@@ -7,28 +7,7 @@
 //     // console.log('message:', message)
 //     // const response = await chrome.runtime.sendMessage(message)
 //     // console.log('response:', response)
-//     addListener()
 // })()
-
-// const observer = new MutationObserver(function () {
-//     addListener()
-// })
-// observer.observe(document.body, {
-//     attributes: true,
-//     childList: true,
-//     subTree: true,
-// })
-
-// function addListener() {
-//     console.log('adding MuiAvatar-root event listener for click:')
-//     document
-//         .querySelectorAll('.MuiAvatar-root ')
-//         .forEach((el) => el.addEventListener('click', clickAvatar))
-// }
-//
-// function clickAvatar() {
-//     console.log('clickAvatar')
-// }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.debug('message:', message)
@@ -101,9 +80,6 @@ function sendClick(event) {
     let text = document.getElementById('stats-text').textContent
     let data = `${username} - ${text}`
     console.log(`sending text: ${data}`)
-    // let textarea = document.querySelector(
-    //     '.MuiInputBase-input .MuiOutlinedInput-input .MuiInputBase-inputMultiline'
-    // )
     let textarea = document.querySelectorAll(
         'textarea[aria-invalid="false"]'
     )[1]
@@ -111,74 +87,3 @@ function sendClick(event) {
     let button = document.querySelector('button[aria-label="send message"]')
     button.click()
 }
-
-// chrome.runtime.onMessage.addListener(onMessage)
-// /**
-//  * Handle Messages
-//  * @function onMessage
-//  * @param {String} message
-//  * @param {MessageSender} sender
-//  * @param {Function} sendResponse
-//  */
-// function onMessage(message, sender, sendResponse) {
-//     console.log(`onMessage: message: ${message}`)
-// }
-
-// /**
-//  * contentScriptFunction
-//  * @return {string}
-//  */
-// function contentScriptFunction() {
-//     return 'Hello from content-script.js'
-// }
-
-// console.log('adding fetch event listener')
-// window.addEventListener('fetch', event => console.log('fetch'));
-
-// var currentTab;
-// var version = "1.0";
-//
-// chrome.tabs.query( //get current Tab
-//     {
-//         currentWindow: true,
-//         active: true
-//     },
-//     function(tabArray) {
-//         currentTab = tabArray[0];
-//         chrome.debugger.attach({ //debug at current tab
-//             tabId: currentTab.id
-//         }, version, onAttach.bind(null, currentTab.id));
-//     }
-// )
-//
-//
-// function onAttach(tabId) {
-//
-//     chrome.debugger.sendCommand({ //first enable the Network
-//         tabId: tabId
-//     }, "Network.enable");
-//
-//     chrome.debugger.onEvent.addListener(allEventHandler);
-//
-// }
-//
-//
-// function allEventHandler(debuggeeId, message, params) {
-//
-//     if (currentTab.id !== debuggeeId.tabId) {
-//         return;
-//     }
-//
-//     if (message === "Network.responseReceived") { //response return
-//         chrome.debugger.sendCommand({
-//             tabId: debuggeeId.tabId
-//         }, "Network.getResponseBody", {
-//             "requestId": params.requestId
-//         }, function(response) {
-//             // you get the response body here!
-//             // you can close the debugger tips by:
-//             chrome.debugger.detach(debuggeeId);
-//         });
-//     }
-//
-// }
