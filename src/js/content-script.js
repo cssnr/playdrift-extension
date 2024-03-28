@@ -91,8 +91,12 @@ function sendClick(event) {
     let data = `${username} - ${text}`
     console.log(`sending text: ${data}`)
     let textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
-    if (textarea.length > 1) {
-        textarea[1].value = data
+    if (textarea.length) {
+        if (textarea.length > 1) {
+            textarea[1].value = data
+        } else {
+            textarea[0].value = data
+        }
         document.querySelector('button[aria-label="send message"]')?.click()
     }
     history.back()

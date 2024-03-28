@@ -281,6 +281,13 @@ function createContextMenus() {
  */
 async function setDefaultOptions(defaultOptions) {
     console.log('setDefaultOptions', defaultOptions)
+
+    let { history } = await chrome.storage.sync.get(['history'])
+    if (!history) {
+        history = {}
+        await chrome.storage.sync.set({ history })
+    }
+
     let { options } = await chrome.storage.sync.get(['options'])
     options = options || {}
     let changed = false
