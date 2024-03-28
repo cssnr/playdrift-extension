@@ -1,0 +1,66 @@
+{
+  "name": "PlayDrift Extension",
+  "description": "PlayDrift Web Extension.",
+  "homepage_url": "https://github.com/smashedr/playdrift-extension",
+  "author": "Shane",
+  "version": "0.0.2",
+  "manifest_version": 3,
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+A"
+      },
+      "description": "Show Main Popup Action"
+    },
+    "openHome": {
+      "suggested_key": {
+        "default": "Alt+Shift+X"
+      },
+      "description": "Open Home Page"
+    },
+    "showPage": {
+      "suggested_key": {
+        "default": "Alt+Shift+W"
+      },
+      "description": "Show Extension Page"
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "scripting",
+    "storage",
+    "tabs",
+    "webRequest",
+    "webNavigation"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.playdrift.com/*"],
+      "js": ["js/content-script.js"]
+    }
+  ],
+  "background": {},
+  "options_ui": {
+    "page": "html/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_popup": "html/popup.html",
+    "default_title": "PlayDrift Extension",
+    "default_icon": {
+      "16": "images/logo16.png",
+      "32": "images/logo32.png",
+      "48": "images/logo48.png",
+      "96": "images/logo96.png",
+      "128": "images/logo128.png"
+    }
+  },
+  "icons": {
+    "16": "images/logo16.png",
+    "32": "images/logo32.png",
+    "48": "images/logo48.png",
+    "96": "images/logo96.png",
+    "128": "images/logo128.png"
+  }
+}
