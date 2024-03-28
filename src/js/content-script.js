@@ -25,16 +25,23 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             console.info('profile data:', data)
 
             let div = document.createElement('div')
-            div.classList.add(
-                'MuiChip-root',
-                'MuiChip-outlined',
-                'MuiChip-sizeMedium',
-                'MuiChip-colorDefault',
-                'MuiChip-outlinedDefault'
-            )
+            // div.classList.add(
+            //     'MuiChip-root',
+            //     'MuiChip-outlined',
+            //     'MuiChip-sizeMedium',
+            //     'MuiChip-colorDefault',
+            //     'MuiChip-outlinedDefault'
+            // )
             let span = document.createElement('span')
+            span.style.color =
+                parseInt(data.result.data.games_won) <
+                    parseInt(data.result.data.games_lost) ||
+                parseInt(data.result.data.rating) < 150
+                    ? 'red'
+                    : 'green'
+            // span.style.color = 'red'
             span.id = 'stats-text'
-            span.classList.add('MuiChip-label', 'MuiChip-labelMedium')
+            // span.classList.add('MuiChip-label', 'MuiChip-labelMedium')
             span.textContent = `Rating: ${data.result.data.rating} - W/L: ${data.result.data.games_won} / ${data.result.data.games_lost}`
             div.appendChild(span)
             let root = document
@@ -46,7 +53,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
             let sendButton = document.createElement('button')
             sendButton.addEventListener('click', sendClick)
-            sendButton.textContent = 'Send to Chat'
+            sendButton.textContent = 'Send and Close'
+            sendButton.style.marginRight = '15px'
+            sendButton.style.marginBottom = '10px'
             root.appendChild(sendButton)
 
             let copyButton = document.createElement('button')
@@ -73,6 +82,7 @@ function copyClick(event) {
     let data = `${username} - ${text}`
     console.log(`copied text: ${data}`)
     navigator.clipboard.writeText(data).then()
+    // history.back()
 }
 
 function sendClick(event) {
@@ -80,10 +90,10 @@ function sendClick(event) {
     let text = document.getElementById('stats-text').textContent
     let data = `${username} - ${text}`
     console.log(`sending text: ${data}`)
-    let textarea = document.querySelectorAll(
-        'textarea[aria-invalid="false"]'
-    )[1]
-    textarea.value = data
-    let button = document.querySelector('button[aria-label="send message"]')
-    button.click()
+    let textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
+    if (textarea.length > 1) {
+        textarea[1].value = data
+        document.querySelector('button[aria-label="send message"]')?.click()
+    }
+    history.back()
 }
