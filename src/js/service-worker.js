@@ -116,26 +116,26 @@ async function onCommand(command) {
  * @param {MessageSender} sender
  * @param {Function} sendResponse
  */
-function onMessage(message, sender, sendResponse) {
-    console.debug(
-        'onMessage: message, sender, sender.tab.id:',
-        message,
-        sender,
-        sender.tab.id
-    )
-    // chrome.debugger.attach(
-    //     {
-    //         //debug at current tab
-    //         tabId: sender.tab.id,
-    //     },
-    //     version,
-    //     onAttach.bind(null, currentTab.id)
-    // )
-    // sendResponse('Success.')
+async function onMessage(message, sender, sendResponse) {
+    console.debug('onMessage: message, sender:', message, sender)
+    if (message.action) {
+        const isShown = await chrome.pageAction.isShown({
+            tabId: sender.tab.id,
+        })
+        // console.debug('isShown:', isShown)
+        if (!isShown) {
+            console.info('showing icon, sender.tab.id:', sender.tab.id)
+            chrome.pageAction.show(sender.tab.id)
+            sendResponse('Shown.')
+        } else {
+            sendResponse('Already Shown...')
+        }
+    }
 }
 
 chrome.tabs.onUpdated.addListener(onUpdate)
 async function onUpdate(tabId, changeInfo, tab) {
+    console.debug('onUpdate: tabId, changeInfo, tab:', tabId, changeInfo, tab)
     if (changeInfo.url) {
         const response = await chrome.tabs.sendMessage(tab.id, {
             url: changeInfo.url,
@@ -144,86 +144,16 @@ async function onUpdate(tabId, changeInfo, tab) {
     }
 }
 
-// chrome.webNavigation.onCompleted.addListener(
-//     // (details) => {
-//     //     chrome.tabs.executeScript(details.tabId, {
-//     //         file: 'js/inject.js',
-//     //         frameId: details.frameId,
-//     //     })
-//     // },
-//     function () {
-//         console.log('hello out there')
-//     },
-//     {
-//         url: [
-//             {
-//                 urlContains: 'profile',
-//             },
-//         ],
-//     }
-// )
-
-// chrome.webRequest.onBeforeRequest.addListener(
-//     function (requestDetails) {
-//         // console.log('requestDetails:', requestDetails)
-//         processRequest(requestDetails).then()
-//     },
-//     {
-//         urls: ['*://*.playdrift.com/*'],
-//     },
-//     ['requestBody']
-// )
-
-async function processRequest(requestDetails) {
-    if (!requestDetails.url.includes('api/profile/trpc/profile.get')) {
-        return
-    }
-    console.log('url:', requestDetails.url)
-    // fetch(requestDetails.url)
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //         console.log('data:', data)
-    //     })
-}
-
-// browser.webRequest.onCompleted.addListener(
-//     listener, // function
-//     filter, //  object
-//     extraInfoSpec //  optional array of strings
-// )
-
-// function onAttach(tabId) {
-//     chrome.debugger.sendCommand(
-//         {
-//             //first enable the Network
-//             tabId: tabId,
-//         },
-//         'Network.enable'
-//     )
-//     chrome.debugger.onEvent.addListener(allEventHandler)
-// }
-//
-// function allEventHandler(debuggeeId, message, params) {
-//     if (currentTab.id !== debuggeeId.tabId) {
+// async function processRequest(requestDetails) {
+//     if (!requestDetails.url.includes('api/profile/trpc/profile.get')) {
 //         return
 //     }
-//     if (message === 'Network.responseReceived') {
-//         //response return
-//         chrome.debugger.sendCommand(
-//             {
-//                 tabId: debuggeeId.tabId,
-//             },
-//             'Network.getResponseBody',
-//             {
-//                 requestId: params.requestId,
-//             },
-//             function (response) {
-//                 // you get the response body here!
-//                 // you can close the debugger tips by:
-//                 chrome.debugger.detach(debuggeeId)
-//             }
-//         )
-//     }
+//     console.log('url:', requestDetails.url)
+//     // fetch(requestDetails.url)
+//     //     .then((response) => response.json())
+//     //     .then((data) => {
+//     //         console.log('data:', data)
+//     //     })
 // }
 
 /**

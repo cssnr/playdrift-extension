@@ -1,13 +1,14 @@
 // JS Content Script
 
-// ;(async () => {
-//     // const { options } = await chrome.storage.sync.get(['options'])
-//     // console.log('options:', options)
-//     // const message = { message: 'test' }
-//     // console.log('message:', message)
-//     // const response = await chrome.runtime.sendMessage(message)
-//     // console.log('response:', response)
-// })()
+;(async () => {
+    console.info('RUNNING content-script.js')
+    const { options } = await chrome.storage.sync.get(['options'])
+    console.debug('options:', options)
+    const message = { action: true }
+    console.debug('message:', message)
+    const response = await chrome.runtime.sendMessage(message)
+    console.debug('response:', response)
+})()
 
 chrome.runtime.onMessage.addListener(onMessage)
 
