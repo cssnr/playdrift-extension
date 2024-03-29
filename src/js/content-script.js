@@ -95,7 +95,9 @@ function updateProfile(profile) {
     const rating = parseInt(profile.rating)
     const games_won = parseInt(profile.games_won)
     const games_lost = parseInt(profile.games_lost)
-    const statsText = `Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()}`
+    const wl_percent =
+        parseInt((games_won / (games_won + games_lost)) * 100) || 0
+    const statsText = `Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
     console.log(statsText)
 
     const spanStats = document.createElement('span')
@@ -118,12 +120,12 @@ function updateProfile(profile) {
     const spanGames = document.createElement('span')
     spanGames.style.color = games_won < games_lost ? '#EE4B2B' : '#50C878'
     spanGames.id = 'stats-text'
-    spanGames.textContent = ` W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} `
+    spanGames.textContent = ` W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%) `
     div.appendChild(spanGames)
 
     const sendButton = document.createElement('button')
     sendButton.addEventListener('click', sendClick)
-    sendButton.textContent = 'Send/Close'
+    sendButton.textContent = 'Send'
     sendButton.style.marginLeft = '5px'
     div.appendChild(sendButton)
 
