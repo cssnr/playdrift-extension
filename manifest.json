@@ -43,7 +43,7 @@
     "page": "html/options.html",
     "open_in_tab": true
   },
-  "page_action": {
+  "action": {
     "default_popup": "html/popup.html",
     "default_title": "PlayDrift Extension",
     "default_icon": {

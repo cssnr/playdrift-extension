@@ -119,21 +119,28 @@ async function onCommand(command) {
  */
 async function onMessage(message, sender, sendResponse) {
     console.debug('onMessage: message, sender:', message, sender)
-    if (message.action) {
-        const isShown = await chrome.pageAction.isShown({
-            tabId: sender.tab.id,
-        })
-        // console.debug('isShown:', isShown)
-        if (!isShown) {
-            console.info('showing icon, sender.tab.id:', sender.tab.id)
-            chrome.pageAction.show(sender.tab.id)
-            sendResponse(true)
-        } else {
-            sendResponse(false)
-        }
-    }
+    // if (message.action) {
+    //     const isShown = await chrome.pageAction.isShown({
+    //         tabId: sender.tab.id,
+    //     })
+    //     // console.debug('isShown:', isShown)
+    //     if (!isShown) {
+    //         console.info('showing icon, sender.tab.id:', sender.tab.id)
+    //         chrome.pageAction.show(sender.tab.id)
+    //         sendResponse(true)
+    //     } else {
+    //         sendResponse(false)
+    //     }
+    // }
 }
 
+/**
+ * On Changed Callback
+ * @function onChanged
+ * @param {number} tabId
+ * @param {Object} changeInfo
+ * @param {Tab} tab
+ */
 async function onUpdate(tabId, changeInfo, tab) {
     console.debug('onUpdate: tabId, changeInfo, tab:', tabId, changeInfo, tab)
     if (changeInfo.url) {

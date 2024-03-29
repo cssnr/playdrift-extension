@@ -2,12 +2,14 @@
 
 ;(async () => {
     console.info('RUNNING content-script.js')
-    const { options } = await chrome.storage.sync.get(['options'])
-    console.debug('options:', options)
-    const message = { action: true }
-    console.debug('message:', message)
-    const response = await chrome.runtime.sendMessage(message)
-    console.debug('response:', response)
+
+    // const { options } = await chrome.storage.sync.get(['options'])
+    // console.debug('options:', options)
+    // const message = { action: true }
+    // console.debug('message:', message)
+    // const response = await chrome.runtime.sendMessage(message)
+    // console.debug('response:', response)
+
     // const userId = document.querySelector('div[data-id]').dataset.id
     // console.debug('update user profile:', userId)
     // await updateUserProfile(userId)
