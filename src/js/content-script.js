@@ -24,7 +24,7 @@ async function onMessage(message, sender, sendResponse) {
     if (!message.url) {
         return console.warn('No message.url')
     }
-    let url = new URL(message.url)
+    const url = new URL(message.url)
     if (url.search.includes('?profile=')) {
         const profileID = url.searchParams.get('profile')
         console.debug(`profileID: ${profileID}`)
@@ -59,7 +59,7 @@ async function getProfile(profileID) {
  * @param {Object} profile
  */
 function updateProfile(profile) {
-    let div = document.createElement('div')
+    const div = document.createElement('div')
     div.style.marginBottom = '10px'
 
     const rating = parseInt(profile.rating)
@@ -68,43 +68,43 @@ function updateProfile(profile) {
     const statsText = `Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()}`
     console.log(statsText)
 
-    let spanStats = document.createElement('span')
+    const spanStats = document.createElement('span')
     spanStats.id = 'stats-text'
     spanStats.textContent = statsText
     spanStats.hidden = true
     div.appendChild(spanStats)
 
-    let copyButton = document.createElement('button')
+    const copyButton = document.createElement('button')
     copyButton.addEventListener('click', copyClick)
     copyButton.textContent = 'Copy'
     copyButton.style.marginRight = '5px'
     div.appendChild(copyButton)
 
-    let spanRating = document.createElement('span')
+    const spanRating = document.createElement('span')
     spanRating.style.color = rating < 200 ? '#EE4B2B' : '#50C878'
     spanRating.textContent = ` Rating: ${rating} `
     div.appendChild(spanRating)
 
-    let spanGames = document.createElement('span')
+    const spanGames = document.createElement('span')
     spanGames.style.color = games_won < games_lost ? '#EE4B2B' : '#50C878'
     spanGames.id = 'stats-text'
     spanGames.textContent = ` W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} `
     div.appendChild(spanGames)
 
-    let sendButton = document.createElement('button')
+    const sendButton = document.createElement('button')
     sendButton.addEventListener('click', sendClick)
     sendButton.textContent = 'Send/Close'
     sendButton.style.marginLeft = '5px'
     div.appendChild(sendButton)
 
     // TODO: Add whole profile to form
-    let spanUsername = document.createElement('span')
+    const spanUsername = document.createElement('span')
     spanUsername.id = 'profile-username'
     spanUsername.textContent = profile.username
     spanUsername.hidden = true
     div.appendChild(spanUsername)
 
-    let root = document
+    const root = document
         .querySelector('.MuiDialogContent-root')
         .querySelectorAll('.MuiBox-root')[3]
     root.appendChild(div)
@@ -117,9 +117,9 @@ function updateProfile(profile) {
  */
 function copyClick(event) {
     console.debug('copyClick', event)
-    let username = document.getElementById('profile-username').textContent
-    let text = document.getElementById('stats-text').textContent
-    let data = `${username} - ${text}`
+    const username = document.getElementById('profile-username').textContent
+    const text = document.getElementById('stats-text').textContent
+    const data = `${username} - ${text}`
     console.log(`copied text: ${data}`)
     navigator.clipboard.writeText(data).then()
     // history.back()
@@ -132,11 +132,11 @@ function copyClick(event) {
  */
 function sendClick(event) {
     console.debug('sendClick', event)
-    let username = document.getElementById('profile-username').textContent
-    let text = document.getElementById('stats-text').textContent
-    let data = `${username} - ${text}`
+    const username = document.getElementById('profile-username').textContent
+    const text = document.getElementById('stats-text').textContent
+    const data = `${username} - ${text}`
     console.log(`sending text: ${data}`)
-    let textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
+    const textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
     if (textarea.length) {
         if (textarea.length > 1) {
             textarea[1].value = data

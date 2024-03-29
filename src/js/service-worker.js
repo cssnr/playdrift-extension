@@ -144,18 +144,6 @@ async function onUpdate(tabId, changeInfo, tab) {
     }
 }
 
-// async function processRequest(requestDetails) {
-//     if (!requestDetails.url.includes('api/profile/trpc/profile.get')) {
-//         return
-//     }
-//     console.log('url:', requestDetails.url)
-//     // fetch(requestDetails.url)
-//     //     .then((response) => response.json())
-//     //     .then((data) => {
-//     //         console.log('data:', data)
-//     //     })
-// }
-
 /**
  * On Changed Callback
  * @function onChanged
@@ -189,7 +177,7 @@ function createContextMenus() {
     const ctx = ['all']
     const contexts = [
         [ctx, 'openHome', 'normal', 'Home Page'],
-        [ctx, 'showPage', 'normal', 'Extension Page'],
+        // [ctx, 'showPage', 'normal', 'Extension Page'],
         [ctx, 'separator-1', 'separator', 'separator'],
         [ctx, 'options', 'normal', 'Open Options'],
     ]
