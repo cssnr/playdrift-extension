@@ -205,7 +205,7 @@ async function setDefaultOptions(defaultOptions) {
         'history',
     ])
     if (!history) {
-        history = {}
+        history = []
         await chrome.storage.sync.set({ history })
     }
     if (!profile) {

@@ -66,6 +66,21 @@ async function updateUserProfile(profile) {
     // const profile = await getProfile(userId)
     console.debug('profile:', profile)
     await chrome.storage.sync.set({ profile })
+
+    const { history } = await chrome.storage.sync.get(['history'])
+    console.debug('history:', history)
+    const last = history.slice(-1)[0]
+    console.debug('last:', last)
+    const current = {
+        rating: profile.rating,
+        games_won: profile.games_won,
+        games_lost: profile.games_lost,
+    }
+    if (!last || last.games_won !== current.games_won) {
+        console.warn('updating history:', current)
+        history.push(current)
+        await chrome.storage.sync.set({ history })
+    }
 }
 
 /**
