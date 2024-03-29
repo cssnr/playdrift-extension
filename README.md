@@ -1,15 +1,14 @@
-[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/ifefifghpkllfibejafbakmflidjcjfp?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-[![Mozilla Add-on Users](https://img.shields.io/amo/users/link-extractor?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/link-extractor)
-[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/ifefifghpkllfibejafbakmflidjcjfp?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-[![Mozilla Add-on Version](https://img.shields.io/amo/v/link-extractor?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/link-extractor)
+[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/ifefifghpkllfibejafbakmflidjcjfp?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Mozilla Add-on Users](https://img.shields.io/amo/users/link-extractor?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/ifefifghpkllfibejafbakmflidjcjfp?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Mozilla Add-on Version](https://img.shields.io/amo/v/link-extractor?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![GitHub Release Version](https://img.shields.io/github/v/release/smashedr/playdrift-extension?logo=github)](https://github.com/smashedr/playdrift-extension/releases/latest)
 [![Manifest Version](https://img.shields.io/github/manifest-json/v/smashedr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/smashedr/playdrift-extension/blob/master/manifest.json)
 [![Build](https://github.com/smashedr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/smashedr/playdrift-extension/actions/workflows/build.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=smashedr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=smashedr_playdrift-extension)
 # PlayDrift Extension
 
-Modern Chrome Web Extension and Firefox Browser Addon PlayDrift Extension Example.
-[README.md](README.md) copied from [link-extractor](https://github.com/cssnr/link-extractor) as an example.
+Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss records on player profiles.
 
 *   [Install](#install)
 *   [Features](#features)
@@ -17,21 +16,25 @@ Modern Chrome Web Extension and Firefox Browser Addon PlayDrift Extension Exampl
 *   [Development](#development)
     -   [Building](#building)
 
+[![Profile Preview](https://repository-images.githubusercontent.com/779112610/77dde83f-7bdb-4b42-93e2-c331df324db5)](https://github.com/smashedr/playdrift-extension)
+
 # Install
 
-*   [Google Chrome Web Store](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-*   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/link-extractor)
+**Coming Soon**. See [Chrome Setup](#chrome-setup) or [Firefox Setup](#firefox-setup).
 
-[![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-[![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_48x48.png)](https://addons.mozilla.org/addon/link-extractor)
-[![Edge](https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-[![Chromium](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chromium/chromium_48x48.png)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-[![Brave](https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave_48x48.png)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-[![Vivaldi](https://raw.githubusercontent.com/alrra/browser-logos/main/src/vivaldi/vivaldi_48x48.png)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
-[![Opera](https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_48x48.png)](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp)
+*   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+*   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
+
+[![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_48x48.png)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Edge](https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Chromium](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chromium/chromium_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Brave](https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Vivaldi](https://raw.githubusercontent.com/alrra/browser-logos/main/src/vivaldi/vivaldi_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Opera](https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
 
 All **Chromium** Based Browsers can install the extension from the
-[Chrome Web Store](https://chromewebstore.google.com/detail/link-extractor/ifefifghpkllfibejafbakmflidjcjfp).
+[Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon).
 
 # Features
 
@@ -40,15 +43,20 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/smas
 
 # Configuration
 
-You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension icon, then;  
-**Chrome,** click the `Pin` icon.  
-**Firefox,** click the `Settings Wheel` and `Pin to Toolbar`.
+To open the options, click on the icon in the address bar when visiting `playdrift.com` and then click `Open Options`.
 
-To open the options, click on the icon (from above) then click `Open Options`.  
-Here you can set flags and add as many saved regular expressions as you would like for easy use later.  
-Make sure to click`Save Options` when finished.
+# Browser Console
 
-For more information on regex, see: https://regex101.com/
+Make sure you are at `https://dominoes.playdrift.com/` and logged in before proceeding.
+
+*   Press `F12` to open the console (for most browsers). May also be: `Ctrl`+`Shift`+`I`
+*   Select the **Network** tab from the top.
+*   In the **Filter URLs** box enter the following filter: `method:get profile.get`
+*   You should see many requests for *profile.get?input=XXX* etc. (if not, refresh the page).
+*   Click on one of the individual requests, this will bring up a new set of tabs (usually on the right or bottom).
+*   From these new tabs, select the `Response` tab. It should be the 4th tab in (Headers, Cookies, Request, Response, etc).
+*   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
+*   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
 
 # Development
 
