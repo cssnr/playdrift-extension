@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener(onMessage)
  * @param {Function} sendResponse
  */
 async function onMessage(message, sender, sendResponse) {
-    console.log('onMessage: message:', message)
+    console.debug('onMessage: message:', message)
     if (!message.url) {
         return console.warn('No message.url')
     }
@@ -32,7 +32,7 @@ async function onMessage(message, sender, sendResponse) {
         const profileID = url.searchParams.get('profile')
         console.debug(`profileID: ${profileID}`)
         const profile = await getProfile(profileID)
-        console.debug('profile:', profile)
+        // console.debug('profile:', profile)
         updateProfile(profile)
     }
     // if (url.pathname.includes('/room/')) {
@@ -56,15 +56,20 @@ async function getProfile(profileID) {
 
     const userId = document.querySelector('div[data-id]').dataset.id
     if (userId === profileID) {
-        console.debug('update user profile:', userId)
         await updateUserProfile(profile)
     }
     return profile
 }
 
+/**
+ * Update User Profile
+ * @function saveOptions
+ * @param {Object} profile
+ */
 async function updateUserProfile(profile) {
     // const profile = await getProfile(userId)
-    console.debug('profile:', profile)
+    // console.debug('profile:', profile)
+    console.info('Updating User Profile:', profile)
     await chrome.storage.sync.set({ profile })
 
     const { history } = await chrome.storage.sync.get(['history'])
@@ -76,8 +81,12 @@ async function updateUserProfile(profile) {
         games_won: profile.games_won,
         games_lost: profile.games_lost,
     }
-    if (!last || last.games_won !== current.games_won) {
-        console.warn('updating history:', current)
+    if (
+        !last ||
+        last.games_won + last.games_lost !==
+            current.games_won + current.games_lost
+    ) {
+        console.info('Adding current to history:', current)
         history.push(current)
         await chrome.storage.sync.set({ history })
     }
@@ -98,7 +107,7 @@ function updateProfile(profile) {
     const wl_percent =
         parseInt((games_won / (games_won + games_lost)) * 100) || 0
     const statsText = `Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
-    console.log(statsText)
+    // console.debug(statsText)
 
     const spanStats = document.createElement('span')
     spanStats.id = 'stats-text'
@@ -152,7 +161,7 @@ function copyClick(event) {
     const username = document.getElementById('profile-username').textContent
     const text = document.getElementById('stats-text').textContent
     const data = `${username} - ${text}`
-    console.log(`copied text: ${data}`)
+    console.log(`Copied: ${data}`)
     navigator.clipboard.writeText(data).then()
     // history.back()
 }
@@ -167,7 +176,7 @@ function sendClick(event) {
     const username = document.getElementById('profile-username').textContent
     const text = document.getElementById('stats-text').textContent
     const data = `${username} - ${text}`
-    console.log(`sending text: ${data}`)
+    console.log(`Sending: ${data}`)
     const textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
     if (textarea.length) {
         if (textarea.length > 1) {

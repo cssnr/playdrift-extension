@@ -6,6 +6,7 @@ chrome.contextMenus.onClicked.addListener(onClicked)
 chrome.commands.onCommand.addListener(onCommand)
 chrome.runtime.onMessage.addListener(onMessage)
 chrome.storage.onChanged.addListener(onChanged)
+chrome.tabs.onUpdated.addListener(onUpdate)
 
 /**
  * On Startup Callback
@@ -133,14 +134,13 @@ async function onMessage(message, sender, sendResponse) {
     }
 }
 
-chrome.tabs.onUpdated.addListener(onUpdate)
 async function onUpdate(tabId, changeInfo, tab) {
     console.debug('onUpdate: tabId, changeInfo, tab:', tabId, changeInfo, tab)
     if (changeInfo.url) {
         const response = await chrome.tabs.sendMessage(tab.id, {
             url: changeInfo.url,
         })
-        console.log('response:', response)
+        console.debug('response:', response)
     }
 }
 

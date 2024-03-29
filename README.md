@@ -1,7 +1,7 @@
-[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/ifefifghpkllfibejafbakmflidjcjfp?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
-[![Mozilla Add-on Users](https://img.shields.io/amo/users/link-extractor?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
-[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/ifefifghpkllfibejafbakmflidjcjfp?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
-[![Mozilla Add-on Version](https://img.shields.io/amo/v/link-extractor?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/coming-soon?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/coming-soon?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![GitHub Release Version](https://img.shields.io/github/v/release/smashedr/playdrift-extension?logo=github)](https://github.com/smashedr/playdrift-extension/releases/latest)
 [![Manifest Version](https://img.shields.io/github/manifest-json/v/smashedr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/smashedr/playdrift-extension/blob/master/manifest.json)
 [![Build](https://github.com/smashedr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/smashedr/playdrift-extension/actions/workflows/build.yaml)
@@ -10,9 +10,12 @@
 
 Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss records on player profiles.
 
-*   [Install](#install)
+*   [Chrome Setup](#chrome-setup)
+*   [Firefox Setup](#firefox-setup)
+*   [Install](#install) (coming soon, use chrome/firefox setup instead)
 *   [Features](#features)
 *   [Configuration](#configuration)
+*   [Browser Console](#browser-console)
 *   [Development](#development)
     -   [Building](#building)
 
@@ -20,7 +23,11 @@ Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rank
 
 # Install
 
-**Coming Soon**. See [Chrome Setup](#chrome-setup) or [Firefox Setup](#firefox-setup).
+> [!WARNING]  
+> **Coming Soon**
+> 
+> See [Chrome Setup](#chrome-setup) or [Firefox Setup](#firefox-setup) for a manual install!
+>
 
 *   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
 *   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
@@ -46,6 +53,8 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/smas
 To open the options, click on the icon in the address bar when visiting `playdrift.com` and then click `Open Options`.
 
 # Browser Console
+
+You can view user profiles manually in your browser console using the following method.
 
 Make sure you are at `https://dominoes.playdrift.com/` and logged in before proceeding.
 
