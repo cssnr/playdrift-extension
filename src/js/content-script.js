@@ -60,38 +60,54 @@ async function getProfile(profileID) {
  */
 function updateProfile(profile) {
     let div = document.createElement('div')
-    let span = document.createElement('span')
-    span.style.color =
-        parseInt(profile.games_won) < parseInt(profile.games_lost) ||
-        parseInt(profile.rating) < 150
-            ? 'red'
-            : 'green'
-    span.id = 'stats-text'
-    span.textContent = `Rating: ${profile.rating} - W/L: ${profile.games_won} / ${profile.games_lost}`
-    div.appendChild(span)
-    let root = document
-        .querySelector('.MuiDialogContent-root')
-        .querySelectorAll('.MuiBox-root')[3]
-    root.appendChild(div)
+    div.style.marginBottom = '10px'
 
-    let sendButton = document.createElement('button')
-    sendButton.addEventListener('click', sendClick)
-    sendButton.textContent = 'Send and Close'
-    sendButton.style.marginRight = '15px'
-    sendButton.style.marginBottom = '10px'
-    root.appendChild(sendButton)
+    const rating = parseInt(profile.rating)
+    const games_won = parseInt(profile.games_won)
+    const games_lost = parseInt(profile.games_lost)
+    const statsText = `Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()}`
+    console.log(statsText)
+
+    let spanStats = document.createElement('span')
+    spanStats.id = 'stats-text'
+    spanStats.textContent = statsText
+    spanStats.hidden = true
+    div.appendChild(spanStats)
 
     let copyButton = document.createElement('button')
     copyButton.addEventListener('click', copyClick)
     copyButton.textContent = 'Copy'
-    root.appendChild(copyButton)
+    copyButton.style.marginRight = '5px'
+    div.appendChild(copyButton)
+
+    let spanRating = document.createElement('span')
+    spanRating.style.color = rating < 200 ? '#EE4B2B' : '#50C878'
+    spanRating.textContent = ` Rating: ${rating} `
+    div.appendChild(spanRating)
+
+    let spanGames = document.createElement('span')
+    spanGames.style.color = games_won < games_lost ? '#EE4B2B' : '#50C878'
+    spanGames.id = 'stats-text'
+    spanGames.textContent = ` W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} `
+    div.appendChild(spanGames)
+
+    let sendButton = document.createElement('button')
+    sendButton.addEventListener('click', sendClick)
+    sendButton.textContent = 'Send/Close'
+    sendButton.style.marginLeft = '5px'
+    div.appendChild(sendButton)
 
     // TODO: Add whole profile to form
-    let username = document.createElement('span')
-    username.id = 'profile-username'
-    username.textContent = profile.username
-    username.hidden = true
-    root.appendChild(username)
+    let spanUsername = document.createElement('span')
+    spanUsername.id = 'profile-username'
+    spanUsername.textContent = profile.username
+    spanUsername.hidden = true
+    div.appendChild(spanUsername)
+
+    let root = document
+        .querySelector('.MuiDialogContent-root')
+        .querySelectorAll('.MuiBox-root')[3]
+    root.appendChild(div)
 }
 
 /**
