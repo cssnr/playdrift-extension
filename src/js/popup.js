@@ -28,9 +28,13 @@ async function initPopup() {
 
     await checkPerms()
 
-    const { options } = await chrome.storage.sync.get(['options'])
-    console.debug('options:', options)
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    console.debug('options, profile:', options, profile)
     updateOptions(options)
+    updateOptions(profile, true)
 
     if (chrome.runtime.lastError) {
         showToast(chrome.runtime.lastError.message, 'warning')

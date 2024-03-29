@@ -126,9 +126,9 @@ async function onMessage(message, sender, sendResponse) {
         if (!isShown) {
             console.info('showing icon, sender.tab.id:', sender.tab.id)
             chrome.pageAction.show(sender.tab.id)
-            sendResponse('Shown.')
+            sendResponse(true)
         } else {
-            sendResponse('Already Shown...')
+            sendResponse(false)
         }
     }
 }
@@ -199,14 +199,19 @@ function createContextMenus() {
  */
 async function setDefaultOptions(defaultOptions) {
     console.log('setDefaultOptions', defaultOptions)
-
-    let { history } = await chrome.storage.sync.get(['history'])
+    let { options, profile, history } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+        'history',
+    ])
     if (!history) {
         history = {}
         await chrome.storage.sync.set({ history })
     }
-
-    let { options } = await chrome.storage.sync.get(['options'])
+    if (!profile) {
+        profile = {}
+        await chrome.storage.sync.set({ profile })
+    }
     options = options || {}
     let changed = false
     for (const [key, value] of Object.entries(defaultOptions)) {

@@ -13,6 +13,30 @@
 <body>
 
 <div class="container-fluid p-3">
+    <h5 id="username" class="text-center"></h5>
+    <table class="table table-hover table-sm">
+        <thead>
+        <tr class="visually-hidden">
+            <th scope="col">Key</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">Rating</th>
+            <td id="rating" class=""></td>
+        </tr>
+        <tr>
+            <th scope="row">Wins</th>
+            <td id="games_won" class="text-success"></td>
+        </tr>
+        <tr>
+            <th scope="row">Losses</th>
+            <td id="games_lost" class="text-danger"></td>
+        </tr>
+        </tbody>
+    </table>
+<!--    <hr>-->
     <div class="d-grid g-2 gap-2">
         <div class="d-none grant-perms">
             <a id="grant-perms" class="btn btn-lg btn-success w-100 mb-1" role="button">

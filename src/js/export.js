@@ -51,13 +51,16 @@ export async function saveOptions(event) {
  * Update Options based on typeof
  * @function initOptions
  * @param {Object} options
+ * @param {boolean} text
  */
-export function updateOptions(options) {
+export function updateOptions(options, text = false) {
     for (const [key, value] of Object.entries(options)) {
-        // console.debug(`${key}: ${value}`)
+        console.debug(`${key}: ${value}`)
         const el = document.getElementById(key)
         if (el) {
-            if (typeof value === 'boolean') {
+            if (text) {
+                el.textContent = value.toString()
+            } else if (typeof value === 'boolean') {
                 el.checked = value
             } else if (typeof value === 'string') {
                 el.value = value

@@ -8,9 +8,20 @@
     console.debug('message:', message)
     const response = await chrome.runtime.sendMessage(message)
     console.debug('response:', response)
+    // if (response) {
+    // }
+    const userId = document.querySelector('div[data-id]').dataset.id
+    console.debug('update user profile:', userId)
+    await updateUserProfile(userId)
 })()
 
 chrome.runtime.onMessage.addListener(onMessage)
+
+async function updateUserProfile(userId) {
+    const profile = await getProfile(userId)
+    console.debug('profile:', profile)
+    await chrome.storage.sync.set({ profile })
+}
 
 /**
  * On Message Callback
