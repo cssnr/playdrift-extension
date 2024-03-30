@@ -37,6 +37,20 @@
 
 chrome.runtime.onMessage.addListener(onMessage)
 
+setInterval(updateUserInterval, 2 * 60000)
+
+async function updateUserInterval() {
+    console.log('updateUserInterval')
+    // TODO: This does not work, get user from storage
+    const userId = document.querySelector('div[data-id]').dataset.id
+    if (!userId) {
+        return console.warn('userId not found!')
+    }
+    await getProfile(userId)
+    // const profile = await getProfile(userId)
+    // updateUserProfile(profile)
+}
+
 /**
  * On Message Callback
  * @function onMessage
@@ -46,6 +60,11 @@ chrome.runtime.onMessage.addListener(onMessage)
  */
 async function onMessage(message, sender, sendResponse) {
     console.debug('onMessage: message:', message)
+    // if (message.userProfile) {
+    //     const profile = await getProfile(message.userProfile)
+    //     updateProfile(profile)
+    //     return console.log('updated user profile via alarm message')
+    // }
     if (!message.url) {
         return console.warn('No message.url')
     }
@@ -54,7 +73,6 @@ async function onMessage(message, sender, sendResponse) {
         const profileID = url.searchParams.get('profile')
         console.debug(`profileID: ${profileID}`)
         const profile = await getProfile(profileID)
-        // console.debug('profile:', profile)
         updateProfile(profile)
     }
     // if (url.pathname.includes('/room/')) {
@@ -71,11 +89,13 @@ async function onMessage(message, sender, sendResponse) {
  */
 async function getProfile(profileID) {
     const profileUrl = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input=%7B%22id%22%3A%22${profileID}%22%2C%22game%22%3A%22dominoes%22%7D`
+    console.debug('profileUrl:', profileUrl)
     const response = await fetch(profileUrl)
     const data = await response.json()
     const profile = data.result.data
     console.info('profile:', profile)
 
+    // TODO: This does not work, get user from storage
     const userId = document.querySelector('div[data-id]').dataset.id
     if (userId === profileID) {
         await updateUserProfile(profile)

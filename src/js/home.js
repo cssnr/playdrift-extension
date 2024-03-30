@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', domContentLoaded)
 document
     .querySelectorAll('.open-options')
     .forEach((el) => el.addEventListener('click', openOptions))
-document
-    .querySelectorAll('.open-page')
-    .forEach((el) => el.addEventListener('click', openPage))
+// document
+//     .querySelectorAll('.open-page')
+//     .forEach((el) => el.addEventListener('click', openPage))
 
 const historyTable = document.getElementById('history-table')
 
@@ -31,13 +31,17 @@ async function domContentLoaded() {
             const row = tr.cloneNode(true)
             console.log('row:', row)
             if (x.win) {
-                row.classList.add('table-success')
+                row.cells[1].classList.add('text-success')
+            } else {
+                row.cells[1].classList.add('text-danger')
             }
             row.cells[0].textContent = date.toLocaleString()
             row.cells[1].textContent = x.win ? 'Win' : 'Loss'
             row.cells[2].textContent = x.rating
             row.cells[3].textContent = x.games_won
+            row.cells[3].classList.add('text-success-emphasis')
             row.cells[4].textContent = x.games_lost
+            row.cells[4].classList.add('text-danger-emphasis')
             tbody.appendChild(row)
         })
 }
@@ -48,13 +52,13 @@ async function openOptions(event) {
     chrome.runtime.openOptionsPage()
 }
 
-async function openPage(event) {
-    console.debug('openPage:', event)
-    event.preventDefault()
-    await chrome.windows.create({
-        type: 'detached_panel',
-        url: '/html/page.html',
-        width: 720,
-        height: 480,
-    })
-}
+// async function openPage(event) {
+//     console.debug('openPage:', event)
+//     event.preventDefault()
+//     await chrome.windows.create({
+//         type: 'detached_panel',
+//         url: '/html/page.html',
+//         width: 720,
+//         height: 480,
+//     })
+// }

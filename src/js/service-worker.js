@@ -5,8 +5,9 @@ chrome.runtime.onInstalled.addListener(onInstalled)
 chrome.contextMenus.onClicked.addListener(onClicked)
 chrome.commands.onCommand.addListener(onCommand)
 chrome.runtime.onMessage.addListener(onMessage)
-chrome.storage.onChanged.addListener(onChanged)
 chrome.tabs.onUpdated.addListener(onUpdate)
+// chrome.alarms.onAlarm.addListener(onAlarm)
+chrome.storage.onChanged.addListener(onChanged)
 
 /**
  * On Startup Callback
@@ -44,6 +45,10 @@ async function onInstalled(details) {
         createContextMenus()
     }
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+        await chrome.alarms.create('check-user-profile', {
+            delayInMinutes: 2,
+            periodInMinutes: 2,
+        })
         const hasPerms = await chrome.permissions.contains({
             origins: ['*://*.playdrift.com/*'],
         })
@@ -136,17 +141,17 @@ async function onMessage(message, sender, sendResponse) {
 
 /**
  * On Changed Callback
- * TODO: Do NOT Use Tabs for monitoring changes, this did not work...
+ * TODO: This fires on ALL Tabs and not just the ones in optional host permissions
  * @function onChanged
  * @param {number} tabId
  * @param {Object} changeInfo
  * @param {Tab} tab
  */
 async function onUpdate(tabId, changeInfo, tab) {
-    console.debug('onUpdate: tabId, changeInfo, tab:', tabId, changeInfo, tab)
-    if (changeInfo.url) {
+    // console.debug('onUpdate: tabId, changeInfo, tab:', tabId, changeInfo, tab)
+    if (changeInfo.url?.includes('playdrift.com')) {
         try {
-            const response = await chrome.tabs.sendMessage(tab.id, {
+            const response = await chrome.tabs.sendMessage(tabId, {
                 url: changeInfo.url,
             })
             console.debug('response:', response)
@@ -155,6 +160,27 @@ async function onUpdate(tabId, changeInfo, tab) {
         }
     }
 }
+
+// /**
+//  * On Alarm Callback
+//  * @function onAlarm
+//  * @param {alarm} alarm
+//  */
+// async function onAlarm(alarm) {
+//     console.info('onAlarm: alarm:', alarm)
+//     // const { profile } = await chrome.storage.sync.get(['profile'])
+//     // if (!profile) {
+//     //     return console.log('no profile in sync storage')
+//     // }
+//     // try {
+//     //     const response = await chrome.runtime.sendMessage({
+//     //         userProfile: profile.id,
+//     //     })
+//     //     console.debug('response:', response)
+//     // } catch (e) {
+//     //     console.debug(e)
+//     // }
+// }
 
 /**
  * On Changed Callback
