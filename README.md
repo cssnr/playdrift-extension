@@ -50,7 +50,11 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/smas
 
 # Configuration
 
-To open the options, click on the icon in the address bar when visiting `playdrift.com` and then click `Open Options`.
+You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension icon, then;  
+**Chrome**, click the `Pin` icon.  
+**Firefox**, click the `Settings Wheel` and `Pin to Toolbar`.
+
+To open the options, click on the icon (from above) then click `Open Options`.
 
 # Browser Console
 

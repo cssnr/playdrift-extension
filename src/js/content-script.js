@@ -15,6 +15,26 @@
     // await updateUserProfile(userId)
 })()
 
+// const observer = new MutationObserver(mutationCallback)
+// observer.observe(document.body, {
+//     attributes: true,
+//     childList: true,
+//     subTree: true,
+// })
+//
+// function mutationCallback(mutationList, observer) {
+//     console.info('mutationCallback, mutationList:', mutationList, observer)
+//     for (const mutation of mutationList) {
+//         if (mutation.type === 'childList') {
+//             console.info('A child node has been added or removed.')
+//         } else if (mutation.type === 'attributes') {
+//             console.info(
+//                 `The ${mutation.attributeName} attribute was modified.`
+//             )
+//         }
+//     }
+// }
+
 chrome.runtime.onMessage.addListener(onMessage)
 
 /**
@@ -82,6 +102,7 @@ async function updateUserProfile(profile) {
         rating: profile.rating,
         games_won: profile.games_won,
         games_lost: profile.games_lost,
+        ts_last: profile.ts_last,
     }
     if (
         !last ||

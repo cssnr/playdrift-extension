@@ -136,6 +136,7 @@ async function onMessage(message, sender, sendResponse) {
 
 /**
  * On Changed Callback
+ * TODO: Do NOT Use Tabs for monitoring changes, this did not work...
  * @function onChanged
  * @param {number} tabId
  * @param {Object} changeInfo
@@ -144,10 +145,14 @@ async function onMessage(message, sender, sendResponse) {
 async function onUpdate(tabId, changeInfo, tab) {
     console.debug('onUpdate: tabId, changeInfo, tab:', tabId, changeInfo, tab)
     if (changeInfo.url) {
-        const response = await chrome.tabs.sendMessage(tab.id, {
-            url: changeInfo.url,
-        })
-        console.debug('response:', response)
+        try {
+            const response = await chrome.tabs.sendMessage(tab.id, {
+                url: changeInfo.url,
+            })
+            console.debug('response:', response)
+        } catch (e) {
+            console.debug(e)
+        }
     }
 }
 
