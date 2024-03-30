@@ -8,14 +8,38 @@ document
     .querySelectorAll('.open-page')
     .forEach((el) => el.addEventListener('click', openPage))
 
+const historyTable = document.getElementById('history-table')
+
 /**
  * DOMContentLoaded
  * @function domContentLoaded
  */
 async function domContentLoaded() {
     console.debug('domContentLoaded')
-    const { options } = await chrome.storage.sync.get(['options'])
-    console.debug('options:', options)
+    // const { options } = await chrome.storage.sync.get(['options'])
+    // console.debug('options:', options)
+    const { history } = await chrome.storage.sync.get(['history'])
+    console.debug('history:', history)
+    const tbody = historyTable.querySelector('tbody')
+    const tr = historyTable.querySelector('tfoot tr')
+    history
+        .slice()
+        .reverse()
+        .forEach((x) => {
+            console.log('item:', x)
+            const date = new Date(x.ts_last)
+            const row = tr.cloneNode(true)
+            console.log('row:', row)
+            if (x.win) {
+                row.classList.add('table-success')
+            }
+            row.cells[0].textContent = date.toLocaleString()
+            row.cells[1].textContent = x.win ? 'Win' : 'Loss'
+            row.cells[2].textContent = x.rating
+            row.cells[3].textContent = x.games_won
+            row.cells[4].textContent = x.games_lost
+            tbody.appendChild(row)
+        })
 }
 
 async function openOptions(event) {

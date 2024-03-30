@@ -103,12 +103,16 @@ async function updateUserProfile(profile) {
         games_won: profile.games_won,
         games_lost: profile.games_lost,
         ts_last: profile.ts_last,
+        win: false,
     }
     if (
         !last ||
         last.games_won + last.games_lost !==
             current.games_won + current.games_lost
     ) {
+        if (last && current.games_won > last.games_won) {
+            current.win = true
+        }
         console.info('Adding current to history:', current)
         history.push(current)
         await chrome.storage.sync.set({ history })
