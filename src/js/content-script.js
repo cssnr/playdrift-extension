@@ -5,14 +5,8 @@
 
     const { profile } = await chrome.storage.sync.get(['profile'])
     console.info('profile:', profile)
-    if (!Object.keys(profile).length) {
-        const userId = document.querySelector('div[data-id]')?.dataset.id
-        if (!userId) {
-            return console.warn('userId not found!', userId)
-        }
-        console.info('No profile, setting to userId:', userId)
-        const userProfile = await getProfile(userId)
-        await updateUserProfile(userProfile)
+    if (profile && !Object.keys(profile).length) {
+        setTimeout(checkProfile, 3000)
     }
     // console.debug('options:', options)
     // const message = { action: true }
@@ -24,6 +18,17 @@
     // console.debug('update user profile:', userId)
     // await updateUserProfile(userId)
 })()
+
+async function checkProfile() {
+    console.debug('checkProfile')
+    const userId = document.querySelector('div[data-id]')?.dataset.id
+    if (!userId) {
+        return console.warn('userId not found!', userId)
+    }
+    console.info('No profile, setting to userId:', userId)
+    const userProfile = await getProfile(userId)
+    await updateUserProfile(userProfile)
+}
 
 // const observer = new MutationObserver(mutationCallback)
 // observer.observe(document.body, {
