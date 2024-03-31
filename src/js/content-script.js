@@ -3,7 +3,17 @@
 ;(async () => {
     console.info('RUNNING content-script.js')
 
-    // const { options } = await chrome.storage.sync.get(['options'])
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    console.info('profile:', profile)
+    if (!Object.keys(profile).length) {
+        const userId = document.querySelector('div[data-id]')?.dataset.id
+        if (!userId) {
+            return console.warn('userId not found!', userId)
+        }
+        console.info('No profile, setting to userId:', userId)
+        const userProfile = await getProfile(userId)
+        await updateUserProfile(userProfile)
+    }
     // console.debug('options:', options)
     // const message = { action: true }
     // console.debug('message:', message)
@@ -41,14 +51,9 @@ setInterval(updateUserInterval, 2 * 60000)
 
 async function updateUserInterval() {
     console.log('updateUserInterval')
-    // TODO: This does not work, get user from storage
-    const userId = document.querySelector('div[data-id]').dataset.id
-    if (!userId) {
-        return console.warn('userId not found!')
-    }
-    await getProfile(userId)
-    // const profile = await getProfile(userId)
-    // updateUserProfile(profile)
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    const userProfile = await getProfile(profile.id)
+    updateUserProfile(userProfile)
 }
 
 /**
@@ -95,11 +100,11 @@ async function getProfile(profileID) {
     const profile = data.result.data
     console.info('profile:', profile)
 
-    // TODO: This does not work, get user from storage
-    const userId = document.querySelector('div[data-id]').dataset.id
-    if (userId === profileID) {
-        await updateUserProfile(profile)
-    }
+    // // TODO: This does not work, get user from storage
+    // const userId = document.querySelector('div[data-id]').dataset.id
+    // if (userId === profileID) {
+    //     await updateUserProfile(profile)
+    // }
     return profile
 }
 
@@ -109,8 +114,10 @@ async function getProfile(profileID) {
  * @param {Object} profile
  */
 async function updateUserProfile(profile) {
-    // const profile = await getProfile(userId)
-    // console.debug('profile:', profile)
+    if (!profile) {
+        return console.warn('updateUserProfile: No profile:', profile)
+    }
+
     console.info('Updating User Profile:', profile)
     await chrome.storage.sync.set({ profile })
 

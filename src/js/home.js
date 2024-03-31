@@ -29,11 +29,13 @@ async function domContentLoaded() {
             console.log('item:', x)
             const date = new Date(x.ts_last)
             const row = tr.cloneNode(true)
-            console.log('row:', row)
+            // console.log('row:', row)
             if (x.win) {
                 row.cells[1].classList.add('text-success')
+                row.cells[2].classList.add('text-success-emphasis')
             } else {
                 row.cells[1].classList.add('text-danger')
+                row.cells[2].classList.add('text-danger-emphasis')
             }
             row.cells[0].textContent = date.toLocaleString()
             row.cells[1].textContent = x.win ? 'Win' : 'Loss'
@@ -42,6 +44,7 @@ async function domContentLoaded() {
             row.cells[3].classList.add('text-success-emphasis')
             row.cells[4].textContent = x.games_lost
             row.cells[4].classList.add('text-danger-emphasis')
+            row.cells[5].textContent = x.games_won + x.games_lost
             tbody.appendChild(row)
         })
 }

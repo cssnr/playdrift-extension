@@ -45,10 +45,10 @@ async function onInstalled(details) {
         createContextMenus()
     }
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
-        await chrome.alarms.create('check-user-profile', {
-            delayInMinutes: 2,
-            periodInMinutes: 2,
-        })
+        // await chrome.alarms.create('check-user-profile', {
+        //     delayInMinutes: 2,
+        //     periodInMinutes: 2,
+        // })
         const hasPerms = await chrome.permissions.contains({
             origins: ['*://*.playdrift.com/*'],
         })
