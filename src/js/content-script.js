@@ -6,7 +6,7 @@
         'options',
         'profile',
     ])
-    console.info('options, profile:', options, profile)
+    console.debug('options, profile:', options, profile)
 
     // add mouseOver listener to document to trigger on specific elements
     if (options.sendMouseover) {
@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener(onMessage)
 async function onMessage(message, sender, sendResponse) {
     console.debug('onMessage: message:', message)
     if (typeof message.sendMouseover !== 'undefined') {
-        console.log('message.sendMouseover', message.sendMouseover)
+        // console.log('message.sendMouseover', message.sendMouseover)
         // if (message.sendMouseover) {
         // }
         return
@@ -59,6 +59,17 @@ async function onMessage(message, sender, sendResponse) {
     if (url.pathname.includes('/room/')) {
         let room = url.pathname.split('/')[2]
         console.debug(`Process Room: ${room}`)
+        const { options } = await chrome.storage.sync.get(['options'])
+        if (options.sendMouseover) {
+            console.debug('Adding Send Mouse Over ON Alert')
+            const root = document.querySelector('aside').childNodes[0]
+            const div = document.createElement('div')
+            div.textContent = 'Mouse Over ON'
+            div.style.textAlign = 'center'
+            div.style.color = '#50C878'
+            div.style.float = 'right'
+            root.prepend(div)
+        }
         // const picker = new Picker()
         // console.log('picker:', picker)
         // document.body.appendChild(picker)
@@ -162,7 +173,7 @@ async function setUserProfile() {
     if (!userId) {
         return console.warn('userId not found!', userId)
     }
-    console.info('No profile, setting to userId:', userId)
+    console.info('User Profile Set to userId:', userId)
     const userProfile = await getProfile(userId)
     await updateUserProfile(userProfile)
 }
@@ -172,7 +183,7 @@ async function setUserProfile() {
  * @function updateUserInterval
  */
 async function updateUserInterval() {
-    console.log('updateUserInterval')
+    console.debug('updateUserInterval')
     const { profile } = await chrome.storage.sync.get(['profile'])
     const userProfile = await getProfile(profile.id)
     await updateUserProfile(userProfile)
@@ -204,7 +215,7 @@ async function updateUserProfile(profile) {
         return console.warn('updateUserProfile: No profile:', profile)
     }
 
-    console.info('Updating User Profile:', profile)
+    console.log('Updating User Profile:', profile)
     await chrome.storage.sync.set({ profile })
 
     const { history } = await chrome.storage.sync.get(['history'])
@@ -379,9 +390,10 @@ async function kickClick(event) {
  * @param {string} playerID
  */
 async function kickPlayer(playerID) {
+    console.debug('kickPlayer: playerID:', playerID)
     const room = location.pathname.split('/')[2]
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/action/kick`
-    console.log('url:', url)
+    // console.debug('url:', url)
     const response = await fetch(url, {
         method: 'POST',
         credentials: 'include',
@@ -392,7 +404,7 @@ async function kickPlayer(playerID) {
         body: JSON.stringify({ player: playerID }),
     })
     const data = await response.json()
-    console.log('data:', data)
+    console.debug('data:', data)
 }
 
 /**
