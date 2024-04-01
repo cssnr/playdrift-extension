@@ -50,6 +50,16 @@
     // console.log(5)
 })()
 
+function profileCloseClick(event) {
+    console.log('profileCloseClick', event)
+    if (
+        event.target.classList.contains('MuiDialog-container') &&
+        event.target.classList.contains('MuiDialog-scrollPaper')
+    ) {
+        history.back()
+    }
+}
+
 async function mouseOver(event) {
     // console.log('mouseover:', event)
     if (
@@ -170,6 +180,9 @@ async function onMessage(message, sender, sendResponse) {
         console.debug(`profileID: ${profileID}`)
         const profile = await getProfile(profileID)
         updateProfile(profile)
+        document
+            .querySelector('.MuiDialog-container')
+            .addEventListener('click', profileCloseClick)
     }
     if (url.pathname.includes('/room/')) {
         let room = url.pathname.split('/')[2]
@@ -187,7 +200,6 @@ function addBtn() {
     const msgBox = document.querySelector('div[aria-label="message"]')
     msgBox.parentElement.parentElement.appendChild(button)
 }
-
 function emojiBtnClick(event) {
     console.debug('emojiBtnClick:', event)
 }
@@ -262,6 +274,7 @@ function updateProfile(profile) {
         .querySelector('.MuiDialogContent-root')
         .querySelectorAll('.MuiBox-root')[3]
     root.style.marginTop = 0
+    root.style.marginBottom = '10px'
 
     const divText = document.createElement('div')
     divText.style.textAlign = 'center'
@@ -293,38 +306,32 @@ function updateProfile(profile) {
 
     root.appendChild(divText)
     const divBtns = document.createElement('div')
-    // divBtns.style.margin = 'auto'
-    divBtns.style.marginBottom = '5px'
+    divBtns.style.textAlign = 'center'
 
     const button = document.createElement('button')
-    button.style.margin = '2px 2px'
-    button.style.float = 'right'
-    // button.style.display = 'block'
+    button.style.margin = '0 2px 0 2px'
 
     const copyButton = button.cloneNode(true)
     copyButton.addEventListener('click', copyClick)
     copyButton.textContent = 'Copy'
-    copyButton.style.float = 'left'
-    // copyButton.style.marginRight = '5px'
+    copyButton.style.marginRight = '15px'
     divBtns.appendChild(copyButton)
-
-    const sendButton = button.cloneNode(true)
-    sendButton.addEventListener('click', sendClick)
-    sendButton.textContent = 'Send'
-    // sendButton.style.marginLeft = '5px'
-    divBtns.appendChild(sendButton)
-
-    const sendKickButton = button.cloneNode(true)
-    sendKickButton.addEventListener('click', sendKickClick)
-    sendKickButton.textContent = 'Send/Kick'
-    // sendKickButton.style.marginLeft = '5px'
-    divBtns.appendChild(sendKickButton)
 
     const kickButton = button.cloneNode(true)
     kickButton.addEventListener('click', kickClick)
     kickButton.textContent = 'Kick'
-    // kickButton.style.marginLeft = '5px'
     divBtns.appendChild(kickButton)
+
+    const sendKickButton = button.cloneNode(true)
+    sendKickButton.addEventListener('click', sendKickClick)
+    sendKickButton.textContent = 'Send/Kick'
+    divBtns.appendChild(sendKickButton)
+
+    const sendButton = button.cloneNode(true)
+    sendButton.addEventListener('click', sendClick)
+    sendButton.textContent = 'Send'
+    sendButton.style.marginLeft = '15px'
+    divBtns.appendChild(sendButton)
 
     root.appendChild(divBtns)
 
