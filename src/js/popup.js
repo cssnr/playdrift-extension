@@ -9,12 +9,34 @@ document.getElementById('grant-perms').addEventListener('click', grantPerms)
 document
     .querySelectorAll('a[href]')
     .forEach((el) => el.addEventListener('click', popupLinks))
-document
-    .querySelectorAll('#options-form input')
-    .forEach((el) => el.addEventListener('change', saveOptions))
+document.querySelectorAll('#options-form input').forEach((el) => {
+    el.addEventListener('change', saveOptions)
+    el.addEventListener('change', saveOptionsPage)
+})
 document
     .querySelectorAll('[data-bs-toggle="tooltip"]')
     .forEach((el) => new bootstrap.Tooltip(el))
+
+async function saveOptionsPage(event) {
+    console.debug('saveOptionsPage:', event)
+    if (event.target.id === 'sendMouseover') {
+        console.debug('event.target.checked:', event.target.checked)
+        const [tab] = await chrome.tabs.query({
+            currentWindow: true,
+            active: true,
+        })
+        console.debug('tab:', tab)
+        try {
+            const response = await chrome.tabs.sendMessage(tab.id, {
+                sendMouseover: event.target.checked,
+            })
+            console.debug('response:', response)
+        } catch (e) {
+            console.debug(e)
+            showToast(e.toString(), 'warning')
+        }
+    }
+}
 
 /**
  * Initialize Popup

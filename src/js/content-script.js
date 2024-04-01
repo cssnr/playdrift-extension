@@ -5,8 +5,14 @@
 ;(async () => {
     console.info('RUNNING content-script.js')
 
-    const { profile } = await chrome.storage.sync.get(['profile'])
-    console.info('profile:', profile)
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    console.info('options, profile:', options, profile)
+    if (options.sendMouseover) {
+        document.addEventListener('mouseover', mouseOver)
+    }
     if (profile && !Object.keys(profile).length) {
         setTimeout(checkProfile, 3000)
     }
@@ -43,6 +49,61 @@
     // document.body.appendChild(picker)
     // console.log(5)
 })()
+
+async function mouseOver(event) {
+    // console.log('mouseover:', event)
+    if (
+        event.target.tagName === 'IMG' &&
+        event.target.parentNode?.dataset?.id
+    ) {
+        await sendChatMouseover(event.target.parentNode)
+        // showMouseover(event.target.parentNode)
+    }
+}
+
+async function sendChatMouseover(element) {
+    const userID = element.dataset.id
+    const parent =
+        element.parentNode.parentNode.parentNode.parentNode.parentNode
+    if (parent.dataset.testid !== 'app-layout-aside') {
+        return console.log('no dataset.testid')
+    }
+    const sent = parent.querySelector(`#userid-${userID}`)
+    if (sent) {
+        return console.debug('already sent for user:', userID)
+    }
+    const div = document.createElement('div')
+    div.style.display = 'none'
+    div.id = `userid-${userID}`
+    parent.appendChild(div)
+
+    const profile = await getProfile(userID)
+    // console.debug('profile:', profile)
+    // TODO: Make this a function, this is copy pasta
+    const rating = parseInt(profile.rating)
+    const games_won = parseInt(profile.games_won)
+    const games_lost = parseInt(profile.games_lost)
+    const wl_percent =
+        parseInt((games_won / (games_won + games_lost)) * 100) || 0
+    const statsText = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
+    // console.debug(statsText)
+    sendChatMessage(statsText)
+}
+
+// function showMouseover(element) {
+//     if (element.dataset.processed) {
+//         return console.debug('already processed element:', element)
+//     }
+//     element.dataset.processed = 'yes'
+//
+//     const userID = element.dataset.id
+//     console.info('userID', userID)
+//     const div = document.createElement('div')
+//     div.textContent = 'Test Test Test Test'
+//     div.style.position = 'fixed'
+//     div.style.color = 'red'
+//     element.parentNode.appendChild(div)
+// }
 
 async function checkProfile() {
     console.debug('checkProfile')
@@ -95,12 +156,11 @@ async function updateUserInterval() {
  */
 async function onMessage(message, sender, sendResponse) {
     console.debug('onMessage: message:', message)
-    // if (message.userProfile) {
-    //     const profile = await getProfile(message.userProfile)
-    //     updateProfile(profile)
-    //     return console.log('updated user profile via alarm message')
-    // }
-    if (!message.url) {
+    if (typeof message.sendMouseover !== 'undefined') {
+        console.log('message.sendMouseover', message.sendMouseover)
+        // if (message.sendMouseover) {
+        // }
+    } else if (!message.url) {
         return console.warn('No message.url')
     }
     const url = new URL(message.url)
@@ -309,16 +369,21 @@ function sendClick(event) {
     const text = document.getElementById('stats-text').textContent
     const data = `${username} - ${text}`
     console.log(`Sending: ${data}`)
+    sendChatMessage(data)
+    history.back()
+}
+
+function sendChatMessage(message) {
+    console.log(`sendChatMessage: ${message}`)
     const textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
     if (textarea.length) {
         if (textarea.length > 1) {
-            textarea[1].value = data
+            textarea[1].value = message
         } else {
-            textarea[0].value = data
+            textarea[0].value = message
         }
         document.querySelector('button[aria-label="send message"]')?.click()
     }
-    history.back()
 }
 
 async function sendKickClick(event) {

@@ -37,7 +37,8 @@ async function onInstalled(details) {
         setDefaultOptions({
             contextMenu: true,
             showUpdate: false,
-            testInput: 'Default Value',
+            sendMouseover: false,
+            // testInput: 'Default Value',
         })
     )
     console.debug('options:', options)
