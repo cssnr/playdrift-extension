@@ -91,6 +91,18 @@ async function onMessage(message, sender, sendResponse) {
     // }
 }
 
+function addBtn() {
+    const button = document.createElement('button')
+    button.textContent = 'Emoji'
+    button.addEventListener('click', emojiBtnClick)
+    const msgBox = document.querySelector('div[aria-label="message"]')
+    msgBox.parentElement.parentElement.appendChild(button)
+}
+
+function emojiBtnClick(event) {
+    console.debug('emojiBtnClick:', event)
+}
+
 /**
  * copyClick Callback
  * @function saveOptions
@@ -157,8 +169,13 @@ async function updateUserProfile(profile) {
  * @param {Object} profile
  */
 function updateProfile(profile) {
-    const div = document.createElement('div')
-    div.style.marginBottom = '10px'
+    const root = document
+        .querySelector('.MuiDialogContent-root')
+        .querySelectorAll('.MuiBox-root')[3]
+    root.style.marginTop = 0
+
+    const divText = document.createElement('div')
+    divText.style.textAlign = 'center'
 
     const rating = parseInt(profile.rating)
     const games_won = parseInt(profile.games_won)
@@ -172,42 +189,69 @@ function updateProfile(profile) {
     spanStats.id = 'stats-text'
     spanStats.textContent = statsText
     spanStats.hidden = true
-    div.appendChild(spanStats)
-
-    const copyButton = document.createElement('button')
-    copyButton.addEventListener('click', copyClick)
-    copyButton.textContent = 'Copy'
-    copyButton.style.marginRight = '5px'
-    div.appendChild(copyButton)
+    divText.appendChild(spanStats)
 
     const spanRating = document.createElement('span')
     spanRating.style.color = rating < 200 ? '#EE4B2B' : '#50C878'
     spanRating.textContent = ` Rating: ${rating} `
-    div.appendChild(spanRating)
+    divText.appendChild(spanRating)
 
     const spanGames = document.createElement('span')
-    spanGames.style.color = games_won < games_lost ? '#EE4B2B' : '#50C878'
+    spanGames.style.color = wl_percent < 45 ? '#EE4B2B' : '#50C878'
     spanGames.id = 'stats-text'
     spanGames.textContent = ` W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%) `
-    div.appendChild(spanGames)
+    divText.appendChild(spanGames)
 
-    const sendButton = document.createElement('button')
+    root.appendChild(divText)
+    const divBtns = document.createElement('div')
+    // divBtns.style.margin = 'auto'
+    divBtns.style.marginBottom = '5px'
+
+    const button = document.createElement('button')
+    button.style.margin = '2px 2px'
+    button.style.float = 'right'
+    // button.style.display = 'block'
+
+    const copyButton = button.cloneNode(true)
+    copyButton.addEventListener('click', copyClick)
+    copyButton.textContent = 'Copy'
+    copyButton.style.float = 'left'
+    // copyButton.style.marginRight = '5px'
+    divBtns.appendChild(copyButton)
+
+    const sendButton = button.cloneNode(true)
     sendButton.addEventListener('click', sendClick)
     sendButton.textContent = 'Send'
-    sendButton.style.marginLeft = '5px'
-    div.appendChild(sendButton)
+    // sendButton.style.marginLeft = '5px'
+    divBtns.appendChild(sendButton)
+
+    const sendKickButton = button.cloneNode(true)
+    sendKickButton.addEventListener('click', sendKickClick)
+    sendKickButton.textContent = 'Send/Kick'
+    // sendKickButton.style.marginLeft = '5px'
+    divBtns.appendChild(sendKickButton)
+
+    const kickButton = button.cloneNode(true)
+    kickButton.addEventListener('click', kickClick)
+    kickButton.textContent = 'Kick'
+    // kickButton.style.marginLeft = '5px'
+    divBtns.appendChild(kickButton)
+
+    root.appendChild(divBtns)
 
     // TODO: Add whole profile to form
-    const spanUsername = document.createElement('span')
-    spanUsername.id = 'profile-username'
-    spanUsername.textContent = profile.username
-    spanUsername.hidden = true
-    div.appendChild(spanUsername)
-
-    const root = document
-        .querySelector('.MuiDialogContent-root')
-        .querySelectorAll('.MuiBox-root')[3]
-    root.appendChild(div)
+    const profileForm = document.createElement('form')
+    profileForm.classList.add('visually-hidden')
+    const profileInput = document.createElement('input')
+    profileInput.hidden = true
+    const keys = ['id', 'username']
+    for (const key of keys) {
+        const input = profileInput.cloneNode(true)
+        input.id = `profile-${key}`
+        input.value = profile[key]
+        profileForm.appendChild(input)
+    }
+    root.appendChild(profileForm)
 }
 
 /**
@@ -217,7 +261,7 @@ function updateProfile(profile) {
  */
 function copyClick(event) {
     console.debug('copyClick', event)
-    const username = document.getElementById('profile-username').textContent
+    const username = document.getElementById('profile-username').value
     const text = document.getElementById('stats-text').textContent
     const data = `${username} - ${text}`
     console.log(`Copied: ${data}`)
@@ -231,8 +275,9 @@ function copyClick(event) {
  * @param {MouseEvent} event
  */
 function sendClick(event) {
-    console.debug('sendClick', event)
-    const username = document.getElementById('profile-username').textContent
+    console.debug('sendClick: event:', event)
+    const username = document.getElementById('profile-username').value
+    // const playerID = document.getElementById('profile-id').value
     const text = document.getElementById('stats-text').textContent
     const data = `${username} - ${text}`
     console.log(`Sending: ${data}`)
@@ -246,4 +291,39 @@ function sendClick(event) {
         document.querySelector('button[aria-label="send message"]')?.click()
     }
     history.back()
+}
+
+async function sendKickClick(event) {
+    const playerID = document.getElementById('profile-id').value
+    console.debug('sendKickClick: playerID, event:', playerID, event)
+    await doKick(playerID)
+    sendClick(event)
+}
+
+async function kickClick(event) {
+    const playerID = document.getElementById('profile-id').value
+    console.debug('kickClick: playerID, event:', playerID, event)
+    await doKick(playerID)
+}
+
+/**
+ * doKick Callback
+ * @function doKick
+ * @param {string} playerID
+ */
+async function doKick(playerID) {
+    const room = location.pathname.split('/')[2]
+    const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/action/kick`
+    console.log('url:', url)
+    const response = await fetch(url, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ player: playerID }),
+    })
+    const data = await response.json()
+    console.log('data:', data)
 }

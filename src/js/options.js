@@ -100,3 +100,11 @@ async function setShortcuts(mapping) {
         }
     }
 }
+
+// document
+//     .querySelector('emoji-picker')
+//     .addEventListener('emoji-click', emojiCallback)
+//
+// function emojiCallback(event) {
+//     console.debug('emojiCallback:', event)
+// }
