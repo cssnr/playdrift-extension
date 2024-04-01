@@ -61,14 +61,17 @@ async function onMessage(message, sender, sendResponse) {
         console.debug(`Process Room: ${room}`)
         const { options } = await chrome.storage.sync.get(['options'])
         if (options.sendMouseover) {
-            console.debug('Adding Send Mouse Over ON Alert')
             const root = document.querySelector('aside').childNodes[0]
-            const div = document.createElement('div')
-            div.textContent = 'Mouse Over ON'
-            div.style.textAlign = 'center'
-            div.style.color = '#50C878'
-            div.style.float = 'right'
-            root.prepend(div)
+            if (!root.querySelector('#sendMouseover-notification')) {
+                console.debug('Adding Send Mouse Over ON Notification')
+                const div = document.createElement('div')
+                div.id = 'sendMouseover-notification'
+                div.textContent = 'Mouse Over ON'
+                div.style.textAlign = 'center'
+                div.style.color = '#50C878'
+                div.style.float = 'right'
+                root.prepend(div)
+            }
         }
         // const picker = new Picker()
         // console.log('picker:', picker)
