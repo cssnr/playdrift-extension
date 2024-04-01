@@ -160,6 +160,7 @@ async function onMessage(message, sender, sendResponse) {
         console.log('message.sendMouseover', message.sendMouseover)
         // if (message.sendMouseover) {
         // }
+        return
     } else if (!message.url) {
         return console.warn('No message.url')
     }
