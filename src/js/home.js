@@ -1,5 +1,7 @@
 // JS for home.html
 
+import { updateOptions } from './export.js'
+
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document
     .querySelectorAll('.open-options')
@@ -16,10 +18,13 @@ const historyTable = document.getElementById('history-table')
  */
 async function domContentLoaded() {
     console.debug('domContentLoaded')
-    // const { options } = await chrome.storage.sync.get(['options'])
-    // console.debug('options:', options)
-    const { history } = await chrome.storage.sync.get(['history'])
-    console.debug('history:', history)
+    const { history, options, profile } = await chrome.storage.sync.get([
+        'history',
+        'options',
+        'profile',
+    ])
+    console.debug('history, options, profile:', history, options, profile)
+    updateOptions(profile, true)
     const tbody = historyTable.querySelector('tbody')
     const tr = historyTable.querySelector('tfoot tr')
     history

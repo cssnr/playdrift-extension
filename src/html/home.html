@@ -15,16 +15,52 @@
     <div class="row">
         <div class="col-12">
             <h1>PlayDrift Extension Home</h1>
-            <p class="lead">This is under active development and currently in Beta!<br>The extension may not function as expected!</p>
+            <p class="lead">This is under active development and currently in Beta! The extension may not function as expected!</p>
             <p>
                 You may configure options from the <a role="button" class="open-options" href="../html/options.html">Options Page</a>.
                 For more information visit
                 <a href="https://github.com/smashedr/playdrift-extension" target="_blank" rel="noopener">
                     GitHub</a>.
             </p>
+            <a class="btn btn-outline-success mb-2" role="button" href="https://dominoes.playdrift.com/" target="_blank">
+                <i class="fa-solid fa-dice-six me-1"></i> Play Dominoes</a>
         </div>
     </div>
     <div class="row">
+        <h1>
+            <span id="username"></span>
+            <small id="id" class="text-body-secondary"></small>
+        </h1>
+        <p class="lead">
+            <span class="fw-bold">Rating: <span id="rating"></span></span>
+            Games Won: <span id="games_won" class="text-success-emphasis fw-bold"></span>
+            Games Lost: <span id="games_lost" class="text-danger-emphasis fw-bold"></span>
+        </p>
+<!--        <table class="table table-hover table-sm">-->
+<!--            <thead>-->
+<!--            <tr class="visually-hidden">-->
+<!--                <th scope="col">Key</th>-->
+<!--                <th scope="col">Value</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr>-->
+<!--                <th scope="row">Rating</th>-->
+<!--                <td id="rating" class=""></td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <th scope="row">Wins</th>-->
+<!--                <td id="games_won" class="text-success-emphasis"></td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <th scope="row">Losses</th>-->
+<!--                <td id="games_lost" class="text-danger-emphasis"></td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+    </div>
+    <div class="row">
+        <h3>Game History</h3>
         <div class="col-12">
             <table id="history-table" class="table table-hover table-sm">
                 <caption class="visually-hidden">History</caption>
@@ -63,7 +99,7 @@
 
 <script type="text/javascript" src="../dist/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="../dist/bootstrap/bootstrap.bundle.min.js"></script>
-<script type="text/javascript" src="../js/home.js"></script>
+<script type="module" src="../js/home.js"></script>
 
 </body>
 </html>

@@ -15,6 +15,15 @@
 <div class="container-fluid p-3">
     <a class="btn btn-outline-success w-100 mb-2" role="button" href="https://dominoes.playdrift.com/">
         <i class="fa-solid fa-dice-six me-1"></i> Play Dominoes</a>
+    <a class="btn btn-outline-primary w-100 mb-2" role="button" href="../html/home.html">
+        <i class="fa-solid fa-house-chimney me-1"></i> Open Home Page</a>
+
+    <div class="d-none grant-perms">
+        <a id="grant-perms" class="btn btn-lg btn-success w-100 mb-1" role="button">
+            <i class="fa-solid fa-check-double me-1"></i> Grant Host Permissions</a>
+        <p class="text-center mb-1"><a role="button" href="../html/oninstall.html" class="">More Information on Permissions</a></p>
+    </div>
+
     <h5 id="username" class="text-center"></h5>
     <table class="table table-hover table-sm">
         <thead>
@@ -39,22 +48,15 @@
         </tbody>
     </table>
 <!--    <hr>-->
-    <div class="d-grid g-2 gap-2">
-        <div class="d-none grant-perms">
-            <a id="grant-perms" class="btn btn-lg btn-success w-100 mb-1" role="button">
-                <i class="fa-solid fa-check-double me-1"></i> Grant Host Permissions</a>
-            <p class="text-center mb-1"><a role="button" href="../html/oninstall.html" class="">More Information on Permissions</a></p>
-        </div>
+<!--    <div class="d-grid g-2 gap-2">-->
 <!--        <a id="revoke-perms" class="btn btn-outline-danger d-none has-perms" role="button">Remove Host Permissions</a>-->
 <!--        <a id="inject-script" class="btn btn-outline-warning" role="button">-->
 <!--            <i class="fa-solid fa-code me-1"></i> Inject Script</a>-->
 <!--        <hr class="my-1">-->
-        <a class="btn btn-primary" role="button" href="../html/home.html">
-            <i class="fa-solid fa-house-chimney me-1"></i> Open Home Page</a>
 <!--        <a class="btn btn-primary" role="button" href="../html/page.html">-->
 <!--            <i class="fa-regular fa-window-maximize me-1"></i> Show Extension Page</a>-->
-    </div>
-    <hr>
+<!--    </div>-->
+<!--    <hr>-->
     <form id="options-form" class="mb-3">
         <div class="form-check form-switch">
             <input class="form-check-input" id="sendMouseover" type="checkbox" role="switch">
