@@ -31,7 +31,7 @@ async function domContentLoaded() {
         .slice()
         .reverse()
         .forEach((x) => {
-            console.log('item:', x)
+            // console.log('item:', x)
             const date = new Date(x.ts_last)
             const row = tr.cloneNode(true)
             // console.log('row:', row)

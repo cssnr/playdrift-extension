@@ -55,7 +55,7 @@ export async function saveOptions(event) {
  */
 export function updateOptions(options, text = false) {
     for (const [key, value] of Object.entries(options)) {
-        console.debug(`${key}: ${value}`)
+        // console.debug(`${key}: ${value}`)
         const el = document.getElementById(key)
         if (el) {
             if (text) {
