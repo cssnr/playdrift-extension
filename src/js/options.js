@@ -1,6 +1,7 @@
 // JS for options.html
 
 import { checkPerms, saveOptions, updateOptions } from './export.js'
+// import { Picker } from '../dist/emoji-picker-element/index.js'
 
 chrome.storage.onChanged.addListener(onChanged)
 document.addEventListener('DOMContentLoaded', initOptions)
@@ -38,6 +39,8 @@ async function initOptions() {
     console.debug('options:', options)
     updateOptions(options)
     await checkPerms()
+    // const picker = new Picker()
+    // document.body.appendChild(picker)
 }
 
 /**

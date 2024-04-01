@@ -1,5 +1,7 @@
 // JS Content Script
 
+// import { Picker } from '../dist/emoji-picker-element/index.js'
+
 ;(async () => {
     console.info('RUNNING content-script.js')
 
@@ -8,6 +10,7 @@
     if (profile && !Object.keys(profile).length) {
         setTimeout(checkProfile, 3000)
     }
+
     // console.debug('options:', options)
     // const message = { action: true }
     // console.debug('message:', message)
@@ -17,6 +20,28 @@
     // const userId = document.querySelector('div[data-id]').dataset.id
     // console.debug('update user profile:', userId)
     // await updateUserProfile(userId)
+    // console.log(1)
+    // const src = chrome.runtime.getURL('dist/emoji-picker-element/picker.js')
+    // console.log('src:', src)
+    // import(src).then((module) => {
+    //     // Do something with the module.
+    //     console.log('module:', module)
+    //     console.log(2)
+    //     const picker = new Picker()
+    //     console.log('picker:', picker)
+    //     document.body.appendChild(picker)
+    //     console.log(3)
+    // })
+    // const contentMain = await import(src)
+    // console.log('contentMain:', contentMain)
+    // console.log(2)
+    // contentMain.main()
+    // const picker = new contentMain.Picker()
+    // const picker = new Picker()
+    // console.log(4)
+    // console.log('picker:', picker)
+    // document.body.appendChild(picker)
+    // console.log(5)
 })()
 
 async function checkProfile() {
@@ -85,10 +110,13 @@ async function onMessage(message, sender, sendResponse) {
         const profile = await getProfile(profileID)
         updateProfile(profile)
     }
-    // if (url.pathname.includes('/room/')) {
-    //     let room = url.pathname.split('/')[2]
-    //     console.debug(`Process Room: ${room}`)
-    // }
+    if (url.pathname.includes('/room/')) {
+        let room = url.pathname.split('/')[2]
+        console.debug(`Process Room: ${room}`)
+        // const picker = new Picker()
+        // console.log('picker:', picker)
+        // document.body.appendChild(picker)
+    }
 }
 
 function addBtn() {
@@ -304,6 +332,7 @@ async function kickClick(event) {
     const playerID = document.getElementById('profile-id').value
     console.debug('kickClick: playerID, event:', playerID, event)
     await doKick(playerID)
+    history.back()
 }
 
 /**

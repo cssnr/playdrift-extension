@@ -11,7 +11,11 @@ gulp.task('bootstrap', () => {
 
 gulp.task('emoji-picker-element', () => {
     return gulp
-        .src('node_modules/emoji-picker-element/index.js')
+        .src([
+            'node_modules/emoji-picker-element/database.js',
+            'node_modules/emoji-picker-element/index.js',
+            'node_modules/emoji-picker-element/picker.js',
+        ])
         .pipe(gulp.dest('src/dist/emoji-picker-element'))
 })
 
