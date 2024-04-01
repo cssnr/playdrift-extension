@@ -1,161 +1,33 @@
 // JS Content Script
 
-// import { Picker } from '../dist/emoji-picker-element/index.js'
-
 ;(async () => {
     console.info('RUNNING content-script.js')
-
     const { options, profile } = await chrome.storage.sync.get([
         'options',
         'profile',
     ])
     console.info('options, profile:', options, profile)
+
+    // add mouseOver listener to document to trigger on specific elements
     if (options.sendMouseover) {
         document.addEventListener('mouseover', mouseOver)
     }
+
+    // if profile object is empty, wait 3 seconds and check user profile
     if (profile && !Object.keys(profile).length) {
-        setTimeout(checkProfile, 3000)
+        setTimeout(setUserProfile, 3000)
     }
 
-    // console.debug('options:', options)
+    setInterval(updateUserInterval, 2 * 60000)
+
+    // // send message to service worker to enable action icon
     // const message = { action: true }
     // console.debug('message:', message)
     // const response = await chrome.runtime.sendMessage(message)
     // console.debug('response:', response)
-
-    // const userId = document.querySelector('div[data-id]').dataset.id
-    // console.debug('update user profile:', userId)
-    // await updateUserProfile(userId)
-    // console.log(1)
-    // const src = chrome.runtime.getURL('dist/emoji-picker-element/picker.js')
-    // console.log('src:', src)
-    // import(src).then((module) => {
-    //     // Do something with the module.
-    //     console.log('module:', module)
-    //     console.log(2)
-    //     const picker = new Picker()
-    //     console.log('picker:', picker)
-    //     document.body.appendChild(picker)
-    //     console.log(3)
-    // })
-    // const contentMain = await import(src)
-    // console.log('contentMain:', contentMain)
-    // console.log(2)
-    // contentMain.main()
-    // const picker = new contentMain.Picker()
-    // const picker = new Picker()
-    // console.log(4)
-    // console.log('picker:', picker)
-    // document.body.appendChild(picker)
-    // console.log(5)
 })()
 
-function profileCloseClick(event) {
-    console.log('profileCloseClick', event)
-    if (
-        event.target.classList.contains('MuiDialog-container') &&
-        event.target.classList.contains('MuiDialog-scrollPaper')
-    ) {
-        history.back()
-    }
-}
-
-async function mouseOver(event) {
-    // console.log('mouseover:', event)
-    if (
-        event.target.tagName === 'IMG' &&
-        event.target.parentNode?.dataset?.id
-    ) {
-        await sendChatMouseover(event.target.parentNode)
-        // showMouseover(event.target.parentNode)
-    }
-}
-
-async function sendChatMouseover(element) {
-    const userID = element.dataset.id
-    const parent =
-        element.parentNode.parentNode.parentNode.parentNode.parentNode
-    if (parent.dataset.testid !== 'app-layout-aside') {
-        return console.log('no dataset.testid')
-    }
-    const sent = parent.querySelector(`#userid-${userID}`)
-    if (sent) {
-        return console.debug('already sent for user:', userID)
-    }
-    const div = document.createElement('div')
-    div.style.display = 'none'
-    div.id = `userid-${userID}`
-    parent.appendChild(div)
-
-    const profile = await getProfile(userID)
-    // console.debug('profile:', profile)
-    // TODO: Make this a function, this is copy pasta
-    const rating = parseInt(profile.rating)
-    const games_won = parseInt(profile.games_won)
-    const games_lost = parseInt(profile.games_lost)
-    const wl_percent =
-        parseInt((games_won / (games_won + games_lost)) * 100) || 0
-    const statsText = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
-    // console.debug(statsText)
-    sendChatMessage(statsText)
-}
-
-// function showMouseover(element) {
-//     if (element.dataset.processed) {
-//         return console.debug('already processed element:', element)
-//     }
-//     element.dataset.processed = 'yes'
-//
-//     const userID = element.dataset.id
-//     console.info('userID', userID)
-//     const div = document.createElement('div')
-//     div.textContent = 'Test Test Test Test'
-//     div.style.position = 'fixed'
-//     div.style.color = 'red'
-//     element.parentNode.appendChild(div)
-// }
-
-async function checkProfile() {
-    console.debug('checkProfile')
-    const userId = document.querySelector('div[data-id]')?.dataset.id
-    if (!userId) {
-        return console.warn('userId not found!', userId)
-    }
-    console.info('No profile, setting to userId:', userId)
-    const userProfile = await getProfile(userId)
-    await updateUserProfile(userProfile)
-}
-
-// const observer = new MutationObserver(mutationCallback)
-// observer.observe(document.body, {
-//     attributes: true,
-//     childList: true,
-//     subTree: true,
-// })
-//
-// function mutationCallback(mutationList, observer) {
-//     console.info('mutationCallback, mutationList:', mutationList, observer)
-//     for (const mutation of mutationList) {
-//         if (mutation.type === 'childList') {
-//             console.info('A child node has been added or removed.')
-//         } else if (mutation.type === 'attributes') {
-//             console.info(
-//                 `The ${mutation.attributeName} attribute was modified.`
-//             )
-//         }
-//     }
-// }
-
 chrome.runtime.onMessage.addListener(onMessage)
-
-setInterval(updateUserInterval, 2 * 60000)
-
-async function updateUserInterval() {
-    console.log('updateUserInterval')
-    const { profile } = await chrome.storage.sync.get(['profile'])
-    const userProfile = await getProfile(profile.id)
-    updateUserProfile(userProfile)
-}
 
 /**
  * On Message Callback
@@ -193,19 +65,121 @@ async function onMessage(message, sender, sendResponse) {
     }
 }
 
-function addBtn() {
-    const button = document.createElement('button')
-    button.textContent = 'Emoji'
-    button.addEventListener('click', emojiBtnClick)
-    const msgBox = document.querySelector('div[aria-label="message"]')
-    msgBox.parentElement.parentElement.appendChild(button)
-}
-function emojiBtnClick(event) {
-    console.debug('emojiBtnClick:', event)
+/**
+ * document mouseover Callback
+ * @function mouseOver
+ * @param {MouseEvent} event
+ */
+async function mouseOver(event) {
+    // console.log('mouseover:', event)
+    if (
+        event.target.tagName === 'IMG' &&
+        event.target.parentNode?.dataset?.id
+    ) {
+        await sendChatMouseover(event.target.parentNode)
+        // showMouseover(event.target.parentNode)
+    }
 }
 
 /**
- * copyClick Callback
+ * Send Chat Message Mouse Over Handler
+ * @function sendChatMouseover
+ * @param {HTMLElement} element
+ */
+async function sendChatMouseover(element) {
+    const userID = element.dataset.id
+    const parent =
+        element.parentNode.parentNode.parentNode.parentNode.parentNode
+    if (parent.dataset.testid !== 'app-layout-aside') {
+        // console.debug('no dataset.testid')
+        return
+    }
+    const sent = parent.querySelector(`#userid-${userID}`)
+    if (sent) {
+        // console.debug('already sent for user:', userID)
+        return
+    }
+    const div = document.createElement('div')
+    div.style.display = 'none'
+    div.id = `userid-${userID}`
+    parent.appendChild(div)
+
+    const profile = await getProfile(userID)
+    // console.debug('profile:', profile)
+    // TODO: Make this a function, this is copy pasta
+    const rating = parseInt(profile.rating)
+    const games_won = parseInt(profile.games_won)
+    const games_lost = parseInt(profile.games_lost)
+    const wl_percent =
+        parseInt((games_won / (games_won + games_lost)) * 100) || 0
+    const statsText = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
+    // console.debug(statsText)
+    sendChatMessage(statsText)
+}
+
+// /**
+//  * Show Profile on Mouse Over Handler
+//  * @function sendChatMouseover
+//  * @param {HTMLElement} element
+//  */
+// function showMouseover(element) {
+//     if (element.dataset.processed) {
+//         return console.debug('already processed element:', element)
+//     }
+//     element.dataset.processed = 'yes'
+//
+//     const userID = element.dataset.id
+//     console.info('userID', userID)
+//     const div = document.createElement('div')
+//     div.textContent = 'Test Test Test Test'
+//     div.style.position = 'fixed'
+//     div.style.color = 'red'
+//     element.parentNode.appendChild(div)
+// }
+
+/**
+ * Close Profile on Click Callback
+ * @function profileCloseClick
+ * @param {MouseEvent} event
+ */
+function profileCloseClick(event) {
+    // console.debug('profileCloseClick', event)
+    if (
+        event.target.classList.contains('MuiDialog-container') &&
+        event.target.classList.contains('MuiDialog-scrollPaper')
+    ) {
+        history.back()
+    }
+}
+
+/**
+ * Set User Profile Timeout - 3000
+ * @function setUserProfile
+ */
+async function setUserProfile() {
+    console.debug('setUserProfile')
+    const userId = document.querySelector('div[data-id]')?.dataset.id
+    if (!userId) {
+        return console.warn('userId not found!', userId)
+    }
+    console.info('No profile, setting to userId:', userId)
+    const userProfile = await getProfile(userId)
+    await updateUserProfile(userProfile)
+}
+
+/**
+ * Update User History Interval - 3 minutes
+ * @function updateUserInterval
+ */
+async function updateUserInterval() {
+    console.log('updateUserInterval')
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    const userProfile = await getProfile(profile.id)
+    await updateUserProfile(userProfile)
+}
+
+/**
+ * Get Profile by User ID
  * @function saveOptions
  * @param {string} profileID
  * @returns {Object}
@@ -217,12 +191,6 @@ async function getProfile(profileID) {
     const data = await response.json()
     const profile = data.result.data
     console.info('profile:', profile)
-
-    // // TODO: This does not work, get user from storage
-    // const userId = document.querySelector('div[data-id]').dataset.id
-    // if (userId === profileID) {
-    //     await updateUserProfile(profile)
-    // }
     return profile
 }
 
@@ -351,7 +319,7 @@ function updateProfile(profile) {
 }
 
 /**
- * copyClick Callback
+ * Copy Stats Click Callback
  * @function saveOptions
  * @param {MouseEvent} event
  */
@@ -366,7 +334,7 @@ function copyClick(event) {
 }
 
 /**
- * sendClick Callback
+ * Send Chat Click Callback
  * @function saveOptions
  * @param {MouseEvent} event
  */
@@ -381,39 +349,36 @@ function sendClick(event) {
     history.back()
 }
 
-function sendChatMessage(message) {
-    console.log(`sendChatMessage: ${message}`)
-    const textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
-    if (textarea.length) {
-        if (textarea.length > 1) {
-            textarea[1].value = message
-        } else {
-            textarea[0].value = message
-        }
-        document.querySelector('button[aria-label="send message"]')?.click()
-    }
-}
-
+/**
+ * Send Chat and Kick Click Callback
+ * @function sendKickClick
+ * @param {MouseEvent} event
+ */
 async function sendKickClick(event) {
     const playerID = document.getElementById('profile-id').value
     console.debug('sendKickClick: playerID, event:', playerID, event)
-    await doKick(playerID)
+    await kickPlayer(playerID)
     sendClick(event)
 }
 
+/**
+ * Kick Click Callback
+ * @function kickClick
+ * @param {MouseEvent} event
+ */
 async function kickClick(event) {
     const playerID = document.getElementById('profile-id').value
     console.debug('kickClick: playerID, event:', playerID, event)
-    await doKick(playerID)
+    await kickPlayer(playerID)
     history.back()
 }
 
 /**
- * doKick Callback
- * @function doKick
+ * Kick a Player by ID
+ * @function kickPlayer
  * @param {string} playerID
  */
-async function doKick(playerID) {
+async function kickPlayer(playerID) {
     const room = location.pathname.split('/')[2]
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/action/kick`
     console.log('url:', url)
@@ -429,3 +394,78 @@ async function doKick(playerID) {
     const data = await response.json()
     console.log('data:', data)
 }
+
+/**
+ * Send a Chat Message
+ * @function sendChatMessage
+ * @param {string} message
+ */
+function sendChatMessage(message) {
+    console.log(`sendChatMessage: ${message}`)
+    const textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
+    if (textarea.length) {
+        if (textarea.length > 1) {
+            textarea[1].value = message
+        } else {
+            textarea[0].value = message
+        }
+        document.querySelector('button[aria-label="send message"]')?.click()
+    }
+}
+
+// function addBtn() {
+//     const button = document.createElement('button')
+//     button.textContent = 'Emoji'
+//     button.addEventListener('click', emojiBtnClick)
+//     const msgBox = document.querySelector('div[aria-label="message"]')
+//     msgBox.parentElement.parentElement.appendChild(button)
+// }
+// function emojiBtnClick(event) {
+//     console.debug('emojiBtnClick:', event)
+// }
+
+// const observer = new MutationObserver(mutationCallback)
+// observer.observe(document.body, {
+//     attributes: true,
+//     childList: true,
+//     subTree: true,
+// })
+//
+// function mutationCallback(mutationList, observer) {
+//     console.info('mutationCallback, mutationList:', mutationList, observer)
+//     for (const mutation of mutationList) {
+//         if (mutation.type === 'childList') {
+//             console.info('A child node has been added or removed.')
+//         } else if (mutation.type === 'attributes') {
+//             console.info(
+//                 `The ${mutation.attributeName} attribute was modified.`
+//             )
+//         }
+//     }
+// }
+
+// const userId = document.querySelector('div[data-id]').dataset.id
+// console.debug('update user profile:', userId)
+// await updateUserProfile(userId)
+// console.log(1)
+// const src = chrome.runtime.getURL('dist/emoji-picker-element/picker.js')
+// console.log('src:', src)
+// import(src).then((module) => {
+//     // Do something with the module.
+//     console.log('module:', module)
+//     console.log(2)
+//     const picker = new Picker()
+//     console.log('picker:', picker)
+//     document.body.appendChild(picker)
+//     console.log(3)
+// })
+// const contentMain = await import(src)
+// console.log('contentMain:', contentMain)
+// console.log(2)
+// contentMain.main()
+// const picker = new contentMain.Picker()
+// const picker = new Picker()
+// console.log(4)
+// console.log('picker:', picker)
+// document.body.appendChild(picker)
+// console.log(5)
