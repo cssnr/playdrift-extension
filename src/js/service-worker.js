@@ -37,7 +37,7 @@ async function onInstalled(details) {
         setDefaultOptions({
             contextMenu: true,
             showUpdate: false,
-            sendOnJoin: true,
+            sendOnJoin: false,
             showMouseover: false,
             sendMouseover: false,
             // testInput: 'Default Value',
