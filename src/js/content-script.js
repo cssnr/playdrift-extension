@@ -160,49 +160,51 @@ async function showMouseover(element) {
         return console.debug('already processed element:', element)
     }
     element.dataset.processed = 'yes'
+    console.log('element.parentNode', element.parentNode)
+    element.parentNode.style.position = 'relative'
 
     // const tooltip = document.getElementById('tooltip')
     // Popper.createPopper(element, tooltip, {
     //     placement: 'right',
     // })
 
-    // const userID = element.dataset.id
-    // console.log('userID', userID)
-    // const profile = await getProfile(userID)
-    // const stats = calStats(profile)
-    // const div = document.createElement('div')
-    // div.style.position = 'fixed'
-    // div.style.marginTop = '-3px'
-    // div.style.paddingLeft = '3px'
-    //
-    // const spanRating = document.createElement('span')
-    // spanRating.textContent = profile.rating
-    // // spanRating.style.position = 'fixed'
-    // if (profile.rating < 200) {
-    //     spanRating.style.color = '#EE4B2B'
-    // } else {
-    //     spanRating.style.color = '#50C878'
-    // }
-    // spanRating.style.textShadow =
-    //     '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
-    // div.appendChild(spanRating)
-    //
-    // div.appendChild(document.createElement('br'))
-    //
-    // const spanRate = document.createElement('span')
-    // spanRate.textContent = `${stats.wl_percent}%`
-    // // spanRate.style.position = 'fixed'
-    // if (stats.wl_percent < 45) {
-    //     spanRate.style.color = '#EE4B2B'
-    // } else {
-    //     spanRate.style.color = '#50C878'
-    // }
-    // // spanRating.style.marginTop = '-3px'
-    // spanRate.style.textShadow =
-    //     '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
-    // div.appendChild(spanRate)
-    //
-    // element.parentNode.appendChild(div)
+    const userID = element.dataset.id
+    console.log('userID', userID)
+    const profile = await getProfile(userID)
+    const stats = calStats(profile)
+    const div = document.createElement('div')
+    div.style.position = 'absolute'
+    div.style.marginTop = '-3px'
+    div.style.paddingLeft = '3px'
+
+    const spanRating = document.createElement('span')
+    spanRating.textContent = profile.rating
+    // spanRating.style.position = 'fixed'
+    if (profile.rating < 200) {
+        spanRating.style.color = '#EE4B2B'
+    } else {
+        spanRating.style.color = '#50C878'
+    }
+    spanRating.style.textShadow =
+        '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+    div.appendChild(spanRating)
+
+    div.appendChild(document.createElement('br'))
+
+    const spanRate = document.createElement('span')
+    spanRate.textContent = `${stats.wl_percent}%`
+    // spanRate.style.position = 'fixed'
+    if (stats.wl_percent < 45) {
+        spanRate.style.color = '#EE4B2B'
+    } else {
+        spanRate.style.color = '#50C878'
+    }
+    // spanRating.style.marginTop = '-3px'
+    spanRate.style.textShadow =
+        '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+    div.appendChild(spanRate)
+
+    element.parentNode.appendChild(div)
 }
 
 /**
