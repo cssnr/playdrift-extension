@@ -41,11 +41,7 @@
   "web_accessible_resources": [
     {
       "matches": ["*://*.playdrift.com/*"],
-      "resources": [
-        "dist/emoji-picker-element/database.js",
-        "dist/emoji-picker-element/index.js",
-        "dist/emoji-picker-element/picker.js"
-      ]
+      "resources": ["dist/jquery/jquery.min.js"]
     }
   ],
   "background": {},

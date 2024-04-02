@@ -39,9 +39,18 @@ async function initOptions() {
     console.debug('options:', options)
     updateOptions(options)
     await checkPerms()
+
+    // const pickerOptions = { onEmojiSelect: onEmojiSelect }
+    // const picker = new EmojiMart.Picker(pickerOptions)
+    // document.body.appendChild(picker)
+
     // const picker = new Picker()
     // document.body.appendChild(picker)
 }
+
+// function onEmojiSelect(emojiData, event) {
+//     console.debug('onEmojiSelect:', emojiData, event)
+// }
 
 /**
  * On Changed Callback

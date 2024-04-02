@@ -9,15 +9,21 @@ gulp.task('bootstrap', () => {
         .pipe(gulp.dest('src/dist/bootstrap'))
 })
 
-gulp.task('emoji-picker-element', () => {
+gulp.task('emoji-mart', () => {
     return gulp
-        .src([
-            'node_modules/emoji-picker-element/database.js',
-            'node_modules/emoji-picker-element/index.js',
-            'node_modules/emoji-picker-element/picker.js',
-        ])
-        .pipe(gulp.dest('src/dist/emoji-picker-element'))
+        .src('node_modules/emoji-mart/dist/browser.js')
+        .pipe(gulp.dest('src/dist/emoji-mart'))
 })
+
+// gulp.task('emoji-picker-element', () => {
+//     return gulp
+//         .src([
+//             'node_modules/emoji-picker-element/database.js',
+//             'node_modules/emoji-picker-element/index.js',
+//             'node_modules/emoji-picker-element/picker.js',
+//         ])
+//         .pipe(gulp.dest('src/dist/emoji-picker-element'))
+// })
 
 gulp.task('fontawesome', () => {
     return gulp
@@ -40,5 +46,5 @@ gulp.task('jquery', () => {
 
 gulp.task(
     'default',
-    gulp.parallel('bootstrap', 'emoji-picker-element', 'fontawesome', 'jquery')
+    gulp.parallel('bootstrap', 'emoji-mart', 'fontawesome', 'jquery')
 )

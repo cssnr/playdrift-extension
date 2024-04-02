@@ -29,6 +29,13 @@
 
 chrome.runtime.onMessage.addListener(onMessage)
 
+// const pickerOptions = { onEmojiSelect: onEmojiSelect }
+// const picker = new EmojiMart.Picker(pickerOptions)
+// document.body.appendChild(picker)
+// function onEmojiSelect(emojiData, event) {
+//     console.debug('onEmojiSelect:', emojiData, event)
+// }
+
 /**
  * On Message Callback
  * @function onMessage
