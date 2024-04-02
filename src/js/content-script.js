@@ -97,6 +97,41 @@ async function onMessage(message, sender, sendResponse) {
         // const picker = new Picker()
         // console.log('picker:', picker)
         // document.body.appendChild(picker)
+
+        if (options.sendOnJoin) {
+            const aside = document.querySelector('aside')
+            if (aside) {
+                // console.info('addEventListener DOMNodeInserted', aside)
+                // aside.addEventListener('DOMNodeInserted', newChatMessage)
+                setTimeout(function () {
+                    aside.addEventListener('DOMNodeInserted', newChatMessage)
+                }, 2000)
+            }
+        }
+    }
+}
+
+async function newChatMessage(event) {
+    console.log(`newChatMessage: ${event.target.textContent}`)
+    if (event.target.textContent.startsWith('Joined the game.')) {
+        console.log('Matched Message - Sending Stats')
+        const userID = event.target.dataset.cid
+
+        // TODO: This was duplicated - bad
+        const sent = event.relatedNode.querySelector(`#userid-${userID}`)
+        if (sent) {
+            console.debug('already sent for user:', userID)
+            return
+        }
+        const div = document.createElement('div')
+        div.style.display = 'none'
+        div.id = `userid-${userID}`
+        event.relatedNode.appendChild(div)
+
+        const profile = await getProfile(userID)
+        const stats = calStats(profile)
+        // console.debug(statsText)
+        sendChatMessage(stats.text)
     }
 }
 
@@ -122,6 +157,8 @@ async function sendChatMouseover(event) {
         // console.debug('no dataset.testid')
         return
     }
+
+    // TODO: This is being duplicated - bad
     const sent = parent.querySelector(`#userid-${userID}`)
     if (sent) {
         // console.debug('already sent for user:', userID)
