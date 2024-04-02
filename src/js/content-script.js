@@ -9,8 +9,11 @@
     console.debug('options, profile:', options, profile)
 
     // add mouseOver listener to document to trigger on specific elements
+    if (options.showMouseover) {
+        document.addEventListener('mouseover', showMouseover)
+    }
     if (options.sendMouseover) {
-        document.addEventListener('mouseover', mouseOver)
+        document.addEventListener('mouseover', sendChatMouseover)
     }
 
     // if profile object is empty, wait 3 seconds and check user profile
@@ -18,6 +21,7 @@
         setTimeout(setUserProfile, 3000)
     }
 
+    // check user profile every 2 minutes to check for new games
     setInterval(updateUserInterval, 2 * 60000)
 
     // const tooltip = document.createElement('div')
@@ -97,38 +101,23 @@ async function onMessage(message, sender, sendResponse) {
 }
 
 /**
- * document mouseover Callback
- * @function mouseOver
- * @param {MouseEvent} event
- */
-async function mouseOver(event) {
-    // console.log('mouseover:', event)
-    if (
-        event.target.tagName === 'IMG' &&
-        event.target.parentNode?.dataset?.id
-    ) {
-        await sendChatMouseover(event.target.parentNode)
-        await showMouseover(event.target.parentNode)
-    }
-    // } else {
-    //     const tooltip = document.getElementById('tooltip')
-    //     // if (tooltip) {
-    //     //     tooltip.Popover.hide()
-    //     //     // tooltip.remove()
-    //     //     // document.removeChild(tooltip)
-    //     // }
-    // }
-}
-
-/**
  * Send Chat Message Mouse Over Handler
  * @function sendChatMouseover
- * @param {HTMLElement} element
+ * @param {MouseEvent} event
  */
-async function sendChatMouseover(element) {
-    const userID = element.dataset.id
+async function sendChatMouseover(event) {
+    if (
+        event.target.tagName !== 'IMG' ||
+        !event.target.parentNode?.dataset?.id
+    ) {
+        return
+    }
+
+    const userID = event.target.parentNode.dataset.id
+    console.debug('sendChatMouseover:', userID)
     const parent =
-        element.parentNode.parentNode.parentNode.parentNode.parentNode
+        event.target.parentNode.parentNode.parentNode.parentNode.parentNode
+            .parentNode
     if (parent.dataset.testid !== 'app-layout-aside') {
         // console.debug('no dataset.testid')
         return
@@ -152,12 +141,21 @@ async function sendChatMouseover(element) {
 /**
  * Show Profile on Mouse Over Handler
  * @function sendChatMouseover
- * @param {HTMLElement} element
+ * @param {MouseEvent} event
  */
-async function showMouseover(element) {
+async function showMouseover(event) {
+    if (
+        event.target.tagName !== 'IMG' ||
+        !event.target.parentNode?.dataset?.id
+    ) {
+        return
+    }
+
+    const element = event.target.parentNode
     console.debug('showMouseover:', element)
     if (element.dataset.processed) {
-        return console.debug('already processed element:', element)
+        // console.debug('already processed element:', element)
+        return
     }
     element.dataset.processed = 'yes'
     console.log('element.parentNode', element.parentNode)
