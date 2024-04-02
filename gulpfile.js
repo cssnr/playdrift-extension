@@ -44,7 +44,13 @@ gulp.task('jquery', () => {
         .pipe(gulp.dest('src/dist/jquery'))
 })
 
+gulp.task('popper', () => {
+    return gulp
+        .src('node_modules/@popperjs/core/dist/umd/popper.min.js')
+        .pipe(gulp.dest('src/dist/popper'))
+})
+
 gulp.task(
     'default',
-    gulp.parallel('bootstrap', 'emoji-mart', 'fontawesome', 'jquery')
+    gulp.parallel('bootstrap', 'emoji-mart', 'fontawesome', 'jquery', 'popper')
 )

@@ -20,6 +20,16 @@
 
     setInterval(updateUserInterval, 2 * 60000)
 
+    // const tooltip = document.createElement('div')
+    // tooltip.id = 'tooltip'
+    // tooltip.setAttribute('role', 'tooltip')
+    // tooltip.textContent = 'I am a fucking tooltip.'
+    // tooltip.style.color = '#FFF'
+    // tooltip.style.backgroundColor = '#333'
+    // tooltip.style.borderRadius = '4px'
+    // tooltip.style.fontSize = '13px'
+    // document.body.appendChild(tooltip)
+
     // // send message to service worker to enable action icon
     // const message = { action: true }
     // console.debug('message:', message)
@@ -98,8 +108,16 @@ async function mouseOver(event) {
         event.target.parentNode?.dataset?.id
     ) {
         await sendChatMouseover(event.target.parentNode)
-        // showMouseover(event.target.parentNode)
+        await showMouseover(event.target.parentNode)
     }
+    // } else {
+    //     const tooltip = document.getElementById('tooltip')
+    //     // if (tooltip) {
+    //     //     tooltip.Popover.hide()
+    //     //     // tooltip.remove()
+    //     //     // document.removeChild(tooltip)
+    //     // }
+    // }
 }
 
 /**
@@ -126,37 +144,82 @@ async function sendChatMouseover(element) {
     parent.appendChild(div)
 
     const profile = await getProfile(userID)
-    // console.debug('profile:', profile)
-    // TODO: Make this a function, this is copy pasta
+    const stats = calStats(profile)
+    // console.debug(statsText)
+    sendChatMessage(stats.text)
+}
+
+/**
+ * Show Profile on Mouse Over Handler
+ * @function sendChatMouseover
+ * @param {HTMLElement} element
+ */
+async function showMouseover(element) {
+    console.debug('showMouseover:', element)
+    if (element.dataset.processed) {
+        return console.debug('already processed element:', element)
+    }
+    element.dataset.processed = 'yes'
+
+    // const tooltip = document.getElementById('tooltip')
+    // Popper.createPopper(element, tooltip, {
+    //     placement: 'right',
+    // })
+
+    // const userID = element.dataset.id
+    // console.log('userID', userID)
+    // const profile = await getProfile(userID)
+    // const stats = calStats(profile)
+    // const div = document.createElement('div')
+    // div.style.position = 'fixed'
+    // div.style.marginTop = '-3px'
+    // div.style.paddingLeft = '3px'
+    //
+    // const spanRating = document.createElement('span')
+    // spanRating.textContent = profile.rating
+    // // spanRating.style.position = 'fixed'
+    // if (profile.rating < 200) {
+    //     spanRating.style.color = '#EE4B2B'
+    // } else {
+    //     spanRating.style.color = '#50C878'
+    // }
+    // spanRating.style.textShadow =
+    //     '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+    // div.appendChild(spanRating)
+    //
+    // div.appendChild(document.createElement('br'))
+    //
+    // const spanRate = document.createElement('span')
+    // spanRate.textContent = `${stats.wl_percent}%`
+    // // spanRate.style.position = 'fixed'
+    // if (stats.wl_percent < 45) {
+    //     spanRate.style.color = '#EE4B2B'
+    // } else {
+    //     spanRate.style.color = '#50C878'
+    // }
+    // // spanRating.style.marginTop = '-3px'
+    // spanRate.style.textShadow =
+    //     '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+    // div.appendChild(spanRate)
+    //
+    // element.parentNode.appendChild(div)
+}
+
+/**
+ * Calculate Stats from profile
+ * @function calStats
+ * @param {Object} profile
+ * @return {Object}
+ */
+function calStats(profile) {
     const rating = parseInt(profile.rating)
     const games_won = parseInt(profile.games_won)
     const games_lost = parseInt(profile.games_lost)
     const wl_percent =
         parseInt((games_won / (games_won + games_lost)) * 100) || 0
-    const statsText = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
-    // console.debug(statsText)
-    sendChatMessage(statsText)
+    const text = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
+    return { rating, games_won, games_lost, wl_percent, text }
 }
-
-// /**
-//  * Show Profile on Mouse Over Handler
-//  * @function sendChatMouseover
-//  * @param {HTMLElement} element
-//  */
-// function showMouseover(element) {
-//     if (element.dataset.processed) {
-//         return console.debug('already processed element:', element)
-//     }
-//     element.dataset.processed = 'yes'
-//
-//     const userID = element.dataset.id
-//     console.info('userID', userID)
-//     const div = document.createElement('div')
-//     div.textContent = 'Test Test Test Test'
-//     div.style.position = 'fixed'
-//     div.style.color = 'red'
-//     element.parentNode.appendChild(div)
-// }
 
 /**
  * Close Profile on Click Callback
