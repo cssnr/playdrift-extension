@@ -428,9 +428,13 @@ async function updateUserProfile(profile) {
  * @param {Object} profile
  */
 function updateProfile(profile) {
-    const root = document
-        .querySelector('.MuiDialogContent-root')
-        .querySelectorAll('.MuiBox-root')[3]
+    // const root = document
+    //     .querySelector('.MuiDialogContent-root')
+    //     .querySelectorAll('.MuiBox-root')[3]
+    const root = document.querySelector('.MuiDialog-container').children[0]
+        .children[1].children[0].children[4]
+    // console.log('root:', root)
+
     root.style.marginTop = 0
     root.style.marginBottom = '10px'
 
