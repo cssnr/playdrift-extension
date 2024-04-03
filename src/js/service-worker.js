@@ -240,11 +240,16 @@ function createContextMenus() {
  */
 async function setDefaultOptions(defaultOptions) {
     console.log('setDefaultOptions', defaultOptions)
-    let { options, profile, history } = await chrome.storage.sync.get([
+    let { banned, history, options, profile } = await chrome.storage.sync.get([
+        'banned',
+        'history',
         'options',
         'profile',
-        'history',
     ])
+    if (!banned) {
+        banned = []
+        await chrome.storage.sync.set({ banned })
+    }
     if (!history) {
         history = []
         await chrome.storage.sync.set({ history })

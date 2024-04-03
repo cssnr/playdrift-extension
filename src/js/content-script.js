@@ -61,24 +61,17 @@ const profiles = {}
  */
 async function onMessage(message, sender, sendResponse) {
     console.debug('onMessage: message:', message)
-    if (typeof message.sendMouseover !== 'undefined') {
-        // console.log('message.sendMouseover', message.sendMouseover)
-        // if (message.sendMouseover) {
-        // }
-        return
-    } else if (!message.url) {
+    if (!message.url) {
         return console.warn('No message.url')
     }
     const url = new URL(message.url)
     if (url.search.includes('?profile=')) {
         const profileID = url.searchParams.get('profile')
-        console.debug(`111111111 profileID: ${profileID}`)
         const profile = await getProfile(profileID)
-        console.debug('111-222 after profile, before update')
         // TODO: Add Timeout so First Popup is not Null if Cached
-        setTimeout(updateProfile, 150, profile)
-        // updateProfile(profile)
-        console.debug('33333 after update')
+        const { banned } = await chrome.storage.sync.get(['banned'])
+        // console.debug('banned:', banned)
+        setTimeout(updateProfile, 150, profile, banned)
         document
             .querySelector('.MuiDialog-container')
             .addEventListener('click', profileCloseClick)
@@ -160,21 +153,33 @@ async function onMessage(message, sender, sendResponse) {
 async function newChatMessage(event) {
     console.log(`newChatMessage: ${event.target.textContent}`)
     if (event.target.textContent.startsWith('Joined the game.')) {
-        console.log('Matched Message - Sending Stats')
-        const userID = event.target.dataset.cid
+        console.log('On Join Message - Sending Stats')
+        const playerID = event.target.dataset.cid
+
+        if (isKicked(playerID)) {
+            return console.debug('return on kicked user:', playerID)
+        }
+
+        const { banned } = await chrome.storage.sync.get(['banned'])
+        if (banned.includes(playerID)) {
+            await kickPlayer(playerID)
+            const name = profiles[playerID]?.username || playerID
+            sendChatMessage(`Auto Kicked Banned User: ${name}`)
+            return
+        }
 
         // TODO: This was duplicated - bad
-        const sent = event.relatedNode.querySelector(`#userid-${userID}`)
+        const sent = event.relatedNode.querySelector(`#userid-${playerID}`)
         if (sent) {
-            console.debug('already sent for user:', userID)
+            console.debug('already sent for user:', playerID)
             return
         }
         const div = document.createElement('div')
         div.style.display = 'none'
-        div.id = `userid-${userID}`
+        div.id = `userid-${playerID}`
         event.relatedNode.appendChild(div)
 
-        const profile = await getProfile(userID)
+        const profile = await getProfile(playerID)
         const stats = calStats(profile)
         // console.debug(statsText)
         sendChatMessage(stats.text)
@@ -195,7 +200,7 @@ async function sendChatMouseover(event) {
     }
 
     const userID = event.target.parentNode.dataset.id
-    console.debug('sendChatMouseover:', userID)
+    // console.debug('sendChatMouseover:', userID)
     const parent =
         event.target.parentNode.parentNode.parentNode.parentNode.parentNode
             .parentNode
@@ -238,13 +243,13 @@ async function showMouseover(event) {
     // tooltip.style.display = 'block'
 
     const element = event.target.parentNode
-    console.debug('showMouseover:', element)
+    // console.debug('showMouseover:', element)
     if (element.dataset.processed) {
         console.debug('already processed element:', element)
         return
     }
     element.dataset.processed = 'yes'
-    console.log('element.parentNode', element.parentNode)
+    // console.debug('element.parentNode', element.parentNode)
     element.parentNode.style.position = 'relative'
 
     // const tooltip = document.getElementById('tooltip')
@@ -253,7 +258,7 @@ async function showMouseover(event) {
     // })
 
     const userID = element.dataset.id
-    console.log('userID', userID)
+    // console.debug('userID', userID)
     const profile = await getProfile(userID)
     const stats = calStats(profile)
     const div = document.createElement('div')
@@ -355,7 +360,7 @@ async function setUserProfile() {
  * @function updateUserInterval
  */
 async function updateUserInterval() {
-    console.debug('updateUserInterval')
+    // console.debug('updateUserInterval')
     const { profile } = await chrome.storage.sync.get(['profile'])
     const userProfile = await getProfile(profile.id)
     await updateUserProfile(userProfile)
@@ -371,11 +376,11 @@ async function getProfile(profileID) {
     if (profiles[profileID]) {
         const age =
             Math.floor(Date.now() / 1000) - profiles[profileID].ts_updated
-        if (age < 60) {
-            console.debug('using cached profile, age:', age)
+        if (age < 150) {
+            // console.debug('using cached profile, age:', age)
             return profiles[profileID]
         }
-        console.debug('cached profile expired, age:', age)
+        // console.debug('cached profile expired, age:', age)
     }
     const profileUrl = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input=%7B%22id%22%3A%22${profileID}%22%2C%22game%22%3A%22dominoes%22%7D`
     console.debug('profileUrl:', profileUrl)
@@ -398,13 +403,13 @@ async function updateUserProfile(profile) {
         return console.warn('updateUserProfile: No profile:', profile)
     }
 
-    console.log('Updating User Profile:', profile)
+    console.debug('Updating User Profile:', profile)
     await chrome.storage.sync.set({ profile })
 
     const { history } = await chrome.storage.sync.get(['history'])
     console.debug('history:', history)
     const last = history.slice(-1)[0]
-    console.debug('last:', last)
+    // console.debug('last:', last)
     const current = {
         rating: profile.rating,
         games_won: profile.games_won,
@@ -430,9 +435,10 @@ async function updateUserProfile(profile) {
  * copyClick Callback
  * @function saveOptions
  * @param {Object} profile
+ * @param {Array} banned
  */
-function updateProfile(profile) {
-    console.log('updateProfile:', profile)
+function updateProfile(profile, banned) {
+    // console.debug('updateProfile:', profile, banned)
     // const root = document
     //     .querySelector('.MuiDialogContent-root')
     //     .querySelectorAll('.MuiBox-root')[3]
@@ -441,12 +447,6 @@ function updateProfile(profile) {
     const root = document
         .querySelector('.MuiDialog-container')
         .querySelectorAll('.MuiBox-root')[4]
-    // const container = document.querySelector('.MuiDialog-container')
-    // console.log('container:', container)
-    // const muibox = container.querySelectorAll('.MuiBox-root')
-    // console.log('muibox:', muibox)
-    // const root = muibox[4]
-    console.log('222222 root:', root)
     if (!root) {
         return console.warn('root not found')
     }
@@ -499,6 +499,18 @@ function updateProfile(profile) {
     kickButton.addEventListener('click', kickClick)
     kickButton.textContent = 'Kick'
     divBtns.appendChild(kickButton)
+
+    if (!banned.includes(profile.id)) {
+        const banButton = button.cloneNode(true)
+        banButton.addEventListener('click', banClick)
+        banButton.textContent = 'Ban'
+        divBtns.appendChild(banButton)
+    } else {
+        const banButton = button.cloneNode(true)
+        banButton.addEventListener('click', unbanClick)
+        banButton.textContent = 'Unban'
+        divBtns.appendChild(banButton)
+    }
 
     const sendKickButton = button.cloneNode(true)
     sendKickButton.addEventListener('click', sendKickClick)
@@ -584,12 +596,49 @@ async function kickClick(event) {
 }
 
 /**
+ * Ban Click Callback
+ * @function banClick
+ * @param {MouseEvent} event
+ */
+async function banClick(event) {
+    const playerID = document.getElementById('profile-id').value
+    console.debug('banClick: playerID, event:', playerID, event)
+    const { banned } = await chrome.storage.sync.get(['banned'])
+    if (!banned.includes(playerID)) {
+        banned.push(playerID)
+        await chrome.storage.sync.set({ banned })
+    }
+    const name = profiles[playerID]?.username || playerID
+    sendChatMessage(`Banned User: ${name}`)
+    await kickPlayer(playerID)
+    history.back()
+}
+
+/**
+ * Unban Click Callback
+ * @function unbanClick
+ * @param {MouseEvent} event
+ */
+async function unbanClick(event) {
+    const playerID = document.getElementById('profile-id').value
+    console.debug('unbanClick: playerID, event:', playerID, event)
+    const { banned } = await chrome.storage.sync.get(['banned'])
+    const index = banned.indexOf(playerID)
+    if (index !== undefined) {
+        banned.splice(index, 1)
+        await chrome.storage.sync.set({ banned })
+    }
+    history.back()
+}
+
+/**
  * Kick a Player by ID
  * @function kickPlayer
  * @param {string} playerID
  */
 async function kickPlayer(playerID) {
     console.debug('kickPlayer: playerID:', playerID)
+    addKicked(playerID)
     const room = location.pathname.split('/')[2]
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/action/kick`
     // console.debug('url:', url)
@@ -621,6 +670,23 @@ function sendChatMessage(message) {
             textarea[0].value = message
         }
         document.querySelector('button[aria-label="send message"]')?.click()
+    }
+}
+
+function isKicked(playerID) {
+    const parent = document.querySelector('aside')
+    const user = parent.querySelector(`#kicked-${playerID}`)
+    return !!user
+}
+
+function addKicked(playerID) {
+    const parent = document.querySelector('aside')
+    const user = parent.querySelector(`#kicked-${playerID}`)
+    if (!user) {
+        const div = document.createElement('div')
+        div.style.display = 'none'
+        div.id = `kicked-${playerID}`
+        parent.appendChild(div)
     }
 }
 
