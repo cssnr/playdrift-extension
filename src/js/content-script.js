@@ -72,9 +72,13 @@ async function onMessage(message, sender, sendResponse) {
     const url = new URL(message.url)
     if (url.search.includes('?profile=')) {
         const profileID = url.searchParams.get('profile')
-        console.debug(`profileID: ${profileID}`)
+        console.debug(`111111111 profileID: ${profileID}`)
         const profile = await getProfile(profileID)
-        updateProfile(profile)
+        console.debug('111-222 after profile, before update')
+        // TODO: Add Timeout so First Popup is not Null if Cached
+        setTimeout(updateProfile, 150, profile)
+        // updateProfile(profile)
+        console.debug('33333 after update')
         document
             .querySelector('.MuiDialog-container')
             .addEventListener('click', profileCloseClick)
@@ -236,7 +240,7 @@ async function showMouseover(event) {
     const element = event.target.parentNode
     console.debug('showMouseover:', element)
     if (element.dataset.processed) {
-        // console.debug('already processed element:', element)
+        console.debug('already processed element:', element)
         return
     }
     element.dataset.processed = 'yes'
@@ -258,7 +262,7 @@ async function showMouseover(event) {
     // div.style.paddingLeft = '3px'
     div.style.textAlign = 'center'
     div.style.width = '40px'
-    div.style.fontSize = '15px'
+    div.style.fontSize = '16px'
     div.style.pointerEvents = 'none'
 
     const spanRating = document.createElement('span')
@@ -428,12 +432,24 @@ async function updateUserProfile(profile) {
  * @param {Object} profile
  */
 function updateProfile(profile) {
+    console.log('updateProfile:', profile)
     // const root = document
     //     .querySelector('.MuiDialogContent-root')
     //     .querySelectorAll('.MuiBox-root')[3]
-    const root = document.querySelector('.MuiDialog-container').children[0]
-        .children[1].children[0].children[4]
-    // console.log('root:', root)
+    // const root = document.querySelector('.MuiDialog-container')?.children[0]
+    //     .children[1].children[0].children[4]
+    const root = document
+        .querySelector('.MuiDialog-container')
+        .querySelectorAll('.MuiBox-root')[4]
+    // const container = document.querySelector('.MuiDialog-container')
+    // console.log('container:', container)
+    // const muibox = container.querySelectorAll('.MuiBox-root')
+    // console.log('muibox:', muibox)
+    // const root = muibox[4]
+    console.log('222222 root:', root)
+    if (!root) {
+        return console.warn('root not found')
+    }
 
     root.style.marginTop = 0
     root.style.marginBottom = '10px'
