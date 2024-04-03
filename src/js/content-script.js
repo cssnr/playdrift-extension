@@ -80,6 +80,9 @@ async function onMessage(message, sender, sendResponse) {
 }
 
 async function newChatMessage(event) {
+    if (event.target.classList.contains('mouseover-stats')) {
+        return console.debug('ignoring mouseover-stats')
+    }
     console.log(`newChatMessage: ${event.target.textContent}`)
     if (event.target.textContent.startsWith('Joined the game.')) {
         console.log('On Join Message - Sending Stats')
@@ -97,21 +100,7 @@ async function newChatMessage(event) {
             return
         }
 
-        // TODO: This was duplicated - bad
-        const sent = event.relatedNode.querySelector(`#userid-${playerID}`)
-        if (sent) {
-            console.debug('already sent for user:', playerID)
-            return
-        }
-        const div = document.createElement('div')
-        div.style.display = 'none'
-        div.id = `userid-${playerID}`
-        event.relatedNode.appendChild(div)
-
-        const profile = await getProfile(playerID)
-        const stats = calStats(profile)
-        // console.debug(statsText)
-        sendChatMessage(stats.text)
+        await sendStatsChat(playerID)
     }
 }
 
@@ -128,8 +117,7 @@ async function sendChatMouseover(event) {
         return
     }
 
-    const userID = event.target.parentNode.dataset.id
-    // console.debug('sendChatMouseover:', userID)
+    // check if this mouse over is in chat
     const parent =
         event.target.parentNode.parentNode.parentNode.parentNode.parentNode
             .parentNode
@@ -138,21 +126,8 @@ async function sendChatMouseover(event) {
         return
     }
 
-    // TODO: This is being duplicated - bad
-    const sent = parent.querySelector(`#userid-${userID}`)
-    if (sent) {
-        // console.debug('already sent for user:', userID)
-        return
-    }
-    const div = document.createElement('div')
-    div.style.display = 'none'
-    div.id = `userid-${userID}`
-    parent.appendChild(div)
-
-    const profile = await getProfile(userID)
-    const stats = calStats(profile)
-    // console.debug(statsText)
-    sendChatMessage(stats.text)
+    const userID = event.target.parentNode.dataset.id
+    await sendStatsChat(userID)
 }
 
 /**
@@ -198,6 +173,7 @@ async function showMouseover(event) {
     div.style.width = '40px'
     div.style.fontSize = '16px'
     div.style.pointerEvents = 'none'
+    div.classList.add('mouseover-stats')
 
     const spanRating = document.createElement('span')
     spanRating.textContent = profile.rating
@@ -236,6 +212,28 @@ async function showMouseover(event) {
     div.appendChild(spanRate)
 
     element.parentNode.appendChild(div)
+}
+
+/**
+ * Send Stats to Chat
+ * @function sendStatsChat
+ * @param {string} playerID
+ */
+async function sendStatsChat(playerID) {
+    const aside = document.querySelector('aside')
+    const sent = aside.querySelector(`#userid-${playerID}`)
+    if (sent) {
+        console.debug('already sent stats for playerID:', playerID)
+        return
+    }
+    const div = document.createElement('div')
+    div.style.display = 'none'
+    div.id = `userid-${playerID}`
+    aside.appendChild(div)
+
+    const profile = await getProfile(playerID)
+    const stats = calStats(profile)
+    sendChatMessage(stats.text)
 }
 
 /**
