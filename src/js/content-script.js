@@ -23,34 +23,11 @@
 
     // check user profile every 2 minutes to check for new games
     setInterval(updateUserInterval, 2 * 60000)
-
-    // const tooltip = document.createElement('div')
-    // tooltip.id = 'tooltip'
-    // tooltip.setAttribute('role', 'tooltip')
-    // tooltip.textContent = 'I am a fucking tooltip.'
-    // tooltip.style.color = '#FFF'
-    // tooltip.style.backgroundColor = '#333'
-    // tooltip.style.borderRadius = '4px'
-    // tooltip.style.fontSize = '13px'
-    // document.body.appendChild(tooltip)
-
-    // // send message to service worker to enable action icon
-    // const message = { action: true }
-    // console.debug('message:', message)
-    // const response = await chrome.runtime.sendMessage(message)
-    // console.debug('response:', response)
 })()
 
 chrome.runtime.onMessage.addListener(onMessage)
 
 const profiles = {}
-
-// const pickerOptions = { onEmojiSelect: onEmojiSelect }
-// const picker = new EmojiMart.Picker(pickerOptions)
-// document.body.appendChild(picker)
-// function onEmojiSelect(emojiData, event) {
-//     console.debug('onEmojiSelect:', emojiData, event)
-// }
 
 /**
  * On Message Callback
@@ -65,16 +42,11 @@ async function onMessage(message, sender, sendResponse) {
         return console.warn('No message.url')
     }
     const url = new URL(message.url)
-    if (url.search.includes('?profile=')) {
+    if (url.searchParams.get('profile')) {
         const profileID = url.searchParams.get('profile')
         const profile = await getProfile(profileID)
-        // TODO: Add Timeout so First Popup is not Null if Cached
         const { banned } = await chrome.storage.sync.get(['banned'])
-        // console.debug('banned:', banned)
         setTimeout(updateProfile, 150, profile, banned)
-        document
-            .querySelector('.MuiDialog-container')
-            .addEventListener('click', profileCloseClick)
     }
     if (url.pathname.includes('/room/')) {
         const room = url.pathname.split('/')[2]
@@ -93,9 +65,6 @@ async function onMessage(message, sender, sendResponse) {
                 root.prepend(div)
             }
         }
-        // const picker = new Picker()
-        // console.log('picker:', picker)
-        // document.body.appendChild(picker)
 
         if (options.sendOnJoin) {
             const aside = document.querySelector('aside')
@@ -107,50 +76,8 @@ async function onMessage(message, sender, sendResponse) {
                 }, 2000)
             }
         }
-
-        // // const evtUrl = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
-        // // const evtUrl = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/ssejoin`
-        // const evtUrl = `https://api-v2.playdrift.com/api/v1/chat/messages/${room}/sse`
-        // console.log(`connecting sse room: ${room} evtUrl:`, evtUrl)
-        // const evtSource = new EventSource(evtUrl, {
-        //     withCredentials: true,
-        // })
-        // evtSource.onmessage = (event) => {
-        //     console.log(`evtSource.onmessage: ${event.data}`, event)
-        // }
-        // console.log('evtSource', evtSource)
     }
 }
-
-// function generateGetBoundingClientRect(x = 0, y = 0) {
-//     return () => ({
-//         width: 0,
-//         height: 0,
-//         top: y,
-//         right: x,
-//         bottom: y,
-//         left: x,
-//     })
-// }
-// const virtualElement = {
-//     getBoundingClientRect: generateGetBoundingClientRect(),
-// }
-// // const tooltip = document.getElementById('tooltip')
-// const tooltip = document.createElement('div')
-// tooltip.id = 'tooltip'
-// tooltip.setAttribute('role', 'tooltip')
-// tooltip.textContent = 'I am a fucking tooltip.'
-// tooltip.style.color = '#FFF'
-// tooltip.style.backgroundColor = '#333'
-// tooltip.style.borderRadius = '4px'
-// tooltip.style.fontSize = '13px'
-// tooltip.style.display = 'none'
-// document.body.appendChild(tooltip)
-// const instance = Popper.createPopper(virtualElement, tooltip)
-// document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
-//     virtualElement.getBoundingClientRect = generateGetBoundingClientRect(x, y)
-//     instance.update()
-// })
 
 async function newChatMessage(event) {
     console.log(`newChatMessage: ${event.target.textContent}`)
@@ -441,47 +368,39 @@ async function updateUserProfile(profile) {
  */
 function updateProfile(profile, banned) {
     // console.debug('updateProfile:', profile, banned)
-    // const root = document
-    //     .querySelector('.MuiDialogContent-root')
-    //     .querySelectorAll('.MuiBox-root')[3]
-    // const root = document.querySelector('.MuiDialog-container')?.children[0]
-    //     .children[1].children[0].children[4]
+    document
+        .querySelector('.MuiDialog-container')
+        .addEventListener('click', profileCloseClick)
+
     const root = document
         .querySelector('.MuiDialog-container')
         .querySelectorAll('.MuiBox-root')[4]
     if (!root) {
         return console.warn('root not found')
     }
-
     root.style.marginTop = 0
     root.style.marginBottom = '10px'
 
     const divText = document.createElement('div')
     divText.style.textAlign = 'center'
 
-    const rating = parseInt(profile.rating)
-    const games_won = parseInt(profile.games_won)
-    const games_lost = parseInt(profile.games_lost)
-    const wl_percent =
-        parseInt((games_won / (games_won + games_lost)) * 100) || 0
-    const statsText = `Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
-    // console.debug(statsText)
+    const stats = calStats(profile)
 
     const spanStats = document.createElement('span')
     spanStats.id = 'stats-text'
-    spanStats.textContent = statsText
+    spanStats.textContent = stats.text
     spanStats.hidden = true
     divText.appendChild(spanStats)
 
     const spanRating = document.createElement('span')
-    spanRating.style.color = rating < 200 ? '#EE4B2B' : '#50C878'
-    spanRating.textContent = ` Rating: ${rating} `
+    spanRating.style.color = stats.rating < 200 ? '#EE4B2B' : '#50C878'
+    spanRating.textContent = ` Rating: ${stats.rating} `
     divText.appendChild(spanRating)
 
     const spanGames = document.createElement('span')
-    spanGames.style.color = wl_percent < 45 ? '#EE4B2B' : '#50C878'
+    spanGames.style.color = stats.wl_percent < 45 ? '#EE4B2B' : '#50C878'
     spanGames.id = 'stats-text'
-    spanGames.textContent = ` W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%) `
+    spanGames.textContent = ` W/L: ${stats.games_won.toLocaleString()} / ${stats.games_lost.toLocaleString()} (${stats.wl_percent}%) `
     divText.appendChild(spanGames)
 
     root.appendChild(divText)
@@ -691,60 +610,3 @@ function addKicked(playerID) {
         parent.appendChild(div)
     }
 }
-
-// function addBtn() {
-//     const button = document.createElement('button')
-//     button.textContent = 'Emoji'
-//     button.addEventListener('click', emojiBtnClick)
-//     const msgBox = document.querySelector('div[aria-label="message"]')
-//     msgBox.parentElement.parentElement.appendChild(button)
-// }
-// function emojiBtnClick(event) {
-//     console.debug('emojiBtnClick:', event)
-// }
-
-// const observer = new MutationObserver(mutationCallback)
-// observer.observe(document.body, {
-//     attributes: true,
-//     childList: true,
-//     subTree: true,
-// })
-//
-// function mutationCallback(mutationList, observer) {
-//     console.info('mutationCallback, mutationList:', mutationList, observer)
-//     for (const mutation of mutationList) {
-//         if (mutation.type === 'childList') {
-//             console.info('A child node has been added or removed.')
-//         } else if (mutation.type === 'attributes') {
-//             console.info(
-//                 `The ${mutation.attributeName} attribute was modified.`
-//             )
-//         }
-//     }
-// }
-
-// const userId = document.querySelector('div[data-id]').dataset.id
-// console.debug('update user profile:', userId)
-// await updateUserProfile(userId)
-// console.log(1)
-// const src = chrome.runtime.getURL('dist/emoji-picker-element/picker.js')
-// console.log('src:', src)
-// import(src).then((module) => {
-//     // Do something with the module.
-//     console.log('module:', module)
-//     console.log(2)
-//     const picker = new Picker()
-//     console.log('picker:', picker)
-//     document.body.appendChild(picker)
-//     console.log(3)
-// })
-// const contentMain = await import(src)
-// console.log('contentMain:', contentMain)
-// console.log(2)
-// contentMain.main()
-// const picker = new contentMain.Picker()
-// const picker = new Picker()
-// console.log(4)
-// console.log('picker:', picker)
-// document.body.appendChild(picker)
-// console.log(5)
