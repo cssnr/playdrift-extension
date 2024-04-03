@@ -108,15 +108,17 @@ async function onMessage(message, sender, sendResponse) {
             }
         }
 
-        // console.log(`connecting sse room: ${room}`)
-        // // const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
-        // const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/ssejoin`
-        // const evtSource = new EventSource(url, {
+        // // const evtUrl = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
+        // // const evtUrl = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/ssejoin`
+        // const evtUrl = `https://api-v2.playdrift.com/api/v1/chat/messages/${room}/sse`
+        // console.log(`connecting sse room: ${room} evtUrl:`, evtUrl)
+        // const evtSource = new EventSource(evtUrl, {
         //     withCredentials: true,
         // })
         // evtSource.onmessage = (event) => {
         //     console.log(`evtSource.onmessage: ${event.data}`, event)
         // }
+        // console.log('evtSource', evtSource)
     }
 }
 
