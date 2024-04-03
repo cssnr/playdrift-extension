@@ -43,6 +43,8 @@
 
 chrome.runtime.onMessage.addListener(onMessage)
 
+const profiles = {}
+
 // const pickerOptions = { onEmojiSelect: onEmojiSelect }
 // const picker = new EmojiMart.Picker(pickerOptions)
 // document.body.appendChild(picker)
@@ -78,7 +80,7 @@ async function onMessage(message, sender, sendResponse) {
             .addEventListener('click', profileCloseClick)
     }
     if (url.pathname.includes('/room/')) {
-        let room = url.pathname.split('/')[2]
+        const room = url.pathname.split('/')[2]
         console.debug(`Process Room: ${room}`)
         const { options } = await chrome.storage.sync.get(['options'])
         if (options.sendMouseover) {
@@ -108,8 +110,48 @@ async function onMessage(message, sender, sendResponse) {
                 }, 2000)
             }
         }
+
+        // console.log(`connecting sse room: ${room}`)
+        // // const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
+        // const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/ssejoin`
+        // const evtSource = new EventSource(url, {
+        //     withCredentials: true,
+        // })
+        // evtSource.onmessage = (event) => {
+        //     console.log(`evtSource.onmessage: ${event.data}`, event)
+        // }
     }
 }
+
+// function generateGetBoundingClientRect(x = 0, y = 0) {
+//     return () => ({
+//         width: 0,
+//         height: 0,
+//         top: y,
+//         right: x,
+//         bottom: y,
+//         left: x,
+//     })
+// }
+// const virtualElement = {
+//     getBoundingClientRect: generateGetBoundingClientRect(),
+// }
+// // const tooltip = document.getElementById('tooltip')
+// const tooltip = document.createElement('div')
+// tooltip.id = 'tooltip'
+// tooltip.setAttribute('role', 'tooltip')
+// tooltip.textContent = 'I am a fucking tooltip.'
+// tooltip.style.color = '#FFF'
+// tooltip.style.backgroundColor = '#333'
+// tooltip.style.borderRadius = '4px'
+// tooltip.style.fontSize = '13px'
+// tooltip.style.display = 'none'
+// document.body.appendChild(tooltip)
+// const instance = Popper.createPopper(virtualElement, tooltip)
+// document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
+//     virtualElement.getBoundingClientRect = generateGetBoundingClientRect(x, y)
+//     instance.update()
+// })
 
 async function newChatMessage(event) {
     console.log(`newChatMessage: ${event.target.textContent}`)
@@ -188,6 +230,9 @@ async function showMouseover(event) {
         return
     }
 
+    // console.log('hide tooltip')
+    // tooltip.style.display = 'block'
+
     const element = event.target.parentNode
     console.debug('showMouseover:', element)
     if (element.dataset.processed) {
@@ -210,11 +255,19 @@ async function showMouseover(event) {
     const div = document.createElement('div')
     div.style.position = 'absolute'
     div.style.marginTop = '-3px'
-    div.style.paddingLeft = '3px'
+    // div.style.paddingLeft = '3px'
+    div.style.textAlign = 'center'
+    div.style.width = '40px'
+    div.style.fontSize = '15px'
+    div.style.pointerEvents = 'none'
 
     const spanRating = document.createElement('span')
     spanRating.textContent = profile.rating
+    spanRating.style.width = '100%'
+    // spanRating.style.margin = '-5px 0'
+    spanRating.style.display = 'inline-block'
     // spanRating.style.position = 'fixed'
+
     if (profile.rating < 200) {
         spanRating.style.color = '#EE4B2B'
     } else {
@@ -224,17 +277,22 @@ async function showMouseover(event) {
         '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
     div.appendChild(spanRating)
 
-    div.appendChild(document.createElement('br'))
+    // const br = document.createElement('br')
+    // br.style.margin = '-5px 0'
+    // div.appendChild(br)
 
     const spanRate = document.createElement('span')
     spanRate.textContent = `${stats.wl_percent}%`
+    spanRating.style.width = '100%'
+    // spanRate.style.margin = '-5px 0'
+    spanRate.style.display = 'inline-block'
     // spanRate.style.position = 'fixed'
+
     if (stats.wl_percent < 45) {
         spanRate.style.color = '#EE4B2B'
     } else {
         spanRate.style.color = '#50C878'
     }
-    // spanRating.style.marginTop = '-3px'
     spanRate.style.textShadow =
         '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
     div.appendChild(spanRate)
@@ -306,11 +364,22 @@ async function updateUserInterval() {
  * @returns {Object}
  */
 async function getProfile(profileID) {
+    if (profiles[profileID]) {
+        const age =
+            Math.floor(Date.now() / 1000) - profiles[profileID].ts_updated
+        if (age < 60) {
+            console.debug('using cached profile, age:', age)
+            return profiles[profileID]
+        }
+        console.debug('cached profile expired, age:', age)
+    }
     const profileUrl = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input=%7B%22id%22%3A%22${profileID}%22%2C%22game%22%3A%22dominoes%22%7D`
     console.debug('profileUrl:', profileUrl)
     const response = await fetch(profileUrl)
     const data = await response.json()
     const profile = data.result.data
+    profile.ts_updated = Math.floor(Date.now() / 1000)
+    profiles[profileID] = profile
     console.info('profile:', profile)
     return profile
 }
