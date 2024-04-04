@@ -8,37 +8,30 @@
     ])
     console.debug('options, profile:', options, profile)
 
-    // add mouseOver listener to document to trigger on specific elements
-    if (options.showMouseover) {
-        document.addEventListener('mouseover', showMouseover)
-    }
-    if (options.sendMouseover) {
-        document.addEventListener('mouseover', sendChatMouseover)
-    }
-
-    if (options.showTooltipMouseover) {
-        document.addEventListener('mouseover', showTooltipMouseover)
-        const virtualElement = {
-            getBoundingClientRect: generateGetBoundingClientRect(),
-        }
-        const instance = Popper.createPopper(virtualElement, tooltip)
-        document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
-            virtualElement.getBoundingClientRect =
-                generateGetBoundingClientRect(x, y)
-            instance.update()
-        })
-    }
-
     // if profile object is empty, wait 3 seconds and check user profile
     if (profile && !Object.keys(profile).length) {
         setTimeout(setUserProfile, 3000)
     }
 
-    // check user profile every 2 minutes to check for new games
-    setInterval(updateUserInterval, 2 * 60000)
+    // Popper Mouse Listener
+    const virtualElement = {
+        getBoundingClientRect: generateGetBoundingClientRect(),
+    }
+    const instance = Popper.createPopper(virtualElement, tooltip)
+    document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
+        virtualElement.getBoundingClientRect = generateGetBoundingClientRect(
+            x,
+            y
+        )
+        instance.update()
+    })
 })()
 
 chrome.runtime.onMessage.addListener(onMessage)
+
+document.addEventListener('mouseover', documentMouseover)
+
+setInterval(updateUserInterval, 2 * 60000)
 
 const profiles = {}
 
@@ -143,38 +136,7 @@ async function newChatMessage(event) {
     }
 }
 
-/**
- * Send Chat Message Mouse Over Handler
- * @function sendChatMouseover
- * @param {MouseEvent} event
- */
-async function sendChatMouseover(event) {
-    if (
-        event.target.tagName !== 'IMG' ||
-        !event.target.parentNode?.dataset?.id
-    ) {
-        return
-    }
-
-    // check if this mouse over is in chat
-    const parent =
-        event.target.parentNode.parentNode.parentNode.parentNode.parentNode
-            .parentNode
-    if (parent.dataset.testid !== 'app-layout-aside') {
-        // console.debug('no dataset.testid')
-        return
-    }
-
-    const userID = event.target.parentNode.dataset.id
-    await sendStatsChat(userID)
-}
-
-/**
- * Show Tooltip on Mouse Over Handler
- * @function showTooltipMouseover
- * @param {MouseEvent} event
- */
-async function showTooltipMouseover(event) {
+async function documentMouseover(event) {
     if (
         event.target.tagName !== 'IMG' ||
         !event.target.parentNode?.dataset?.id
@@ -186,12 +148,74 @@ async function showTooltipMouseover(event) {
         }
         return
     }
+    const { options } = await chrome.storage.sync.get(['options'])
+
+    // Cache the profile
+    if (
+        options.showMouseover ||
+        options.sendMouseover ||
+        options.showTooltipMouseover
+    ) {
+        await getProfile(event.target.parentNode.dataset.id)
+    }
+
+    if (options.sendMouseover) {
+        await sendMouseover(event)
+    }
+    if (options.showTooltipMouseover) {
+        await showTooltipMouseover(event)
+    }
+    if (options.showMouseover) {
+        await showMouseover(event)
+    }
+}
+
+/**
+ * Send Chat Message Mouse Over Handler
+ * @function sendMouseover
+ * @param {MouseEvent} event
+ */
+async function sendMouseover(event) {
+    // if (
+    //     event.target.tagName !== 'IMG' ||
+    //     !event.target.parentNode?.dataset?.id
+    // ) {
+    //     return
+    // }
+
+    // check if this mouse over is in chat
+    const parent =
+        event.target.parentNode.parentNode.parentNode.parentNode.parentNode
+            .parentNode
+    if (parent.dataset.testid !== 'app-layout-aside') {
+        return
+    }
+    const userID = event.target.parentNode.dataset.id
+    await sendStatsChat(userID)
+}
+
+/**
+ * Show Tooltip on Mouse Over Handler
+ * @function showTooltipMouseover
+ * @param {MouseEvent} event
+ */
+async function showTooltipMouseover(event) {
+    // if (
+    //     event.target.tagName !== 'IMG' ||
+    //     !event.target.parentNode?.dataset?.id
+    // ) {
+    //     if (tooltip.style.display !== 'none') {
+    //         console.debug('hide tooltip')
+    //         tooltip.style.display = 'none'
+    //         tooltip.innerHTML = 'Loading...'
+    //     }
+    //     return
+    // }
     if (tooltip.style.display === 'block') {
         return
     }
     console.debug('show tooltip')
     tooltip.style.display = 'block'
-
     const userID = event.target.parentNode.dataset.id
     const profile = await getProfile(userID)
     const stats = calStats(profile)
@@ -226,13 +250,12 @@ async function showTooltipMouseover(event) {
  * @param {MouseEvent} event
  */
 async function showMouseover(event) {
-    if (
-        event.target.tagName !== 'IMG' ||
-        !event.target.parentNode?.dataset?.id
-    ) {
-        return
-    }
-
+    // if (
+    //     event.target.tagName !== 'IMG' ||
+    //     !event.target.parentNode?.dataset?.id
+    // ) {
+    //     return
+    // }
     const element = event.target.parentNode
     if (element.dataset.processed) {
         console.debug('already processed element:', element)
