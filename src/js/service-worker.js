@@ -38,6 +38,7 @@ async function onInstalled(details) {
             contextMenu: true,
             showUpdate: false,
             sendOnJoin: false,
+            showTooltipMouseover: false,
             showMouseover: false,
             sendMouseover: false,
             // testInput: 'Default Value',

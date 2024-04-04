@@ -16,6 +16,19 @@
         document.addEventListener('mouseover', sendChatMouseover)
     }
 
+    if (options.showTooltipMouseover) {
+        document.addEventListener('mouseover', showTooltipMouseover)
+        const virtualElement = {
+            getBoundingClientRect: generateGetBoundingClientRect(),
+        }
+        const instance = Popper.createPopper(virtualElement, tooltip)
+        document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
+            virtualElement.getBoundingClientRect =
+                generateGetBoundingClientRect(x, y)
+            instance.update()
+        })
+    }
+
     // if profile object is empty, wait 3 seconds and check user profile
     if (profile && !Object.keys(profile).length) {
         setTimeout(setUserProfile, 3000)
@@ -28,6 +41,32 @@
 chrome.runtime.onMessage.addListener(onMessage)
 
 const profiles = {}
+
+const tooltip = document.createElement('div')
+tooltip.id = 'tooltip'
+tooltip.setAttribute('role', 'tooltip')
+tooltip.textContent = 'Loading...'
+tooltip.style.color = '#FFF'
+tooltip.style.backgroundColor = 'rgba(21,20,20,0.5)'
+tooltip.style.borderRadius = '4px'
+tooltip.style.fontSize = '16px'
+tooltip.style.display = 'none'
+tooltip.style.pointerEvents = 'none'
+tooltip.style.width = '200px'
+tooltip.style.overflow = 'hidden'
+tooltip.style.padding = '3px'
+document.body.appendChild(tooltip)
+
+function generateGetBoundingClientRect(x = 0, y = 0) {
+    return () => ({
+        width: 200,
+        height: 0,
+        top: y - 10,
+        right: x,
+        bottom: y,
+        left: x + 20,
+    })
+}
 
 /**
  * On Message Callback
@@ -131,6 +170,57 @@ async function sendChatMouseover(event) {
 }
 
 /**
+ * Show Tooltip on Mouse Over Handler
+ * @function showTooltipMouseover
+ * @param {MouseEvent} event
+ */
+async function showTooltipMouseover(event) {
+    if (
+        event.target.tagName !== 'IMG' ||
+        !event.target.parentNode?.dataset?.id
+    ) {
+        if (tooltip.style.display !== 'none') {
+            console.debug('hide tooltip')
+            tooltip.style.display = 'none'
+            tooltip.innerHTML = 'Loading...'
+        }
+        return
+    }
+    if (tooltip.style.display === 'block') {
+        return
+    }
+    console.debug('show tooltip')
+    tooltip.style.display = 'block'
+
+    const userID = event.target.parentNode.dataset.id
+    const profile = await getProfile(userID)
+    const stats = calStats(profile)
+    tooltip.innerHTML = ''
+    const span = document.createElement('span')
+    span.style.width = '100%'
+    span.style.display = 'inline-block'
+    const span1 = span.cloneNode(true)
+    span1.textContent = profile.username
+    tooltip.appendChild(span1)
+    const span2 = span.cloneNode(true)
+    span2.textContent = `Rating: ${stats.rating} - ${stats.wl_percent}%`
+    if (profile.rating < 200) {
+        span2.style.color = '#EE4B2B'
+    } else {
+        span2.style.color = '#50C878'
+    }
+    tooltip.appendChild(span2)
+    const span3 = span.cloneNode(true)
+    span3.textContent = `W/L: ${stats.games_won} / ${stats.games_lost}`
+    if (stats.wl_percent < 45) {
+        span3.style.color = '#EE4B2B'
+    } else {
+        span3.style.color = '#50C878'
+    }
+    tooltip.appendChild(span3)
+}
+
+/**
  * Show Profile on Mouse Over Handler
  * @function sendChatMouseover
  * @param {MouseEvent} event
@@ -143,23 +233,13 @@ async function showMouseover(event) {
         return
     }
 
-    // console.log('hide tooltip')
-    // tooltip.style.display = 'block'
-
     const element = event.target.parentNode
-    // console.debug('showMouseover:', element)
     if (element.dataset.processed) {
         console.debug('already processed element:', element)
         return
     }
     element.dataset.processed = 'yes'
-    // console.debug('element.parentNode', element.parentNode)
     element.parentNode.style.position = 'relative'
-
-    // const tooltip = document.getElementById('tooltip')
-    // Popper.createPopper(element, tooltip, {
-    //     placement: 'right',
-    // })
 
     const userID = element.dataset.id
     // console.debug('userID', userID)
@@ -168,7 +248,6 @@ async function showMouseover(event) {
     const div = document.createElement('div')
     div.style.position = 'absolute'
     div.style.marginTop = '-3px'
-    // div.style.paddingLeft = '3px'
     div.style.textAlign = 'center'
     div.style.width = '40px'
     div.style.fontSize = '16px'
