@@ -1,32 +1,5 @@
 // JS Content Script
 
-;(async () => {
-    console.info('RUNNING content-script.js')
-    const { options, profile } = await chrome.storage.sync.get([
-        'options',
-        'profile',
-    ])
-    console.debug('options, profile:', options, profile)
-
-    // if profile object is empty, wait 3 seconds and check user profile
-    if (profile && !Object.keys(profile).length) {
-        setTimeout(setUserProfile, 3000)
-    }
-
-    // Popper Mouse Listener
-    const virtualElement = {
-        getBoundingClientRect: generateGetBoundingClientRect(),
-    }
-    const instance = Popper.createPopper(virtualElement, tooltip)
-    document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
-        virtualElement.getBoundingClientRect = generateGetBoundingClientRect(
-            x,
-            y
-        )
-        instance.update()
-    })
-})()
-
 chrome.runtime.onMessage.addListener(onMessage)
 
 document.addEventListener('mouseover', documentMouseover)
@@ -34,7 +7,9 @@ document.addEventListener('mouseover', documentMouseover)
 setInterval(updateUserInterval, 2 * 60000)
 
 const profiles = {}
+// let userProfile = {}
 
+// Popper Tooltip
 const tooltip = document.createElement('div')
 tooltip.id = 'tooltip'
 tooltip.setAttribute('role', 'tooltip')
@@ -49,6 +24,32 @@ tooltip.style.width = '200px'
 tooltip.style.overflow = 'hidden'
 tooltip.style.padding = '3px'
 document.body.appendChild(tooltip)
+
+// Popper Mouse Listener
+const virtualElement = {
+    getBoundingClientRect: generateGetBoundingClientRect(),
+}
+const instance = Popper.createPopper(virtualElement, tooltip)
+document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
+    virtualElement.getBoundingClientRect = generateGetBoundingClientRect(x, y)
+    instance.update()
+})
+
+// async
+;(async () => {
+    console.info('RUNNING content-script.js')
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    // userProfile = profile
+    console.debug('options, profile:', options, profile)
+
+    // if profile object is empty, wait 3 seconds and check user profile
+    if (profile && !Object.keys(profile).length) {
+        setTimeout(setUserProfile, 3000)
+    }
+})()
 
 function generateGetBoundingClientRect(x = 0, y = 0) {
     return () => ({
@@ -118,22 +119,11 @@ async function processRoom(room) {
             root.prepend(div)
         }
     }
-
-    if (options.sendOnJoin) {
-        const aside = document.querySelector('aside')
-        if (aside) {
-            // console.info('addEventListener DOMNodeInserted', aside)
-            // aside.addEventListener('DOMNodeInserted', newChatMessage)
-            setTimeout(function () {
-                aside.addEventListener('DOMNodeInserted', newChatMessage)
-            }, 2000)
-        }
-    }
     if (options.sendSelfOnJoin) {
         const { profile } = await chrome.storage.sync.get(['profile'])
         const stats = calStats(profile)
-        sendChatMessage(stats.text)
-        // setTimeout(sendChatMessage, 1000, stats.text)
+        // await sendChatMessage(stats.text)
+        setTimeout(sendChatMessage, 500, stats.text)
     }
 }
 
@@ -156,46 +146,72 @@ function sse1(room) {
             input.value = msg.state.tid
             document.querySelector('aside').appendChild(input)
             source.close()
-            // setTimeout(sse2, 150, msg.state.tid)
+            setTimeout(sse2, 150, msg.state.tid)
         }
     })
 }
 
-// function sse2(tid) {
-//     const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${tid}/sse`
-//     console.log('connecting to sse2 url:', url)
-//     const source = new EventSource(url, {
-//         withCredentials: true,
-//     })
-//     console.log('source:', source)
-//     source.addEventListener('msg', function (event) {
-//         const msg = JSON.parse(event.data)
-//         console.log('msg:', msg)
-//     })
-// }
+function sse2(tid) {
+    const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${tid}/sse`
+    console.log('connecting to sse2 url:', url)
+    const source = new EventSource(url, {
+        withCredentials: true,
+    })
+    console.log('source:', source)
+    const now = Date.now()
+    source.addEventListener('msg', function (event) {
+        const msg = JSON.parse(event.data)
+        if (msg.t === 'm' && msg.json?.ts > now) {
+            console.log('processing new msg:', msg)
+            newChatMessage(msg)
+        }
+    })
+}
 
-async function newChatMessage(event) {
-    if (event.target.classList.contains('mouseover-stats')) {
-        return console.debug('ignoring mouseover-stats')
+async function newChatMessage(msg) {
+    console.debug('newChatMessage:', msg)
+    if (!msg.json) {
+        return console.debug('NO msg.json')
     }
-    console.log(`newChatMessage: ${event.target.textContent}`)
-    if (event.target.textContent.startsWith('Joined the game.')) {
-        console.log('On Join Message - Sending Stats')
-        const playerID = event.target.dataset.cid
+    const message = msg.json.message
+    const playerID = msg.json.cid
 
+    const { banned, options, profile } = await chrome.storage.sync.get([
+        'banned',
+        'options',
+        'profile',
+    ])
+    // console.debug('userProfile:', userProfile)
+    // console.debug('userProfile.id:', userProfile.id)
+    // console.debug('playerID:', playerID)
+
+    if (message.startsWith('Joined the game.')) {
+        console.debug('On Join Message')
+        if (profile?.id === playerID) {
+            return console.debug('ignoring self user join events')
+        }
         if (isKicked(playerID)) {
             return console.debug('return on kicked user:', playerID)
         }
-
-        const { banned } = await chrome.storage.sync.get(['banned'])
         if (banned.includes(playerID)) {
             await kickPlayer(playerID)
             const name = profiles[playerID]?.username || playerID
-            sendChatMessage(`Auto Kicked Banned User: ${name}`)
-            return
+            await sendChatMessage(`Auto Kicked Banned User: ${name}`)
+            return console.debug('return and kicked banned player:', playerID)
         }
-
-        await sendStatsChat(playerID)
+        if (options.sendOnJoin) {
+            await sendStatsChat(playerID)
+        }
+    }
+    if (
+        message.startsWith('!stat') ||
+        message.startsWith('!profile') ||
+        message.startsWith('!rating') ||
+        message.startsWith('!record')
+    ) {
+        const profile = await getProfile(playerID)
+        const stats = calStats(profile)
+        await sendChatMessage(stats.text)
     }
 }
 
@@ -321,7 +337,7 @@ async function showMouseover(event) {
     // }
     const element = event.target.parentNode
     if (element.dataset.processed) {
-        console.debug('already processed element:', element)
+        // console.debug('already processed element:', element)
         return
     }
     element.dataset.processed = 'yes'
@@ -398,7 +414,7 @@ async function sendStatsChat(playerID) {
 
     const profile = await getProfile(playerID)
     const stats = calStats(profile)
-    sendChatMessage(stats.text)
+    await sendChatMessage(stats.text)
 }
 
 /**
@@ -433,6 +449,7 @@ function profileCloseClick(event) {
 }
 
 /**
+ * TODO: Make this an Interval that cancels once complete
  * Set User Profile Timeout - 3000
  * @function setUserProfile
  */
@@ -443,8 +460,8 @@ async function setUserProfile() {
         return console.warn('userId not found!', userId)
     }
     console.info('User Profile Set to userId:', userId)
-    const userProfile = await getProfile(userId)
-    await updateUserProfile(userProfile)
+    const profile = await getProfile(userId)
+    await updateUserProfile(profile)
 }
 
 /**
@@ -497,6 +514,7 @@ async function updateUserProfile(profile) {
 
     console.debug('Updating User Profile:', profile)
     await chrome.storage.sync.set({ profile })
+    userProfile = profile
 
     const { history } = await chrome.storage.sync.get(['history'])
     console.debug('history:', history)
@@ -649,7 +667,7 @@ function sendClick(event) {
     const text = document.getElementById('stats-text')?.textContent
     if (text) {
         console.debug(`Sending: ${text}`)
-        sendChatMessage(text)
+        sendChatMessage(text).then()
         history.back()
     }
 }
@@ -692,7 +710,7 @@ async function banClick(event) {
         await chrome.storage.sync.set({ banned })
     }
     const name = profiles[playerID]?.username || playerID
-    sendChatMessage(`Banned User: ${name}`)
+    await sendChatMessage(`Banned User: ${name}`)
     await kickPlayer(playerID)
     history.back()
 }
