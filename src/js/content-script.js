@@ -82,48 +82,97 @@ async function onMessage(message, sender, sendResponse) {
     }
     if (url.pathname.includes('/room/')) {
         const room = url.pathname.split('/')[2]
-        const processed = document.getElementById(`processed-#${room}`)
-        if (processed) {
-            return console.debug('already processed room:', room)
-        }
-        const div = document.createElement('div')
-        div.id = `processed-#${room}`
-        document.body.appendChild(div)
-
-        console.debug(`Process Room: ${room}`)
-        const { options } = await chrome.storage.sync.get(['options'])
-        if (options.sendMouseover) {
-            const root = document.querySelector('aside').childNodes[0]
-            if (!root.querySelector('#sendMouseover-notification')) {
-                console.debug('Adding Send Mouse Over ON Notification')
-                const div = document.createElement('div')
-                div.id = 'sendMouseover-notification'
-                div.textContent = 'Mouse Over ON'
-                div.style.textAlign = 'center'
-                div.style.color = '#50C878'
-                div.style.float = 'right'
-                root.prepend(div)
-            }
-        }
-
-        if (options.sendOnJoin) {
-            const aside = document.querySelector('aside')
-            if (aside) {
-                // console.info('addEventListener DOMNodeInserted', aside)
-                // aside.addEventListener('DOMNodeInserted', newChatMessage)
-                setTimeout(function () {
-                    aside.addEventListener('DOMNodeInserted', newChatMessage)
-                }, 2000)
-            }
-        }
-        if (options.sendSelfOnJoin) {
-            const { profile } = await chrome.storage.sync.get(['profile'])
-            const stats = calStats(profile)
-            // sendChatMessage(stats.text)
-            setTimeout(sendChatMessage, 1000, stats.text)
-        }
+        setTimeout(processRoom, 150, room)
     }
 }
+
+async function processRoom(room) {
+    const aside = document.querySelector('aside')
+    console.debug('aside:', aside)
+    if (!aside) {
+        return console.warn('Error Processing Room, No ASIDE:', room)
+    }
+    const processed = aside.querySelector(`#processed-${room}`)
+    if (processed) {
+        return console.debug('Already Processed Room:', room)
+    }
+    const div = document.createElement('div')
+    div.id = `processed-${room}`
+    aside.appendChild(div)
+
+    console.debug(`Process Room: ${room}`)
+    // setTimeout(sse1, 150, room)
+    sse1(room)
+
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (options.sendMouseover) {
+        const root = document.querySelector('aside').childNodes[0]
+        if (!root.querySelector('#sendMouseover-notification')) {
+            console.debug('Adding Send Mouse Over ON Notification')
+            const div = document.createElement('div')
+            div.id = 'sendMouseover-notification'
+            div.textContent = 'Mouse Over ON'
+            div.style.textAlign = 'center'
+            div.style.color = '#50C878'
+            div.style.float = 'right'
+            root.prepend(div)
+        }
+    }
+
+    if (options.sendOnJoin) {
+        const aside = document.querySelector('aside')
+        if (aside) {
+            // console.info('addEventListener DOMNodeInserted', aside)
+            // aside.addEventListener('DOMNodeInserted', newChatMessage)
+            setTimeout(function () {
+                aside.addEventListener('DOMNodeInserted', newChatMessage)
+            }, 2000)
+        }
+    }
+    if (options.sendSelfOnJoin) {
+        const { profile } = await chrome.storage.sync.get(['profile'])
+        const stats = calStats(profile)
+        sendChatMessage(stats.text)
+        // setTimeout(sendChatMessage, 1000, stats.text)
+    }
+}
+
+function sse1(room) {
+    const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
+    // const url = `https://api-v2.playdrift.com/api/v1/chat/messages/h3KnXwaJqEmA8o9rNAENq/sse`
+    console.log('connecting to sse1 url:', url)
+    const source = new EventSource(url, {
+        withCredentials: true,
+    })
+    console.log('source:', source)
+    source.addEventListener('msg', function (event) {
+        const msg = JSON.parse(event.data)
+        // console.log('msg:', msg)
+        if (msg.t === 'rs' && msg.state.tid) {
+            console.log(`Room ${room} TID = ${msg.state.tid}`)
+            const input = document.createElement('input')
+            input.hidden = true
+            input.id = 'tid'
+            input.value = msg.state.tid
+            document.querySelector('aside').appendChild(input)
+            source.close()
+            // setTimeout(sse2, 150, msg.state.tid)
+        }
+    })
+}
+
+// function sse2(tid) {
+//     const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${tid}/sse`
+//     console.log('connecting to sse2 url:', url)
+//     const source = new EventSource(url, {
+//         withCredentials: true,
+//     })
+//     console.log('source:', source)
+//     source.addEventListener('msg', function (event) {
+//         const msg = JSON.parse(event.data)
+//         console.log('msg:', msg)
+//     })
+// }
 
 async function newChatMessage(event) {
     if (event.target.classList.contains('mouseover-stats')) {
@@ -156,7 +205,7 @@ async function documentMouseover(event) {
         !event.target.parentNode?.dataset?.id
     ) {
         if (tooltip.style.display !== 'none') {
-            console.debug('hide tooltip')
+            // console.debug('hide tooltip')
             tooltip.style.display = 'none'
             tooltip.innerHTML = 'Loading...'
         }
@@ -228,7 +277,7 @@ async function showTooltipMouseover(event) {
     if (tooltip.style.display === 'block') {
         return
     }
-    console.debug('show tooltip')
+    // console.debug('show tooltip')
     tooltip.style.display = 'block'
     const userID = event.target.parentNode.dataset.id
     const profile = await getProfile(userID)
@@ -694,8 +743,33 @@ async function kickPlayer(playerID) {
  * @function sendChatMessage
  * @param {string} message
  */
-function sendChatMessage(message) {
-    console.log(`sendChatMessage: ${message}`)
+async function sendChatMessage(message) {
+    const tid = document.getElementById('tid')?.value
+    console.debug('sendChatMessage: tid, message:', tid, message)
+    if (!tid) {
+        return sendChatMessageLegacy(message)
+    }
+    const url = `https://api-v2.playdrift.com/api/v1/chat/${tid}/send`
+    const response = await fetch(url, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: message }),
+    })
+    const data = await response.json()
+    console.debug('data:', data)
+}
+
+/**
+ * Send a Chat Message
+ * @function sendChatMessage
+ * @param {string} message
+ */
+function sendChatMessageLegacy(message) {
+    console.log(`sendChatMessageLegacy: ${message}`)
     const textarea = document.querySelectorAll('textarea[aria-invalid="false"]')
     if (textarea.length) {
         if (textarea.length > 1) {
