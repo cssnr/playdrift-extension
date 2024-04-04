@@ -679,8 +679,8 @@ function isKicked(playerID) {
 
 function addKicked(playerID) {
     const parent = document.querySelector('aside')
-    const user = parent.querySelector(`#kicked-${playerID}`)
-    if (!user) {
+    const user = parent?.querySelector(`#kicked-${playerID}`)
+    if (parent && !user) {
         const div = document.createElement('div')
         div.style.display = 'none'
         div.id = `kicked-${playerID}`
