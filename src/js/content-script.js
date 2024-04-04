@@ -82,6 +82,14 @@ async function onMessage(message, sender, sendResponse) {
     }
     if (url.pathname.includes('/room/')) {
         const room = url.pathname.split('/')[2]
+        const processed = document.getElementById(`processed-#${room}`)
+        if (processed) {
+            return console.debug('already processed room:', room)
+        }
+        const div = document.createElement('div')
+        div.id = `processed-#${room}`
+        document.body.appendChild(div)
+
         console.debug(`Process Room: ${room}`)
         const { options } = await chrome.storage.sync.get(['options'])
         if (options.sendMouseover) {
@@ -107,6 +115,12 @@ async function onMessage(message, sender, sendResponse) {
                     aside.addEventListener('DOMNodeInserted', newChatMessage)
                 }, 2000)
             }
+        }
+        if (options.sendSelfOnJoin) {
+            const { profile } = await chrome.storage.sync.get(['profile'])
+            const stats = calStats(profile)
+            // sendChatMessage(stats.text)
+            setTimeout(sendChatMessage, 1000, stats.text)
         }
     }
 }
@@ -568,12 +582,12 @@ function updateProfile(profile, banned) {
  */
 function copyClick(event) {
     console.debug('copyClick', event)
-    const username = document.getElementById('profile-username').value
-    const text = document.getElementById('stats-text').textContent
-    const data = `${username} - ${text}`
-    console.log(`Copied: ${data}`)
-    navigator.clipboard.writeText(data).then()
-    // history.back()
+    const text = document.getElementById('stats-text')?.textContent
+    if (text) {
+        console.log(`Copied: ${text}`)
+        navigator.clipboard.writeText(text).then()
+        history.back()
+    }
 }
 
 /**
@@ -583,13 +597,12 @@ function copyClick(event) {
  */
 function sendClick(event) {
     console.debug('sendClick: event:', event)
-    const username = document.getElementById('profile-username').value
-    // const playerID = document.getElementById('profile-id').value
-    const text = document.getElementById('stats-text').textContent
-    const data = `${username} - ${text}`
-    console.log(`Sending: ${data}`)
-    sendChatMessage(data)
-    history.back()
+    const text = document.getElementById('stats-text')?.textContent
+    if (text) {
+        console.debug(`Sending: ${text}`)
+        sendChatMessage(text)
+        history.back()
+    }
 }
 
 /**
