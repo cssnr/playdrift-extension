@@ -19,7 +19,7 @@ Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rank
 *   [Development](#development)
     -   [Building](#building)
 
-[![Profile Preview](https://repository-images.githubusercontent.com/779112610/77dde83f-7bdb-4b42-93e2-c331df324db5)](https://github.com/smashedr/playdrift-extension)
+[![GitHub Image](https://repository-images.githubusercontent.com/779112610/ff9e457a-234f-44df-b61a-56c272564343)](https://github.com/smashedr/playdrift-extension)
 
 # Install
 
@@ -45,6 +45,14 @@ All **Chromium** Based Browsers can install the extension from the
 
 # Features
 
+- Show User Rating and Record (Win/Loss)
+- Track Game History, Win/Loss, Rating and Date
+- Automatically Send Stats to Chat on User Join
+- Automatically Send Your Own Stats to Chat When You Join
+- Show Stats Tooltip on Mouse Over
+- Show Stats on Icon on Mouse Over
+- Ban User Feature that Automatically Kicks User in Future
+
 Please submit a [Feature Request](https://github.com/smashedr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/smashedr/playdrift-extension/issues).
 
@@ -55,6 +63,8 @@ You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension ico
 **Firefox**, click the `Settings Wheel` and `Pin to Toolbar`.
 
 To open the options, click on the icon (from above) then click `Open Options`.
+
+You may also access the Options and Home page from a Right Click if Enabled in Options.
 
 # Browser Console
 
