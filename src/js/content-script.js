@@ -7,23 +7,28 @@ document.addEventListener('mouseover', documentMouseover)
 setInterval(updateUserInterval, 2 * 60000)
 
 const profiles = {}
-// let userProfile = {}
 
 // Popper Tooltip
 const tooltip = document.createElement('div')
 tooltip.id = 'tooltip'
 tooltip.setAttribute('role', 'tooltip')
-tooltip.textContent = 'Loading...'
-tooltip.style.color = '#FFF'
-tooltip.style.backgroundColor = 'rgba(21,20,20,0.5)'
-tooltip.style.borderRadius = '4px'
-tooltip.style.fontSize = '16px'
-tooltip.style.display = 'none'
-tooltip.style.pointerEvents = 'none'
-tooltip.style.width = '200px'
-tooltip.style.overflow = 'hidden'
-tooltip.style.padding = '3px'
+tooltip.innerHTML = 'Loading...'
 document.body.appendChild(tooltip)
+
+// async
+;(async () => {
+    console.info('RUNNING content-script.js')
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    console.debug('options, profile:', options, profile)
+
+    // if profile object is empty, wait 3 seconds and check user profile
+    if (profile && !Object.keys(profile).length) {
+        setTimeout(setUserProfile, 3000)
+    }
+})()
 
 // Popper Mouse Listener
 const virtualElement = {
@@ -34,23 +39,6 @@ document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
     virtualElement.getBoundingClientRect = generateGetBoundingClientRect(x, y)
     instance.update()
 })
-
-// async
-;(async () => {
-    console.info('RUNNING content-script.js')
-    const { options, profile } = await chrome.storage.sync.get([
-        'options',
-        'profile',
-    ])
-    // userProfile = profile
-    console.debug('options, profile:', options, profile)
-
-    // if profile object is empty, wait 3 seconds and check user profile
-    if (profile && !Object.keys(profile).length) {
-        setTimeout(setUserProfile, 3000)
-    }
-})()
-
 function generateGetBoundingClientRect(x = 0, y = 0) {
     return () => ({
         width: 200,
@@ -83,7 +71,7 @@ async function onMessage(message, sender, sendResponse) {
     }
     if (url.pathname.includes('/room/')) {
         const room = url.pathname.split('/')[2]
-        setTimeout(processRoom, 150, room)
+        setTimeout(processRoom, 250, room)
     }
 }
 
@@ -295,6 +283,7 @@ async function showTooltipMouseover(event) {
     }
     // console.debug('show tooltip')
     tooltip.style.display = 'block'
+    instance.update()
     const userID = event.target.parentNode.dataset.id
     const profile = await getProfile(userID)
     const stats = calStats(profile)

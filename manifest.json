@@ -25,23 +25,18 @@
       "description": "Show Extension Page"
     }
   },
-  "permissions": [
-    "contextMenus",
-    "scripting",
-    "storage",
-    "tabs",
-    "webNavigation"
-  ],
+  "permissions": ["contextMenus", "scripting", "storage", "tabs"],
   "content_scripts": [
     {
       "matches": ["*://*.playdrift.com/*"],
-      "js": ["dist/popper/popper.min.js", "js/content-script.js"]
+      "js": ["dist/popper/popper.min.js", "js/content-script.js"],
+      "css": ["css/content.css"]
     }
   ],
   "web_accessible_resources": [
     {
       "matches": ["*://*.playdrift.com/*"],
-      "resources": ["dist/jquery/jquery.min.js", "dist/popper/popper.min.js"]
+      "resources": ["dist/jquery/jquery.min.js"]
     }
   ],
   "background": {},
