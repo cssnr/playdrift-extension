@@ -8,7 +8,6 @@ setInterval(updateUserInterval, 2 * 60000)
 
 const profiles = {}
 const rooms = {}
-// TODO: This is not used
 let currentRoom = ''
 
 // Popper Tooltip
@@ -143,6 +142,7 @@ function sse1(room) {
         if (msg.t === 'rs' && msg.state.tid) {
             console.debug('Room State:', msg.state)
             rooms[room] = msg.state
+            console.log(`Set Room: "${room}" room.tid = ${msg.state.tid}`)
             // source.close()
             // setTimeout(sse2, 150, msg.state.tid)
         }
@@ -168,8 +168,7 @@ function sse2(room) {
     source2.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         if (msg.t === 'm' && msg.json?.ts > now) {
-            console.debug('processing new msg:', msg)
-            newChatMessage(msg)
+            newChatMessage(msg).then()
         }
     })
 }
@@ -187,32 +186,39 @@ async function newChatMessage(msg) {
         'options',
         'profile',
     ])
-    // console.debug('userProfile:', userProfile)
-    // console.debug('userProfile.id:', userProfile.id)
-    // console.debug('playerID:', playerID)
+
+    const room = rooms[currentRoom]
+    const owner = room?.players.length && room.players[0] === profile.id
+    console.log('owner, room:', owner, room)
 
     if (message.startsWith('Joined the game.')) {
         console.debug('On Join Message')
         if (profile.id === playerID) {
             return console.debug('ignoring self user join events')
         }
-        if (isKicked(playerID)) {
+        if (room.kicked.includes(playerID)) {
             return console.debug('return on kicked user:', playerID)
         }
-        if (banned.includes(playerID)) {
-            await kickPlayer(playerID)
-            const name = profiles[playerID]?.username || playerID
-            await sendChatMessage(`Auto Kicked Banned User: ${name}`)
-            return console.debug('return and kicked banned player:', playerID)
-        }
-        const pp = await getProfile(playerID)
-        const stats = await calStats(pp)
-        if (options.autoKickLowRate && stats.wl_percent < options.kickLowRate) {
-            await kickPlayer(playerID)
-            await sendChatMessage(
-                `Auto Kicked Low Win Rate User: ${pp.username} (${stats.wl_percent}%)`
-            )
-            return
+        const player = await getProfile(playerID)
+        const stats = await calStats(player)
+        if (owner) {
+            if (banned.includes(playerID)) {
+                await kickPlayer(playerID)
+                await sendChatMessage(
+                    `Auto Kicked Banned User: ${player.username}`
+                )
+                return console.debug('return and kicked banned:', playerID)
+            }
+            if (
+                options.autoKickLowRate &&
+                stats.wl_percent < options.kickLowRate
+            ) {
+                await kickPlayer(playerID)
+                await sendChatMessage(
+                    `Auto Kicked Low Win Rate Player: ${player.username} (${stats.wl_percent}%)`
+                )
+                return
+            }
         }
         if (options.sendOnJoin) {
             await sendStatsChat(playerID)
@@ -596,7 +602,7 @@ function updateProfile(profile, banned) {
 
     const spanGames = document.createElement('span')
     spanGames.style.color = stats.wl_percent < 45 ? '#EE4B2B' : '#50C878'
-    spanGames.id = 'stats-text'
+    // spanGames.id = 'stats-text'
     spanGames.textContent = ` W/L: ${stats.games_won.toLocaleString()} / ${stats.games_lost.toLocaleString()} (${stats.wl_percent}%) `
     divText.appendChild(spanGames)
 
@@ -719,8 +725,8 @@ async function kickClick(event) {
  */
 async function banClick(event) {
     const playerID = document.getElementById('profile-id').value
-    console.debug('banClick: playerID, event:', playerID, event)
     const { banned } = await chrome.storage.sync.get(['banned'])
+    console.debug('banClick: playerID, banned, event:', playerID, banned, event)
     if (!banned.includes(playerID)) {
         banned.push(playerID)
         await chrome.storage.sync.set({ banned })
@@ -738,8 +744,8 @@ async function banClick(event) {
  */
 async function unbanClick(event) {
     const playerID = document.getElementById('profile-id').value
-    console.debug('unbanClick: playerID, event:', playerID, event)
     const { banned } = await chrome.storage.sync.get(['banned'])
+    console.debug('banClick: playerID, banned, event:', playerID, banned, event)
     const index = banned.indexOf(playerID)
     if (index !== undefined) {
         banned.splice(index, 1)
@@ -755,10 +761,13 @@ async function unbanClick(event) {
  */
 async function kickPlayer(playerID) {
     console.debug('kickPlayer: playerID:', playerID)
-    addKicked(playerID)
-    const room = location.pathname.split('/')[2]
-    const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/action/kick`
-    // console.debug('url:', url)
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    const room = rooms[currentRoom]
+    const owner = room?.players.length && room.players[0] === profile.id
+    if (!owner || room.kicked.includes(playerID)) {
+        return console.debug('not owner or user already kicked')
+    }
+    const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${currentRoom}/action/kick`
     const response = await fetch(url, {
         method: 'POST',
         credentials: 'include',
@@ -778,8 +787,8 @@ async function kickPlayer(playerID) {
  * @param {string} message
  */
 async function sendChatMessage(message) {
-    const tid = document.getElementById('tid')?.value
-    console.debug('sendChatMessage: tid, message:', tid, message)
+    const tid = rooms[currentRoom]?.tid
+    console.debug('sendChatMessage:', currentRoom, tid, message)
     if (!tid) {
         return sendChatMessageLegacy(message)
     }
@@ -812,22 +821,5 @@ function sendChatMessageLegacy(message) {
             textarea[0].value = message
         }
         document.querySelector('button[aria-label="send message"]')?.click()
-    }
-}
-
-function isKicked(playerID) {
-    const parent = document.querySelector('aside')
-    const user = parent?.querySelector(`#kicked-${playerID}`)
-    return !!user
-}
-
-function addKicked(playerID) {
-    const parent = document.querySelector('aside')
-    const user = parent?.querySelector(`#kicked-${playerID}`)
-    if (parent && !user) {
-        const div = document.createElement('div')
-        div.style.display = 'none'
-        div.id = `kicked-${playerID}`
-        parent.appendChild(div)
     }
 }
