@@ -7,6 +7,9 @@ document.addEventListener('mouseover', documentMouseover)
 setInterval(updateUserInterval, 2 * 60000)
 
 const profiles = {}
+const rooms = {}
+// TODO: This is not used
+let currentRoom = ''
 
 // Popper Tooltip
 const tooltip = document.createElement('div')
@@ -68,10 +71,19 @@ async function onMessage(message, sender, sendResponse) {
         const profile = await getProfile(profileID)
         const { banned } = await chrome.storage.sync.get(['banned'])
         setTimeout(updateProfile, 150, profile, banned)
-    }
-    if (url.pathname.includes('/room/')) {
-        const room = url.pathname.split('/')[2]
-        setTimeout(processRoom, 250, room)
+    } else if (url.pathname.includes('/room/')) {
+        currentRoom = url.pathname.split('/')[2]
+        setTimeout(processRoom, 250, currentRoom)
+    } else {
+        // TODO: This can be done at the sse function level
+        if (source1 && source1.readyState === 1) {
+            source1.close()
+            console.log('close sse1 source1', source1)
+        }
+        if (source2 && source2.readyState === 1) {
+            source2.close()
+            console.log('close sse2 source2', source2)
+        }
     }
 }
 
@@ -115,42 +127,48 @@ async function processRoom(room) {
     }
 }
 
+let source1
+
 function sse1(room) {
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
     // const url = `https://api-v2.playdrift.com/api/v1/chat/messages/h3KnXwaJqEmA8o9rNAENq/sse`
-    console.log('connecting to sse1 url:', url)
-    const source = new EventSource(url, {
+    console.debug('connecting to sse1 url:', url)
+    source1 = new EventSource(url, {
         withCredentials: true,
     })
-    console.log('source:', source)
-    source.addEventListener('msg', function (event) {
+    console.debug('source1:', source1)
+    source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
-        // console.log('msg:', msg)
+        // console.debug('msg:', msg)
         if (msg.t === 'rs' && msg.state.tid) {
-            console.log(`Room ${room} TID = ${msg.state.tid}`)
-            const input = document.createElement('input')
-            input.hidden = true
-            input.id = 'tid'
-            input.value = msg.state.tid
-            document.querySelector('aside').appendChild(input)
+            console.debug('Room State:', msg.state)
+            rooms[room] = msg.state
             // source.close()
-            setTimeout(sse2, 150, msg.state.tid)
+            // setTimeout(sse2, 150, msg.state.tid)
+        }
+        if (msg.t === 'helo') {
+            setTimeout(sse2, 1000, room)
         }
     })
 }
 
-function sse2(tid) {
-    const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${tid}/sse`
-    console.log('connecting to sse2 url:', url)
-    const source = new EventSource(url, {
+let source2
+
+function sse2(room) {
+    if (!rooms[room]?.tid) {
+        return console.warn('room not found in rooms:', room, rooms)
+    }
+    const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${rooms[room].tid}/sse`
+    console.debug('connecting to sse2 url:', url)
+    source2 = new EventSource(url, {
         withCredentials: true,
     })
-    console.log('source:', source)
+    console.debug('source2:', source2)
     const now = Date.now()
-    source.addEventListener('msg', function (event) {
+    source2.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         if (msg.t === 'm' && msg.json?.ts > now) {
-            console.log('processing new msg:', msg)
+            console.debug('processing new msg:', msg)
             newChatMessage(msg)
         }
     })
