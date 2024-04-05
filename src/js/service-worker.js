@@ -42,6 +42,7 @@ async function onInstalled(details) {
             sendOnJoin: false,
             sendSelfOnJoin: false,
             sendMouseover: false,
+            playPlayersAudio: false,
             autoKickLowRate: false,
             kickLowRate: 40,
             // testInput: 'Default Value',

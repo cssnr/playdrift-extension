@@ -6,9 +6,17 @@ document.addEventListener('mouseover', documentMouseover)
 
 setInterval(updateUserInterval, 2 * 60000)
 
+let source1
+let source2
+
 const profiles = {}
 const rooms = {}
 let currentRoom = ''
+
+// console.log('url:', chrome.runtime.getURL('/audio/join.mp3'))
+const joinAudio = new Audio(chrome.runtime.getURL('/audio/join.mp3'))
+// console.log('joinAudio:', joinAudio)
+const leaveAudio = new Audio(chrome.runtime.getURL('/audio/leave.mp3'))
 
 // Popper Tooltip
 const tooltip = document.createElement('div')
@@ -126,8 +134,11 @@ async function processRoom(room) {
     }
 }
 
-let source1
-
+/**
+ * Server-Sent Event Room Handler
+ * @function sse1
+ * @param {String} room
+ */
 function sse1(room) {
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
     // const url = `https://api-v2.playdrift.com/api/v1/chat/messages/h3KnXwaJqEmA8o9rNAENq/sse`
@@ -141,8 +152,14 @@ function sse1(room) {
         // console.debug('msg:', msg)
         if (msg.t === 'rs' && msg.state.tid) {
             console.debug('Room State:', msg.state)
-            rooms[room] = msg.state
             console.log(`Set Room: "${room}" room.tid = ${msg.state.tid}`)
+            if (
+                rooms[room] &&
+                rooms[room].players.length !== msg.state.players.length
+            ) {
+                roomPlayerChange(rooms[room].players, msg.state.players)
+            }
+            rooms[room] = msg.state
             // source.close()
             // setTimeout(sse2, 150, msg.state.tid)
         }
@@ -152,8 +169,11 @@ function sse1(room) {
     })
 }
 
-let source2
-
+/**
+ * Server-Sent Event Chat Handler
+ * @function sse2
+ * @param {String} room
+ */
 function sse2(room) {
     if (!rooms[room]?.tid) {
         return console.warn('room not found in rooms:', room, rooms)
@@ -173,6 +193,72 @@ function sse2(room) {
     })
 }
 
+/**
+ * Room Player Update Handler
+ * @function roomPlayerChange
+ * @param {Array} before
+ * @param {Array} after
+ */
+function roomPlayerChange(before, after) {
+    console.debug('roomPlayerChange:', before, after)
+    const left = []
+    const joined = []
+    for (const player of before) {
+        if (!after.includes(player)) {
+            left.push(player)
+        }
+    }
+    playersLeaveRoom(left)
+    for (const player of after) {
+        if (!before.includes(player)) {
+            joined.push(player)
+        }
+    }
+    playersJoinRoom(joined)
+}
+
+/**
+ * Players Leave Room Handler
+ * @function playersLeaveRoom
+ * @param {Array} players
+ */
+function playersLeaveRoom(players) {
+    if (!players.length) {
+        return
+    }
+    console.debug('playersLeaveRoom:', players)
+    // const { options } = await chrome.storage.sync.get(['options'])
+    chrome.storage.sync.get(['options']).then((result) => {
+        console.log('result:', result)
+        if (result.options.playPlayersAudio) {
+            leaveAudio.play().then()
+        }
+    })
+}
+
+/**
+ * Players Join Room Handler
+ * @function playersJoinRoom
+ * @param {Array} players
+ */
+function playersJoinRoom(players) {
+    if (!players.length) {
+        return
+    }
+    console.debug('playersJoinRoom:', players)
+    chrome.storage.sync.get(['options']).then((result) => {
+        console.log('result:', result)
+        if (result.options.playPlayersAudio) {
+            joinAudio.play().then()
+        }
+    })
+}
+
+/**
+ * New Chat Message Handler
+ * @function newChatMessage
+ * @param {Object} msg
+ */
 async function newChatMessage(msg) {
     console.debug('newChatMessage:', msg)
     if (!msg.json) {
@@ -186,10 +272,11 @@ async function newChatMessage(msg) {
         'options',
         'profile',
     ])
+    console.debug('banned, options, profile:', banned, options, profile)
 
     const room = rooms[currentRoom]
     const owner = room?.players.length && room.players[0] === profile.id
-    console.log('owner, room:', owner, room)
+    console.debug('owner, room:', owner, room)
 
     if (message.startsWith('Joined the game.')) {
         console.debug('On Join Message')
@@ -236,6 +323,11 @@ async function newChatMessage(msg) {
     }
 }
 
+/**
+ * Document Mouse Over Handler
+ * @function documentMouseover
+ * @param {MouseEvent} event
+ */
 async function documentMouseover(event) {
     if (
         event.target.tagName !== 'IMG' ||

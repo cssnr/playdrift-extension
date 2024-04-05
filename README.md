@@ -51,6 +51,8 @@ All **Chromium** Based Browsers can install the extension from the
 - Automatically Send Your Own Stats to Chat When You Join
 - Show Stats Tooltip on Mouse Over
 - Show Stats on Icon on Mouse Over
+- Play Audio When Users Join or Leave a Room
+- Auto Kick Users Below X Win Percentage
 - Ban User Feature that Automatically Kicks User in Future
 
 Please submit a [Feature Request](https://github.com/smashedr/playdrift-extension/discussions/categories/feature-requests) for new features.  
