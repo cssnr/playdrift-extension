@@ -145,7 +145,7 @@ function sse1(room) {
             input.id = 'tid'
             input.value = msg.state.tid
             document.querySelector('aside').appendChild(input)
-            source.close()
+            // source.close()
             setTimeout(sse2, 150, msg.state.tid)
         }
     })
@@ -801,7 +801,7 @@ function sendChatMessageLegacy(message) {
 
 function isKicked(playerID) {
     const parent = document.querySelector('aside')
-    const user = parent.querySelector(`#kicked-${playerID}`)
+    const user = parent?.querySelector(`#kicked-${playerID}`)
     return !!user
 }
 
