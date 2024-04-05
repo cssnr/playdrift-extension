@@ -147,7 +147,7 @@ function sse1(room) {
             // setTimeout(sse2, 150, msg.state.tid)
         }
         if (msg.t === 'helo') {
-            setTimeout(sse2, 1000, room)
+            setTimeout(sse2, 2000, room)
         }
     })
 }
@@ -193,7 +193,7 @@ async function newChatMessage(msg) {
 
     if (message.startsWith('Joined the game.')) {
         console.debug('On Join Message')
-        if (profile?.id === playerID) {
+        if (profile.id === playerID) {
             return console.debug('ignoring self user join events')
         }
         if (isKicked(playerID)) {
@@ -204,6 +204,15 @@ async function newChatMessage(msg) {
             const name = profiles[playerID]?.username || playerID
             await sendChatMessage(`Auto Kicked Banned User: ${name}`)
             return console.debug('return and kicked banned player:', playerID)
+        }
+        const pp = await getProfile(playerID)
+        const stats = await calStats(pp)
+        if (options.autoKickLowRate && stats.wl_percent < options.kickLowRate) {
+            await kickPlayer(playerID)
+            await sendChatMessage(
+                `Auto Kicked Low Win Rate User: ${pp.username} (${stats.wl_percent}%)`
+            )
+            return
         }
         if (options.sendOnJoin) {
             await sendStatsChat(playerID)

@@ -31,7 +31,17 @@ export async function saveOptions(event) {
     console.debug('saveOptions:', event)
     const { options } = await chrome.storage.sync.get(['options'])
     let value
-    if (event.target.type === 'checkbox') {
+    if (event.target.id === 'kickLowRate') {
+        const number = parseInt(event.target.value, 10)
+        console.log('kickLowRate:', number)
+        if (!isNaN(number) && number >= 1 && number <= 99) {
+            event.target.value = number.toString()
+            value = number
+        } else {
+            event.target.value = options[event.target.id]
+            // TODO: Add Error Handling
+        }
+    } else if (event.target.type === 'checkbox') {
         value = event.target.checked
     } else if (event.target.type === 'number') {
         value = event.target.value.toString()
@@ -62,8 +72,14 @@ export function updateOptions(options, text = false) {
                 el.textContent = value.toString()
             } else if (typeof value === 'boolean') {
                 el.checked = value
-            } else if (typeof value === 'string') {
+            } else {
                 el.value = value
+            }
+            if (key === 'autoKickLowRate') {
+                const kickLowRate = document.getElementById('kickLowRate')
+                if (kickLowRate) {
+                    kickLowRate.disabled = !value
+                }
             }
         }
         // el.classList.remove('is-invalid')
