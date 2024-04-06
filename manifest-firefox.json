@@ -1,6 +1,7 @@
 {
   "background": {
-    "scripts": ["js/service-worker.js"]
+    "scripts": ["js/service-worker.js"],
+    "type": "module"
   },
   "optional_permissions": ["*://*.playdrift.com/*"],
   "browser_specific_settings": {

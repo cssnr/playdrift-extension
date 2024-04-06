@@ -1,6 +1,42 @@
 // JS Exports
 
 /**
+ * Open Game Tab
+ * @function playGame
+ */
+export async function playGame() {
+    const tabs = await chrome.tabs.query({
+        currentWindow: true,
+        url: '*://*.playdrift.com/*',
+    })
+    console.log('tabs:', tabs)
+    if (tabs.length) {
+        await chrome.tabs.update(tabs[0].id, { active: true })
+    } else {
+        const url = 'https://dominoes.playdrift.com/'
+        await chrome.tabs.create({ active: true, url })
+    }
+}
+
+/**
+ * Open Game Tab
+ * @function playGame
+ */
+export async function openHome() {
+    const url = chrome.runtime.getURL('/html/home.html')
+    const tabs = await chrome.tabs.query({
+        currentWindow: true,
+        url: url,
+    })
+    console.log('tabs:', tabs)
+    if (tabs.length) {
+        await chrome.tabs.update(tabs[0].id, { active: true })
+    } else {
+        await chrome.tabs.create({ active: true, url })
+    }
+}
+
+/**
  * Check Host Permissions
  * @function checkPerms
  * @return {Boolean}

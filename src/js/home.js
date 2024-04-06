@@ -1,11 +1,14 @@
 // JS for home.html
 
-import { updateOptions } from './export.js'
+import { playGame, updateOptions } from './export.js'
 
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document
     .querySelectorAll('.open-options')
     .forEach((el) => el.addEventListener('click', openOptions))
+document
+    .querySelectorAll('.play-dominoes')
+    .forEach((el) => el.addEventListener('click', playDominoes))
 // document
 //     .querySelectorAll('.open-page')
 //     .forEach((el) => el.addEventListener('click', openPage))
@@ -31,10 +34,8 @@ async function domContentLoaded() {
         .slice()
         .reverse()
         .forEach((x) => {
-            // console.log('item:', x)
             const date = new Date(x.ts_last)
             const row = tr.cloneNode(true)
-            // console.log('row:', row)
             if (x.win) {
                 row.cells[1].classList.add('text-success')
                 row.cells[2].classList.add('text-success-emphasis')
@@ -58,6 +59,12 @@ async function openOptions(event) {
     console.debug('openOptions:', event)
     event.preventDefault()
     chrome.runtime.openOptionsPage()
+}
+
+async function playDominoes(event) {
+    console.debug('playDominoes:', event)
+    event.preventDefault()
+    await playGame()
 }
 
 // async function openPage(event) {

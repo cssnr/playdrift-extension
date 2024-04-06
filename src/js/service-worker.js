@@ -1,5 +1,7 @@
 // JS Background Service Worker
 
+import { openHome, playGame } from './export.js'
+
 chrome.runtime.onStartup.addListener(onStartup)
 chrome.runtime.onInstalled.addListener(onInstalled)
 chrome.contextMenus.onClicked.addListener(onClicked)
@@ -89,8 +91,7 @@ async function onClicked(ctx, tab) {
     if (ctx.menuItemId === 'options') {
         chrome.runtime.openOptionsPage()
     } else if (ctx.menuItemId === 'openHome') {
-        const url = chrome.runtime.getURL('/html/home.html')
-        await chrome.tabs.create({ active: true, url })
+        await openHome()
     } else if (ctx.menuItemId === 'showPage') {
         await chrome.windows.create({
             type: 'detached_panel',
@@ -98,6 +99,8 @@ async function onClicked(ctx, tab) {
             width: 720,
             height: 480,
         })
+    } else if (ctx.menuItemId === 'playDominoes') {
+        await playGame()
     } else {
         console.error(`Unknown ctx.menuItemId: ${ctx.menuItemId}`)
     }
@@ -222,6 +225,7 @@ function createContextMenus() {
     chrome.contextMenus.removeAll()
     const ctx = ['all']
     const contexts = [
+        [ctx, 'playDominoes', 'normal', 'Play Dominoes'],
         [ctx, 'openHome', 'normal', 'Home Page'],
         // [ctx, 'showPage', 'normal', 'Extension Page'],
         [ctx, 'separator-1', 'separator', 'separator'],

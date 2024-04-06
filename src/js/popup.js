@@ -1,6 +1,13 @@
 // JS for popup.html
 
-import { checkPerms, saveOptions, showToast, updateOptions } from './export.js'
+import {
+    checkPerms,
+    openHome,
+    playGame,
+    saveOptions,
+    showToast,
+    updateOptions,
+} from './export.js'
 
 document.addEventListener('DOMContentLoaded', initPopup)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
@@ -65,9 +72,6 @@ async function initPopup() {
     // const platformInfo = await chrome.runtime.getPlatformInfo()
     // console.log('platformInfo:', platformInfo)
 
-    // const tabs = await chrome.tabs.query({ highlighted: true })
-    // console.log('tabs:', tabs)
-
     // const views = chrome.extension.getViews()
     // console.log('views:', views)
     // const result = views.find((item) => item.location.href.endsWith('html/home.html'))
@@ -96,6 +100,12 @@ async function popupLinks(event) {
             width: 720,
             height: 480,
         })
+        return window.close()
+    } else if (anchor.href.endsWith('html/home.html')) {
+        await openHome()
+        return window.close()
+    } else if (anchor.href.includes('dominoes.playdrift.com')) {
+        await playGame()
         return window.close()
     } else if (
         anchor.href.startsWith('http') ||
