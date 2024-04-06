@@ -3,8 +3,10 @@
 /**
  * Open Game Tab
  * @function playGame
+ * @param {MouseEvent} event
  */
-export async function playGame() {
+export async function playGame(event= null) {
+    event?.preventDefault()
     const tabs = await chrome.tabs.query({
         currentWindow: true,
         url: '*://*.playdrift.com/*',
@@ -21,8 +23,10 @@ export async function playGame() {
 /**
  * Open Game Tab
  * @function playGame
+ * @param {MouseEvent} event
  */
-export async function openHome() {
+export async function openHome(event= null) {
+    event?.preventDefault()
     const url = chrome.runtime.getURL('/html/home.html')
     const tabs = await chrome.tabs.query({
         currentWindow: true,

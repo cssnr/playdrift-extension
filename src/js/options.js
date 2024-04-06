@@ -1,6 +1,12 @@
 // JS for options.html
 
-import { checkPerms, onChanged, saveOptions, updateOptions } from './export.js'
+import {
+    checkPerms,
+    onChanged,
+    openHome,
+    saveOptions,
+    updateOptions,
+} from './export.js'
 // import { Picker } from '../dist/emoji-picker-element/index.js'
 
 chrome.storage.onChanged.addListener(onChanged)
@@ -15,6 +21,9 @@ document
 document
     .querySelectorAll('.open-oninstall')
     .forEach((el) => el.addEventListener('click', openOnInstall))
+document
+    .querySelectorAll('.open-home')
+    .forEach((el) => el.addEventListener('click', openHome))
 document
     .querySelectorAll('[data-bs-toggle="tooltip"]')
     .forEach((el) => new bootstrap.Tooltip(el))
@@ -72,7 +81,7 @@ async function grantPerms(event) {
  */
 async function openOnInstall(event) {
     console.debug('openOnInstall:', event)
-    const url = chrome.runtime.getURL('../html/oninstall.html')
+    const url = chrome.runtime.getURL('/html/oninstall.html')
     await chrome.tabs.create({ active: true, url })
     window.close()
 }

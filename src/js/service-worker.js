@@ -43,7 +43,7 @@ async function onInstalled(details) {
             showMouseover: false,
             sendOnJoin: false,
             sendSelfOnJoin: false,
-            sendMouseover: false,
+            // sendMouseover: false,
             playPlayersAudio: false,
             autoKickLowRate: false,
             kickLowRate: 40,
@@ -90,8 +90,6 @@ async function onClicked(ctx, tab) {
     console.debug('onClicked:', ctx, tab)
     if (ctx.menuItemId === 'options') {
         chrome.runtime.openOptionsPage()
-    } else if (ctx.menuItemId === 'openHome') {
-        await openHome()
     } else if (ctx.menuItemId === 'showPage') {
         await chrome.windows.create({
             type: 'detached_panel',
@@ -99,6 +97,8 @@ async function onClicked(ctx, tab) {
             width: 720,
             height: 480,
         })
+    } else if (ctx.menuItemId === 'openHome') {
+        await openHome()
     } else if (ctx.menuItemId === 'playDominoes') {
         await playGame()
     } else {
@@ -114,8 +114,7 @@ async function onClicked(ctx, tab) {
 async function onCommand(command) {
     console.debug(`onCommand: ${command}`)
     if (command === 'openHome') {
-        const url = chrome.runtime.getURL('/html/home.html')
-        await chrome.tabs.create({ active: true, url })
+        await openHome()
     } else if (command === 'showPage') {
         await chrome.windows.create({
             type: 'detached_panel',

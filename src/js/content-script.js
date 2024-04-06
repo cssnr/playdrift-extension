@@ -111,19 +111,19 @@ async function processRoom(room) {
     sse1(room)
 
     const { options } = await chrome.storage.sync.get(['options'])
-    if (options.sendMouseover) {
-        const root = document.querySelector('aside').childNodes[0]
-        if (!root.querySelector('#sendMouseover-notification')) {
-            console.debug('Adding Send Mouse Over ON Notification')
-            const div = document.createElement('div')
-            div.id = 'sendMouseover-notification'
-            div.textContent = 'Mouse Over ON'
-            div.style.textAlign = 'center'
-            div.style.color = '#50C878'
-            div.style.float = 'right'
-            root.prepend(div)
-        }
-    }
+    // if (options.sendMouseover) {
+    //     const root = document.querySelector('aside').childNodes[0]
+    //     if (!root.querySelector('#sendMouseover-notification')) {
+    //         console.debug('Adding Send Mouse Over ON Notification')
+    //         const div = document.createElement('div')
+    //         div.id = 'sendMouseover-notification'
+    //         div.textContent = 'Mouse Over ON'
+    //         div.style.textAlign = 'center'
+    //         div.style.color = '#50C878'
+    //         div.style.float = 'right'
+    //         root.prepend(div)
+    //     }
+    // }
     if (options.sendSelfOnJoin) {
         const { profile } = await chrome.storage.sync.get(['profile'])
         const stats = calStats(profile)
@@ -354,15 +354,15 @@ async function documentMouseover(event) {
     // Cache the profile
     if (
         options.showMouseover ||
-        options.sendMouseover ||
+        // options.sendMouseover ||
         options.showTooltipMouseover
     ) {
         await getProfile(event.target.parentNode.dataset.id)
     }
 
-    if (options.sendMouseover) {
-        await sendMouseover(event)
-    }
+    // if (options.sendMouseover) {
+    //     await sendMouseover(event)
+    // }
     if (options.showTooltipMouseover) {
         await showTooltipMouseover(event)
     }
@@ -371,29 +371,29 @@ async function documentMouseover(event) {
     }
 }
 
-/**
- * Send Chat Message Mouse Over Handler
- * @function sendMouseover
- * @param {MouseEvent} event
- */
-async function sendMouseover(event) {
-    // if (
-    //     event.target.tagName !== 'IMG' ||
-    //     !event.target.parentNode?.dataset?.id
-    // ) {
-    //     return
-    // }
-
-    // check if this mouse over is in chat
-    const parent =
-        event.target.parentNode.parentNode.parentNode.parentNode.parentNode
-            .parentNode
-    if (parent.dataset.testid !== 'app-layout-aside') {
-        return
-    }
-    const userID = event.target.parentNode.dataset.id
-    await sendStatsChat(userID)
-}
+// /**
+//  * Send Chat Message Mouse Over Handler
+//  * @function sendMouseover
+//  * @param {MouseEvent} event
+//  */
+// async function sendMouseover(event) {
+//     // if (
+//     //     event.target.tagName !== 'IMG' ||
+//     //     !event.target.parentNode?.dataset?.id
+//     // ) {
+//     //     return
+//     // }
+//
+//     // check if this mouse over is in chat
+//     const parent =
+//         event.target.parentNode.parentNode.parentNode.parentNode.parentNode
+//             .parentNode
+//     if (parent.dataset.testid !== 'app-layout-aside') {
+//         return
+//     }
+//     const userID = event.target.parentNode.dataset.id
+//     await sendStatsChat(userID)
+// }
 
 /**
  * Show Tooltip on Mouse Over Handler
