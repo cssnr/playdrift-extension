@@ -13,9 +13,7 @@ const profiles = {}
 const rooms = {}
 let currentRoom = ''
 
-// console.log('url:', chrome.runtime.getURL('/audio/join.mp3'))
 const joinAudio = new Audio(chrome.runtime.getURL('/audio/join.mp3'))
-// console.log('joinAudio:', joinAudio)
 const leaveAudio = new Audio(chrome.runtime.getURL('/audio/leave.mp3'))
 
 // Popper Tooltip
@@ -85,11 +83,11 @@ async function onMessage(message, sender, sendResponse) {
         // TODO: This can be done at the sse function level
         if (source1 && source1.readyState === 1) {
             source1.close()
-            console.log('close sse1 source1', source1)
+            console.debug('close sse1 source1', source1)
         }
         if (source2 && source2.readyState === 1) {
             source2.close()
-            console.log('close sse2 source2', source2)
+            console.debug('close sse2 source2', source2)
         }
     }
 }
@@ -146,13 +144,13 @@ function sse1(room) {
     source1 = new EventSource(url, {
         withCredentials: true,
     })
-    console.debug('source1:', source1)
+    // console.debug('source1:', source1)
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('msg:', msg)
         if (msg.t === 'rs' && msg.state.tid) {
             console.debug('Room State:', msg.state)
-            console.log(`Set Room: "${room}" room.tid = ${msg.state.tid}`)
+            // console.log(`Set Room: "${room}" room.tid = ${msg.state.tid}`)
             if (
                 rooms[room] &&
                 rooms[room].players.length !== msg.state.players.length
@@ -183,7 +181,7 @@ function sse2(room) {
     source2 = new EventSource(url, {
         withCredentials: true,
     })
-    console.debug('source2:', source2)
+    // console.debug('source2:', source2)
     const now = Date.now()
     source2.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
@@ -229,7 +227,7 @@ function playersLeaveRoom(players) {
     console.debug('playersLeaveRoom:', players)
     // const { options } = await chrome.storage.sync.get(['options'])
     chrome.storage.sync.get(['options']).then((result) => {
-        console.log('result:', result)
+        // console.log('result:', result)
         if (result.options.playPlayersAudio) {
             leaveAudio.play().then()
         }
@@ -247,7 +245,7 @@ function playersJoinRoom(players) {
     }
     console.debug('playersJoinRoom:', players)
     chrome.storage.sync.get(['options']).then((result) => {
-        console.log('result:', result)
+        // console.log('result:', result)
         if (result.options.playPlayersAudio) {
             joinAudio.play().then()
         }
@@ -260,7 +258,7 @@ function playersJoinRoom(players) {
  * @param {Object} msg
  */
 async function newChatMessage(msg) {
-    console.debug('newChatMessage:', msg)
+    // console.debug('newChatMessage:', msg)
     if (!msg.json) {
         return console.debug('NO msg.json')
     }
@@ -272,19 +270,21 @@ async function newChatMessage(msg) {
         'options',
         'profile',
     ])
-    console.debug('banned, options, profile:', banned, options, profile)
+    // console.debug('banned, options, profile:', banned, options, profile)
 
     const room = rooms[currentRoom]
     const owner = room?.players.length && room.players[0] === profile.id
-    console.debug('owner, room:', owner, room)
+    // console.debug('owner, room:', owner, room)
 
     if (message.startsWith('Joined the game.')) {
-        console.debug('On Join Message')
+        console.debug('Process Join Message')
         if (profile.id === playerID) {
-            return console.debug('ignoring self user join events')
+            // console.debug('ignoring self user join events')
+            return
         }
         if (room.kicked.includes(playerID)) {
-            return console.debug('return on kicked user:', playerID)
+            // console.debug('return on kicked user:', playerID)
+            return
         }
         const player = await getProfile(playerID)
         const stats = await calStats(player)
@@ -294,7 +294,8 @@ async function newChatMessage(msg) {
                 await sendChatMessage(
                     `Auto Kicked Banned User: ${player.username}`
                 )
-                return console.debug('return and kicked banned:', playerID)
+                // console.debug('return and kicked banned:', playerID)
+                return
             }
             if (
                 options.autoKickLowRate &&
@@ -308,18 +309,26 @@ async function newChatMessage(msg) {
             }
         }
         if (options.sendOnJoin) {
-            await sendStatsChat(playerID)
+            return await sendStatsChat(playerID)
         }
     }
     if (
         message.startsWith('!stat') ||
-        message.startsWith('!profile') ||
         message.startsWith('!rating') ||
         message.startsWith('!record')
     ) {
         const profile = await getProfile(playerID)
         const stats = calStats(profile)
         await sendChatMessage(stats.text)
+    } else if (
+        message.startsWith('!help') ||
+        message.startsWith('!info') ||
+        message.startsWith('!addon')
+    ) {
+        const msg1 = `Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more. More Info on GitHub: https://github.com/smashedr/playdrift-extension`
+        await sendChatMessage(msg1)
+        // const msg2 = `More information is available on GitHub: `
+        // await sendChatMessage(msg2)
     }
 }
 
@@ -606,7 +615,7 @@ async function getProfile(profileID) {
         // console.debug('cached profile expired, age:', age)
     }
     const profileUrl = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input=%7B%22id%22%3A%22${profileID}%22%2C%22game%22%3A%22dominoes%22%7D`
-    console.debug('profileUrl:', profileUrl)
+    // console.debug('profileUrl:', profileUrl)
     const response = await fetch(profileUrl)
     const data = await response.json()
     const profile = data.result.data
@@ -625,15 +634,13 @@ async function updateUserProfile(profile) {
     if (!profile) {
         return console.warn('updateUserProfile: No profile:', profile)
     }
-
-    console.debug('Updating User Profile:', profile)
+    const historyMax = 80
     await chrome.storage.sync.set({ profile })
-    userProfile = profile
+    // userProfile = profile
 
     const { history } = await chrome.storage.sync.get(['history'])
-    console.debug('history:', history)
+    console.debug('Updating User Profile:', profile, history)
     const last = history.slice(-1)[0]
-    // console.debug('last:', last)
     const current = {
         rating: profile.rating,
         games_won: profile.games_won,
@@ -641,6 +648,7 @@ async function updateUserProfile(profile) {
         ts_last: profile.ts_last,
         win: false,
     }
+    // console.debug('last, current:', last, current)
     if (
         !last ||
         last.games_won + last.games_lost !==
@@ -649,8 +657,11 @@ async function updateUserProfile(profile) {
         if (last && current.games_won > last.games_won) {
             current.win = true
         }
-        console.info('Adding current to history:', current)
+        console.info('Adding New Game:', current)
         history.push(current)
+        if (history.length > historyMax) {
+            history.splice(0, history.length - historyMax)
+        }
         await chrome.storage.sync.set({ history })
     }
 }
@@ -777,7 +788,7 @@ function copyClick(event) {
  * @param {MouseEvent} event
  */
 function sendClick(event) {
-    console.debug('sendClick: event:', event)
+    console.debug('sendClick:', event)
     const text = document.getElementById('stats-text')?.textContent
     if (text) {
         console.debug(`Sending: ${text}`)
@@ -793,9 +804,10 @@ function sendClick(event) {
  */
 async function sendKickClick(event) {
     const playerID = document.getElementById('profile-id').value
-    console.debug('sendKickClick: playerID, event:', playerID, event)
+    console.debug('sendKickClick:', playerID, event)
     await kickPlayer(playerID)
-    sendClick(event)
+    // sendClick(event)
+    await sendChatMessage(`Kicked Player: ${profiles[playerID] || playerID}`)
 }
 
 /**
@@ -805,7 +817,7 @@ async function sendKickClick(event) {
  */
 async function kickClick(event) {
     const playerID = document.getElementById('profile-id').value
-    console.debug('kickClick: playerID, event:', playerID, event)
+    console.debug('kickClick:', playerID, event)
     await kickPlayer(playerID)
     history.back()
 }
@@ -818,7 +830,7 @@ async function kickClick(event) {
 async function banClick(event) {
     const playerID = document.getElementById('profile-id').value
     const { banned } = await chrome.storage.sync.get(['banned'])
-    console.debug('banClick: playerID, banned, event:', playerID, banned, event)
+    console.debug('banClick:', playerID, banned, event)
     if (!banned.includes(playerID)) {
         banned.push(playerID)
         await chrome.storage.sync.set({ banned })
@@ -837,7 +849,7 @@ async function banClick(event) {
 async function unbanClick(event) {
     const playerID = document.getElementById('profile-id').value
     const { banned } = await chrome.storage.sync.get(['banned'])
-    console.debug('banClick: playerID, banned, event:', playerID, banned, event)
+    console.debug('banClick:', playerID, banned, event)
     const index = banned.indexOf(playerID)
     if (index !== undefined) {
         banned.splice(index, 1)
@@ -852,7 +864,7 @@ async function unbanClick(event) {
  * @param {string} playerID
  */
 async function kickPlayer(playerID) {
-    console.debug('kickPlayer: playerID:', playerID)
+    console.debug('kickPlayer:', playerID)
     const { profile } = await chrome.storage.sync.get(['profile'])
     const room = rooms[currentRoom]
     const owner = room?.players.length && room.players[0] === profile.id

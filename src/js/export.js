@@ -123,6 +123,22 @@ export function updateOptions(options, text = false) {
 }
 
 /**
+ * On Changed Callback
+ * @function onChanged
+ * @param {Object} changes
+ * @param {String} namespace
+ */
+export function onChanged(changes, namespace) {
+    console.debug('onChanged:', changes, namespace)
+    for (const [key, { newValue }] of Object.entries(changes)) {
+        if (namespace === 'sync' && key === 'options') {
+            console.debug('newValue:', newValue)
+            updateOptions(newValue)
+        }
+    }
+}
+
+/**
  * Show Bootstrap Toast
  * @function showToast
  * @param {String} message

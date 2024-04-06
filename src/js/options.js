@@ -1,6 +1,6 @@
 // JS for options.html
 
-import { checkPerms, saveOptions, updateOptions } from './export.js'
+import { checkPerms, onChanged, saveOptions, updateOptions } from './export.js'
 // import { Picker } from '../dist/emoji-picker-element/index.js'
 
 chrome.storage.onChanged.addListener(onChanged)
@@ -51,22 +51,6 @@ async function initOptions() {
 // function onEmojiSelect(emojiData, event) {
 //     console.debug('onEmojiSelect:', emojiData, event)
 // }
-
-/**
- * On Changed Callback
- * @function onChanged
- * @param {Object} changes
- * @param {String} namespace
- */
-function onChanged(changes, namespace) {
-    console.debug('onChanged:', changes, namespace)
-    for (const [key, { newValue }] of Object.entries(changes)) {
-        if (namespace === 'sync' && key === 'options') {
-            console.debug('newValue:', newValue)
-            updateOptions(newValue)
-        }
-    }
-}
 
 /**
  * Grant Permissions Click Callback

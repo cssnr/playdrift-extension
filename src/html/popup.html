@@ -15,11 +15,11 @@
 <div class="container-fluid p-3">
     <div class="row">
         <div class="col-6">
-            <a class="btn btn-outline-success w-100 mb-2" role="button" href="https://dominoes.playdrift.com/">
+            <a class="btn btn-outline-success btn-sm w-100 mb-2" role="button" href="https://dominoes.playdrift.com/">
                 <i class="fa-solid fa-dice-six me-1"></i> Play</a>
         </div>
         <div class="col-6">
-            <a class="btn btn-outline-primary w-100 mb-2" role="button" href="../html/home.html">
+            <a class="btn btn-outline-primary btn-sm w-100 mb-2" role="button" href="../html/home.html">
                 <i class="fa-solid fa-house-chimney me-1"></i> Home</a>
         </div>
     </div>
@@ -30,29 +30,36 @@
         <p class="text-center mb-1"><a role="button" href="../html/oninstall.html" class="">More Information on Permissions</a></p>
     </div>
 
-    <h5 id="username" class="text-center"></h5>
-    <table class="table table-hover table-sm">
-        <thead>
-        <tr class="visually-hidden">
-            <th scope="col">Key</th>
-            <th scope="col">Value</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">Rating</th>
-            <td id="rating" class=""></td>
-        </tr>
-        <tr>
-            <th scope="row">Wins</th>
-            <td id="games_won" class="text-success-emphasis"></td>
-        </tr>
-        <tr>
-            <th scope="row">Losses</th>
-            <td id="games_lost" class="text-danger-emphasis"></td>
-        </tr>
-        </tbody>
-    </table>
+    <h2 class="text-center mb-0"><span id="username"></span> <small id="rating" class="text-body-secondary"></small></h2>
+    <p class="lead text-center mb-2">
+        Won: <span id="games_won" class="text-success-emphasis fw-bold"></span>
+        Lost: <span id="games_lost" class="text-danger-emphasis fw-bold"></span>
+    </p>
+
+<!--    <p>Rating: <span id="rating"></span></p>-->
+<!--    <table class="table table-hover table-sm">-->
+<!--        <thead>-->
+<!--        <tr class="visually-hidden">-->
+<!--            <th scope="col">Key</th>-->
+<!--            <th scope="col">Value</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr>-->
+<!--            <th scope="row">Rating</th>-->
+<!--            <td id="rating" class=""></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <th scope="row">Wins</th>-->
+<!--            <td id="games_won" class="text-success-emphasis"></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <th scope="row">Losses</th>-->
+<!--            <td id="games_lost" class="text-danger-emphasis"></td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+
 <!--    <hr>-->
 <!--    <div class="d-grid g-2 gap-2">-->
 <!--        <a id="revoke-perms" class="btn btn-outline-danger d-none has-perms" role="button">Remove Host Permissions</a>-->
@@ -64,6 +71,7 @@
 <!--    </div>-->
 <!--    <hr>-->
 <!--    <p class="text-warning-emphasis text-center mb-2">Game Options are Experimental!</p>-->
+
     <form id="options-form" class="mb-3">
         <div class="form-check form-switch">
             <input class="form-check-input" id="showTooltipMouseover" type="checkbox" role="switch">
@@ -128,8 +136,13 @@
                 </span>
             </label>
         </div>
+        <div class="ms-5 mb-2" style="width: 100px;">
+            <label for="kickLowRate" class="form-label visually-hidden"><i class="fa-solid fa-list-ol me-2"></i> Kick Low Rate</label>
+            <input id="kickLowRate" aria-describedby="kickLowRateHelp" type="number" class="form-control form-control-sm" autocomplete="off">
+<!--            <div class="form-text" id="kickLowRateHelp">Popup Recent Files. <span class="d-inline-block">0 to Disable.</span></div>-->
+        </div>
 
-        <hr>
+<!--        <hr>-->
 
         <div class="form-check form-switch">
             <input class="form-check-input" id="contextMenu" type="checkbox" role="switch">
@@ -150,7 +163,7 @@
             </label>
         </div>
     </form>
-    <a class="btn btn-outline-info w-100" role="button" href="../html/options.html">
+    <a class="btn btn-outline-info btn-sm w-100" role="button" href="../html/options.html">
         <i class="fa-solid fa-sliders me-1"></i> Open Options</a>
     <hr>
     <div class="d-flex justify-content-center align-items-center text-center small">

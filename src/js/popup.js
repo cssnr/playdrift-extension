@@ -2,12 +2,15 @@
 
 import {
     checkPerms,
+    onChanged,
     openHome,
     playGame,
     saveOptions,
     showToast,
     updateOptions,
 } from './export.js'
+
+chrome.storage.onChanged.addListener(onChanged)
 
 document.addEventListener('DOMContentLoaded', initPopup)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
