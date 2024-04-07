@@ -2,6 +2,8 @@
 
 import { playGame, updateOptions } from './export.js'
 
+chrome.storage.onChanged.addListener(onChanged)
+
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document
     .querySelectorAll('.open-options')
@@ -12,6 +14,11 @@ document
 // document
 //     .querySelectorAll('.open-page')
 //     .forEach((el) => el.addEventListener('click', openPage))
+
+// document.addEventListener('focus', onFocus)
+// function onFocus(e) {
+//     window.location.reload()
+// }
 
 const historyTable = document.getElementById('history-table')
 
@@ -28,6 +35,12 @@ async function domContentLoaded() {
     ])
     console.debug('history, options, profile:', history, options, profile)
     updateOptions(profile, true)
+    if (!profile || !Object.keys(profile).length) {
+        document
+            .querySelectorAll('.profile')
+            .forEach((el) => el.classList.add('d-none'))
+        document.getElementById('no-profile').classList.remove('d-none')
+    }
     const tbody = historyTable.querySelector('tbody')
     const tr = historyTable.querySelector('tfoot tr')
     history
@@ -77,3 +90,19 @@ async function playDominoes(event) {
 //         height: 480,
 //     })
 // }
+
+/**
+ * On Changed Callback
+ * @function onChanged
+ * @param {Object} changes
+ * @param {String} namespace
+ */
+export function onChanged(changes, namespace) {
+    console.debug('onChanged:', changes, namespace)
+    for (const [key, { newValue }] of Object.entries(changes)) {
+        if ((namespace === 'sync' && key === 'profile') || key === 'history') {
+            console.debug('newValue:', newValue)
+            window.location.reload()
+        }
+    }
+}

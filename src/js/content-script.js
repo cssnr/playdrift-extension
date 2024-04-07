@@ -8,6 +8,7 @@ setInterval(updateUserInterval, 2 * 60000)
 
 let source1
 let source2
+let source3
 
 const profiles = {}
 const rooms = {}
@@ -15,6 +16,7 @@ let currentRoom = ''
 
 const joinAudio = new Audio(chrome.runtime.getURL('/audio/join.mp3'))
 const leaveAudio = new Audio(chrome.runtime.getURL('/audio/leave.mp3'))
+const turnAudio = new Audio(chrome.runtime.getURL('/audio/turn.mp3'))
 
 // Popper Tooltip
 const tooltip = document.createElement('div')
@@ -77,8 +79,17 @@ async function onMessage(message, sender, sendResponse) {
         const { banned } = await chrome.storage.sync.get(['banned'])
         setTimeout(updateProfile, 150, profile, banned)
     } else if (url.pathname.includes('/room/')) {
-        currentRoom = url.pathname.split('/')[2]
-        setTimeout(processRoom, 250, currentRoom)
+        const split = url.pathname.split('/')
+        const room = split[2]
+        const game = split[3]
+        currentRoom = room
+        // console.debug('SET currentRoom:', currentRoom)
+        if (room) {
+            setTimeout(processRoom, 250, room)
+        }
+        if (game) {
+            await processGame(game)
+        }
     } else {
         // TODO: This can be done at the sse function level
         if (source1 && source1.readyState === 1) {
@@ -89,9 +100,19 @@ async function onMessage(message, sender, sendResponse) {
             source2.close()
             console.debug('close sse2 source2', source2)
         }
+        if (source3 && source3.readyState === 1) {
+            source3.close()
+            console.debug('close sse2 source3', source3)
+        }
     }
 }
 
+/**
+ * Process Room Handler
+ * TODO: Refactor this function to check source1 connection
+ * @function processRoom
+ * @param {String} room
+ */
 async function processRoom(room) {
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
@@ -107,29 +128,31 @@ async function processRoom(room) {
     aside.appendChild(div)
 
     console.debug(`Process Room: ${room}`)
-    // setTimeout(sse1, 150, room)
-    sse1(room)
+    await sse1(room)
+}
 
-    const { options } = await chrome.storage.sync.get(['options'])
-    // if (options.sendMouseover) {
-    //     const root = document.querySelector('aside').childNodes[0]
-    //     if (!root.querySelector('#sendMouseover-notification')) {
-    //         console.debug('Adding Send Mouse Over ON Notification')
-    //         const div = document.createElement('div')
-    //         div.id = 'sendMouseover-notification'
-    //         div.textContent = 'Mouse Over ON'
-    //         div.style.textAlign = 'center'
-    //         div.style.color = '#50C878'
-    //         div.style.float = 'right'
-    //         root.prepend(div)
-    //     }
-    // }
-    if (options.sendSelfOnJoin) {
-        const { profile } = await chrome.storage.sync.get(['profile'])
-        const stats = calStats(profile)
-        // await sendChatMessage(stats.text)
-        setTimeout(sendChatMessage, 500, stats.text)
+/**
+ * Process Game Handler
+ * TODO: Refactor this function to check source3 connection
+ * @function processGame
+ * @param {String} game
+ */
+async function processGame(game) {
+    const aside = document.querySelector('aside')
+    console.debug('aside:', aside)
+    if (!aside) {
+        return console.warn('Error Processing Game, No ASIDE:', game)
     }
+    const processed = aside.querySelector(`#processed-${game}`)
+    if (processed) {
+        return console.debug('Already Processed Game:', game)
+    }
+    const div = document.createElement('div')
+    div.id = `processed-${game}`
+    aside.appendChild(div)
+
+    console.debug(`Process Game: ${game}`)
+    await sse3(game)
 }
 
 /**
@@ -137,7 +160,7 @@ async function processRoom(room) {
  * @function sse1
  * @param {String} room
  */
-function sse1(room) {
+async function sse1(room) {
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
     // const url = `https://api-v2.playdrift.com/api/v1/chat/messages/h3KnXwaJqEmA8o9rNAENq/sse`
     console.debug('connecting to sse1 url:', url)
@@ -145,6 +168,10 @@ function sse1(room) {
         withCredentials: true,
     })
     // console.debug('source1:', source1)
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('msg:', msg)
@@ -163,6 +190,9 @@ function sse1(room) {
         }
         if (msg.t === 'helo') {
             setTimeout(sse2, 2000, room)
+            if (options.sendSelfOnJoin) {
+                sendPlayerStats(profile.id).then()
+            }
         }
     })
 }
@@ -172,7 +202,7 @@ function sse1(room) {
  * @function sse2
  * @param {String} room
  */
-function sse2(room) {
+async function sse2(room) {
     if (!rooms[room]?.tid) {
         return console.warn('room not found in rooms:', room, rooms)
     }
@@ -187,6 +217,47 @@ function sse2(room) {
         const msg = JSON.parse(event.data)
         if (msg.t === 'm' && msg.json?.ts > now) {
             newChatMessage(msg).then()
+        }
+    })
+}
+
+/**
+ * Server-Sent Event Game Handler
+ * TODO: Options Handling Needs Overhaul vs Always Calling Get
+ * TODO: Add Option to Set Audio Tone after Options Overhaul
+ * @function sse3
+ * @param {String} game
+ */
+async function sse3(game) {
+    if (!game) {
+        return console.warn('game not provided:', game)
+    }
+    const rand = (Math.random() + 1).toString(36).substring(2)
+    const url = `https://api-v2.playdrift.com/api/v1/game/${game}/sse?sseid=${rand}`
+    console.debug('connecting to sse3 url:', url)
+    source3 = new EventSource(url, {
+        withCredentials: true,
+    })
+    // console.debug('source3:', source3)
+    // const { options, profile } = await chrome.storage.sync.get([
+    //     'options',
+    //     'profile',
+    // ])
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    source3.addEventListener('msg', async (event) => {
+        const msg = JSON.parse(event.data)
+        // console.debug('msg:', msg)
+        if (msg.t === 'a') {
+            if (msg.a.t === 'player') {
+                if (msg.a.pid === profile.id) {
+                    const { options } = await chrome.storage.sync.get([
+                        'options',
+                    ])
+                    if (options.playTurnAudio) {
+                        await turnAudio.play()
+                    }
+                }
+            }
         }
     })
 }
@@ -282,7 +353,7 @@ async function newChatMessage(msg) {
             // console.debug('ignoring self user join events')
             return
         }
-        if (room.kicked.includes(playerID)) {
+        if (room?.kicked.includes(playerID)) {
             // console.debug('return on kicked user:', playerID)
             return
         }
@@ -317,9 +388,7 @@ async function newChatMessage(msg) {
         message.startsWith('!rating') ||
         message.startsWith('!record')
     ) {
-        const profile = await getProfile(playerID)
-        const stats = calStats(profile)
-        await sendChatMessage(stats.text)
+        await sendPlayerStats(playerID)
     } else if (
         message.startsWith('!help') ||
         message.startsWith('!info') ||
@@ -327,8 +396,6 @@ async function newChatMessage(msg) {
     ) {
         const msg1 = `Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more. More Info on GitHub: https://github.com/smashedr/playdrift-extension`
         await sendChatMessage(msg1)
-        // const msg2 = `More information is available on GitHub: `
-        // await sendChatMessage(msg2)
     }
 }
 
@@ -519,7 +586,7 @@ async function showMouseover(event) {
 }
 
 /**
- * Send Stats to Chat
+ * Send Stats to Chat One Time
  * @function sendStatsChat
  * @param {string} playerID
  */
@@ -534,7 +601,15 @@ async function sendStatsChat(playerID) {
     div.style.display = 'none'
     div.id = `userid-${playerID}`
     aside.appendChild(div)
+    await sendPlayerStats(playerID)
+}
 
+/**
+ * Send Player Stats to Chat
+ * @function sendPlayerStats
+ * @param {string} playerID
+ */
+async function sendPlayerStats(playerID) {
     const profile = await getProfile(playerID)
     const stats = calStats(profile)
     await sendChatMessage(stats.text)

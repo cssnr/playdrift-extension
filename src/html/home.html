@@ -26,20 +26,24 @@
                 <i class="fa-solid fa-dice-six me-1"></i> Play Dominoes</a>
         </div>
     </div>
-    <div class="row">
-        <h1>
-            <span id="username"></span>
-            <small id="id" class="text-body-secondary"></small>
-        </h1>
-        <p class="lead">
-            <span class="fw-bold">Rating: <span id="rating"></span></span>
-            Games Won: <span id="games_won" class="text-success-emphasis fw-bold"></span>
-            Games Lost: <span id="games_lost" class="text-danger-emphasis fw-bold"></span>
-        </p>
-    </div>
-    <div class="row">
-        <h3>Last 80 Games</h3>
+    <div id="no-profile" class="row d-none">
         <div class="col-12">
+            <p class="lead">To populate your profile, head over to <a href="https://dominoes.playdrift.com/" target="_blank" rel="noopener">PlayDrift</a> and log in.</p>
+            <p>Tip: If the profile does not update in a few seconds, make sure you are logged in, refresh the page (F5).</p>
+        </div>
+    </div>
+    <div class="row profile">
+        <div class="col-12">
+            <h1>
+                <span id="username"></span>
+                <small id="id" class="text-body-secondary"></small>
+            </h1>
+            <p class="lead">
+                <span class="fw-bold">Rating: <span id="rating"></span></span>
+                Games Won: <span id="games_won" class="text-success-emphasis fw-bold"></span>
+                Games Lost: <span id="games_lost" class="text-danger-emphasis fw-bold"></span>
+            </p>
+            <h3>Last 80 Games</h3>
             <table id="history-table" class="table table-hover table-sm">
                 <caption class="visually-hidden">Last 80 Games</caption>
                 <thead>

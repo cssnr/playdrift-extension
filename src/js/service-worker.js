@@ -37,16 +37,17 @@ async function onInstalled(details) {
     const githubURL = 'https://github.com/smashedr/playdrift-extension'
     const options = await Promise.resolve(
         setDefaultOptions({
-            contextMenu: true,
-            showUpdate: false,
             showTooltipMouseover: false,
             showMouseover: false,
             sendOnJoin: false,
             sendSelfOnJoin: false,
             // sendMouseover: false,
+            playTurnAudio: false,
             playPlayersAudio: false,
             autoKickLowRate: false,
             kickLowRate: 40,
+            contextMenu: true,
+            showUpdate: false,
             // testInput: 'Default Value',
         })
     )

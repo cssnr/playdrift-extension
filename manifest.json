@@ -3,7 +3,7 @@
   "description": "PlayDrift Web Extension.",
   "homepage_url": "https://github.com/smashedr/playdrift-extension",
   "author": "Shane",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "manifest_version": 3,
   "commands": {
     "_execute_action": {
@@ -36,11 +36,7 @@
   "web_accessible_resources": [
     {
       "matches": ["*://*.playdrift.com/*"],
-      "resources": [
-        "dist/jquery/jquery.min.js",
-        "audio/leave.mp3",
-        "audio/join.mp3"
-      ]
+      "resources": ["dist/*", "audio/*"]
     }
   ],
   "background": {},
