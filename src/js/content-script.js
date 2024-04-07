@@ -120,6 +120,16 @@ async function onMessage(message, sender, sendResponse) {
  * @param {String} room
  */
 async function processRoom(room) {
+    const { options } = await chrome.storage.sync.get(['options'])
+    const parent = document.querySelector('div[data-testid="room"]')
+    // console.debug('parent:', parent)
+    if (options.autoUpdateOptions) {
+        const root = parent?.querySelector(
+            '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
+        )
+        // console.debug('root:', root)
+        root?.querySelector('button')?.click()
+    }
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
     if (!aside) {
