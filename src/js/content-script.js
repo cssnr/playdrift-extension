@@ -175,20 +175,18 @@ async function sse1(room) {
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('msg:', msg)
-        if (msg.t === 'rs' && msg.state.tid) {
+        if (msg.t === 'rs' && msg.state?.tid) {
             console.debug('Room State:', msg.state)
-            // console.log(`Set Room: "${room}" room.tid = ${msg.state.tid}`)
-            if (rooms[room] && !rooms[room].game && msg.state.game) {
-                gameStart(msg.state).then()
-            }
-            if (rooms[room] && rooms[room].game && !msg.state.game) {
-                gameEnd(msg.state).then()
-            }
-            if (
-                rooms[room] &&
-                rooms[room].players.length !== msg.state.players.length
-            ) {
-                roomPlayerChange(rooms[room].players, msg.state.players)
+            if (rooms[room]) {
+                if (!rooms[room].game && msg.state.game) {
+                    gameStart(msg.state).then()
+                }
+                if (rooms[room].game && !msg.state.game) {
+                    gameEnd(msg.state).then()
+                }
+                if (rooms[room].players.length !== msg.state.players.length) {
+                    roomPlayerChange(rooms[room].players, msg.state.players)
+                }
             }
             rooms[room] = msg.state
             // source.close()
@@ -201,21 +199,6 @@ async function sse1(room) {
             }
         }
     })
-}
-
-async function gameStart(state) {
-    console.info('Game Start:', state.game.id, state)
-    if (state.game.teams) {
-        // TODO: Requires Processing of state.game.teams
-        console.info('Team:', state.game.teams)
-        // TODO: Make this an Option with Customizable Text
-        await sendChatMessage('Game Start! Good Luck to Everyone and Have Fun!')
-    }
-}
-
-async function gameEnd(state) {
-    console.info('Game End:', state.game.id, state)
-    // TODO: Need to get results and process
 }
 
 /**
@@ -343,6 +326,27 @@ function playersJoinRoom(players) {
             joinAudio.play().then()
         }
     })
+}
+
+async function gameStart(state) {
+    console.info('Game Start:', state.game.id, state)
+    if (state.game.teams) {
+        // TODO: Requires Processing of state.game.teams
+        console.info('Team:', state.game.teams)
+        // TODO: Make this an Option with Customizable Text
+        const { profile } = await chrome.storage.sync.get(['profile'])
+        if (state.game.gameOptions.pids.includes(profile.id)) {
+            console.log('You are Playing in this Game!')
+            await sendChatMessage(
+                'Game Start! Good Luck to Everyone and Have Fun!'
+            )
+        }
+    }
+}
+
+async function gameEnd(state) {
+    console.info('Game End:', state.game.id, state)
+    // TODO: Need to get results and process
 }
 
 /**
