@@ -41,6 +41,26 @@ export async function openHome(event = null) {
 }
 
 /**
+ * Focus or Open Tab/URL
+ * TODO: Not yet in use
+ * @function focusOpen
+ * @param {string} url
+ */
+export async function focusOpen(url) {
+    const queryInfo = {
+        currentWindow: true,
+        url: url,
+    }
+    const tabs = await chrome.tabs.query(queryInfo)
+    console.log('tabs:', tabs)
+    if (tabs.length) {
+        await chrome.tabs.update(tabs[0].id, { active: true })
+    } else {
+        await chrome.tabs.create({ active: true, url: url })
+    }
+}
+
+/**
  * Check Host Permissions
  * @function checkPerms
  * @return {Boolean}

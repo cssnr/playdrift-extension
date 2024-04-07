@@ -41,7 +41,7 @@ async function initOptions() {
     await setShortcuts({
         mainKey: '_execute_action',
         openHome: 'openHome',
-        showPage: 'showPage',
+        playGame: 'playGame',
     })
 
     const { options } = await chrome.storage.sync.get(['options'])

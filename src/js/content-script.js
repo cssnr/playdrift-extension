@@ -411,9 +411,8 @@ async function newChatMessage(msg) {
                 stats.wl_percent < options.kickLowRate
             ) {
                 await kickPlayer(playerID)
-                await sendChatMessage(
-                    `Auto Kicked Low Win Rate Player: ${player.username} (${stats.wl_percent}%)`
-                )
+                const ss = `${player.username} ${stats.games_won}/${stats.games_lost} (${stats.wl_percent}%)`
+                await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
                 return
             }
         }
