@@ -178,6 +178,12 @@ async function sse1(room) {
         if (msg.t === 'rs' && msg.state.tid) {
             console.debug('Room State:', msg.state)
             // console.log(`Set Room: "${room}" room.tid = ${msg.state.tid}`)
+            if (rooms[room] && !rooms[room].game && msg.state.game) {
+                gameStart(msg.state).then()
+            }
+            if (rooms[room] && rooms[room].game && !msg.state.game) {
+                gameEnd(msg.state).then()
+            }
             if (
                 rooms[room] &&
                 rooms[room].players.length !== msg.state.players.length
@@ -197,6 +203,21 @@ async function sse1(room) {
     })
 }
 
+async function gameStart(state) {
+    console.info('Game Start:', state.game.id, state)
+    if (state.game.teams) {
+        // TODO: Requires Processing of state.game.teams
+        console.info('Team:', state.game.teams)
+        // TODO: Make this an Option with Customizable Text
+        await sendChatMessage('Game Start! Good Luck to Everyone and Have Fun!')
+    }
+}
+
+async function gameEnd(state) {
+    console.info('Game End:', state.game.id, state)
+    // TODO: Need to get results and process
+}
+
 /**
  * Server-Sent Event Chat Handler
  * @function sse2
@@ -212,6 +233,7 @@ async function sse2(room) {
         withCredentials: true,
     })
     // console.debug('source2:', source2)
+    // TODO: Checking date might not be necessary!
     const now = Date.now()
     source2.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
