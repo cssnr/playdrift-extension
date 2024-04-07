@@ -5,7 +5,7 @@
  * @function playGame
  * @param {MouseEvent} event
  */
-export async function playGame(event= null) {
+export async function playGame(event = null) {
     event?.preventDefault()
     const tabs = await chrome.tabs.query({
         currentWindow: true,
@@ -25,7 +25,7 @@ export async function playGame(event= null) {
  * @function playGame
  * @param {MouseEvent} event
  */
-export async function openHome(event= null) {
+export async function openHome(event = null) {
     event?.preventDefault()
     const url = chrome.runtime.getURL('/html/home.html')
     const tabs = await chrome.tabs.query({
@@ -117,6 +117,12 @@ export function updateOptions(options, text = false) {
             }
             if (key === 'autoKickLowRate') {
                 const kickLowRate = document.getElementById('kickLowRate')
+                if (kickLowRate) {
+                    kickLowRate.disabled = !value
+                }
+            }
+            if (key === 'sendGameStart') {
+                const kickLowRate = document.getElementById('gameStartMessage')
                 if (kickLowRate) {
                     kickLowRate.disabled = !value
                 }

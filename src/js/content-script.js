@@ -60,6 +60,12 @@ function generateGetBoundingClientRect(x = 0, y = 0) {
     })
 }
 
+document.addEventListener('blur', function (event) {
+    // console.debug('documentBlur', event)
+    tooltip.style.display = 'none'
+    instance.update()
+})
+
 /**
  * On Message Callback
  * @function onMessage
@@ -193,9 +199,10 @@ async function sse1(room) {
             // setTimeout(sse2, 150, msg.state.tid)
         }
         if (msg.t === 'helo') {
-            setTimeout(sse2, 2000, room)
+            setTimeout(sse2, 250, room)
             if (options.sendSelfOnJoin) {
-                sendPlayerStats(profile.id).then()
+                // sendPlayerStats(profile.id).then()
+                setTimeout(sendPlayerStats, 250, profile.id)
             }
         }
     })
@@ -330,17 +337,22 @@ function playersJoinRoom(players) {
 
 async function gameStart(state) {
     console.info('Game Start:', state.game.id, state)
-    if (state.game.teams) {
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    // console.debug('options, profile:', options, profile)
+    if (state.game.gameOptions.teams) {
         // TODO: Requires Processing of state.game.teams
-        console.info('Team:', state.game.teams)
+        console.info('Teams:', state.game.gameOptions.teams)
         // TODO: Make this an Option with Customizable Text
-        const { profile } = await chrome.storage.sync.get(['profile'])
-        if (state.game.gameOptions.pids.includes(profile.id)) {
-            console.log('You are Playing in this Game!')
-            await sendChatMessage(
-                'Game Start! Good Luck to Everyone and Have Fun!'
-            )
-        }
+    }
+    if (
+        options.sendGameStart &&
+        state.game.gameOptions.pids.includes(profile.id)
+    ) {
+        console.info('You are Playing in this Game!')
+        await sendChatMessage(options.gameStartMessage)
     }
 }
 

@@ -46,9 +46,10 @@ async function onInstalled(details) {
             playPlayersAudio: false,
             autoKickLowRate: false,
             kickLowRate: 40,
+            sendGameStart: false,
+            gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
             contextMenu: true,
             showUpdate: false,
-            // testInput: 'Default Value',
         })
     )
     console.debug('options:', options)
