@@ -345,7 +345,7 @@ async function playersLeaveRoom(state, players) {
                 // const message = `Player ${profile.username} has left.`
                 // sendChatMessage(message).then()
                 getProfile(playerID).then((profile) => {
-                    const message = `Player ${profile.username} has left.`
+                    const message = `${profile.username} left the game.`
                     sendChatMessage(message).then()
                 })
             }
@@ -876,13 +876,8 @@ function updateProfile(profile, banned) {
     const copyButton = button.cloneNode(true)
     copyButton.addEventListener('click', copyClick)
     copyButton.textContent = 'Copy'
-    copyButton.style.marginRight = '15px'
+    copyButton.style.marginRight = '20px'
     divBtns.appendChild(copyButton)
-
-    const kickButton = button.cloneNode(true)
-    kickButton.addEventListener('click', kickClick)
-    kickButton.textContent = 'Kick'
-    divBtns.appendChild(kickButton)
 
     if (!banned.includes(profile.id)) {
         const banButton = button.cloneNode(true)
@@ -896,15 +891,20 @@ function updateProfile(profile, banned) {
         divBtns.appendChild(banButton)
     }
 
+    const kickButton = button.cloneNode(true)
+    kickButton.addEventListener('click', kickClick)
+    kickButton.textContent = 'Kick'
+    divBtns.appendChild(kickButton)
+
     const sendKickButton = button.cloneNode(true)
     sendKickButton.addEventListener('click', sendKickClick)
-    sendKickButton.textContent = 'Send/Kick'
+    sendKickButton.textContent = 'Kick/Send'
     divBtns.appendChild(sendKickButton)
 
     const sendButton = button.cloneNode(true)
     sendButton.addEventListener('click', sendClick)
     sendButton.textContent = 'Send'
-    sendButton.style.marginLeft = '15px'
+    sendButton.style.marginLeft = '20px'
     divBtns.appendChild(sendButton)
 
     root.appendChild(divBtns)

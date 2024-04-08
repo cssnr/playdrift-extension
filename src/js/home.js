@@ -1,11 +1,18 @@
 // JS for home.html
 
-import { checkPerms, grantPerms, playGame, updateOptions } from './export.js'
+import {
+    checkPerms,
+    grantPerms,
+    playGame,
+    showToast,
+    updateOptions,
+} from './export.js'
 
 chrome.storage.onChanged.addListener(onChanged)
 
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
+document.getElementById('banned-form').addEventListener('submit', addBannedUser)
 document
     .querySelectorAll('.open-options')
     .forEach((el) => el.addEventListener('click', openOptions))
@@ -129,6 +136,33 @@ function updateBanned(banned) {
         cell2.setAttribute('role', 'button')
         cell2.appendChild(link)
     })
+}
+
+/**
+ * Add Banned User
+ * @function addBannedUser
+ * @param {SubmitEvent} event
+ */
+async function addBannedUser(event) {
+    console.debug('addBannedUser:', event)
+    event.preventDefault()
+    // const element = document.querySelector('#banned-form input')
+    const input = document.getElementById('add-banned')
+    const user = input.value.trim()
+    if (user.length !== 36) {
+        showToast('You must provide a valid User ID.', 'danger')
+    } else {
+        console.log(`user: ${user}`)
+        const { banned } = await chrome.storage.sync.get(['banned'])
+        if (!banned.includes(user)) {
+            banned.push(user)
+            console.debug('banned:', banned)
+            await chrome.storage.sync.set({ banned })
+            updateBanned(banned)
+        }
+        input.value = ''
+    }
+    input.focus()
 }
 
 /**
