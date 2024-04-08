@@ -6,16 +6,21 @@ document.addEventListener('mouseover', documentMouseover)
 
 setInterval(updateUserInterval, 2 * 60000)
 
+// SSE
 let source1
 let source2
 let source3
 
+// State
 const profiles = {}
 const rooms = {}
 let currentRoom = ''
 
+// Audio
+const speech = new SpeechSynthesisUtterance()
 const joinAudio = new Audio(chrome.runtime.getURL('/audio/join.mp3'))
 const leaveAudio = new Audio(chrome.runtime.getURL('/audio/leave.mp3'))
+const messageAudio = new Audio(chrome.runtime.getURL('/audio/message.mp3'))
 const turnAudio = new Audio(chrome.runtime.getURL('/audio/turn.mp3'))
 
 // Popper Tooltip
@@ -429,20 +434,30 @@ async function newChatMessage(msg) {
         if (options.sendOnJoin) {
             return await sendStatsChat(playerID)
         }
+        return
     }
-    if (
-        message.startsWith('!stat') ||
-        message.startsWith('!rating') ||
-        message.startsWith('!record')
-    ) {
-        await sendPlayerStats(playerID)
-    } else if (
-        message.startsWith('!help') ||
-        message.startsWith('!info') ||
-        message.startsWith('!addon')
-    ) {
-        const msg1 = `Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more. More Info on GitHub: https://github.com/smashedr/playdrift-extension`
-        await sendChatMessage(msg1)
+    if (message.startsWith('!')) {
+        if (
+            message.startsWith('!stat') ||
+            message.startsWith('!rating') ||
+            message.startsWith('!record')
+        ) {
+            await sendPlayerStats(playerID)
+        } else if (
+            message.startsWith('!help') ||
+            message.startsWith('!info') ||
+            message.startsWith('!addon')
+        ) {
+            const msg1 = `Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more. More Info on GitHub: https://github.com/smashedr/playdrift-extension`
+            await sendChatMessage(msg1)
+        }
+    } else if (playerID !== profile.id) {
+        if (options.playChatSpeech) {
+            speech.text = message
+            window.speechSynthesis.speak(speech)
+        } else if (options.playMessageAudio) {
+            messageAudio.play().then()
+        }
     }
 }
 
@@ -928,7 +943,6 @@ async function sendKickClick(event) {
     const playerID = document.getElementById('profile-id').value
     console.debug('sendKickClick:', playerID, event)
     await kickPlayer(playerID)
-    // sendClick(event)
     await sendChatMessage(`Kicked Player: ${profiles[playerID] || playerID}`)
 }
 

@@ -2,6 +2,7 @@
 
 import {
     checkPerms,
+    grantPerms,
     onChanged,
     openHome,
     saveOptions,
@@ -60,19 +61,6 @@ async function initOptions() {
 // function onEmojiSelect(emojiData, event) {
 //     console.debug('onEmojiSelect:', emojiData, event)
 // }
-
-/**
- * Grant Permissions Click Callback
- * @function grantPerms
- * @param {MouseEvent} event
- */
-async function grantPerms(event) {
-    console.debug('grantPermsBtn:', event)
-    await chrome.permissions.request({
-        origins: ['*://*.playdrift.com/*'],
-    })
-    await checkPerms()
-}
 
 /**
  * Open OnInstall Page Click Callback

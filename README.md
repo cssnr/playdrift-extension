@@ -53,6 +53,8 @@ All **Chromium** Based Browsers can install the extension from the
 - Automatically Send Your Own Stats to Chat When You Join
 - Play Audio on Your Turn to Make a Move
 - Play Audio When Users Join or Leave a Room
+- Play Audio on New Chat Message
+- Play Chat Message as Audio (TTS)
 - Auto Update Options on Room Creation
 - Auto Kick Users Below X Win Rate Percentage
 - Ban User Feature that Automatically Kicks User in Future

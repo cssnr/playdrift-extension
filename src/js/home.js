@@ -1,10 +1,11 @@
 // JS for home.html
 
-import { playGame, updateOptions } from './export.js'
+import { checkPerms, grantPerms, playGame, updateOptions } from './export.js'
 
 chrome.storage.onChanged.addListener(onChanged)
 
 document.addEventListener('DOMContentLoaded', domContentLoaded)
+document.getElementById('grant-perms').addEventListener('click', grantPerms)
 document
     .querySelectorAll('.open-options')
     .forEach((el) => el.addEventListener('click', openOptions))
@@ -36,6 +37,7 @@ async function domContentLoaded() {
     updateOptions(profile, true)
     updateHistory(history)
     updateBanned(banned)
+    await checkPerms()
 }
 
 function showProfile(profile) {

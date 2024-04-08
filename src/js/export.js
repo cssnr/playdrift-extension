@@ -61,6 +61,19 @@ export async function focusOpen(url) {
 }
 
 /**
+ * Grant Permissions Click Callback
+ * @function grantPerms
+ * @param {MouseEvent} event
+ */
+export async function grantPerms(event) {
+    console.debug('grantPermsBtn:', event)
+    await chrome.permissions.request({
+        origins: ['*://*.playdrift.com/*'],
+    })
+    await checkPerms()
+}
+
+/**
  * Check Host Permissions
  * @function checkPerms
  * @return {Boolean}

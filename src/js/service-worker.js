@@ -45,6 +45,8 @@ async function onInstalled(details) {
             // sendMouseover: false,
             playTurnAudio: false,
             playPlayersAudio: false,
+            playMessageAudio: false,
+            playChatSpeech: false,
             autoKickLowRate: false,
             kickLowRate: 40,
             sendGameStart: false,

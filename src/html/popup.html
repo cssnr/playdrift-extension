@@ -14,7 +14,7 @@
 
 <div class="container-fluid px-3 py-2">
     <p id="no-profile" class="lead text-center d-none">
-        To populate your user, head over to <a href="https://dominoes.playdrift.com/" target="_blank" rel="noopener">PlayDrift</a> and log in.
+        First Log In at <a href="https://dominoes.playdrift.com/" target="_blank" rel="noopener">PlayDrift</a>.
     </p>
 
     <div class="profile">
@@ -42,7 +42,7 @@
     <div class="d-none grant-perms">
         <a id="grant-perms" class="btn btn-sm btn-success w-100 mb-1" role="button">
             <i class="fa-solid fa-check-double me-1"></i> Grant Host Permissions</a>
-        <p class="text-center mb-1"><a role="button" href="../html/oninstall.html" class="">More Information on Permissions</a></p>
+<!--        <p class="text-center mb-1"><a role="button" href="../html/oninstall.html" class="">More Information on Permissions</a></p>-->
     </div>
 
 <!--    <p>Rating: <span id="rating"></span></p>-->
@@ -150,6 +150,24 @@
             <label class="form-check-label" for="playPlayersAudio" aria-describedby="playPlayersAudioHelp">
                 Play Audio on Player Join/Leave
                 <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Player Join/Leave.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="playMessageAudio" type="checkbox" role="switch">
+            <label class="form-check-label" for="playMessageAudio" aria-describedby="playMessageAudioHelp">
+                Play Audio on New Chat Message
+                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on New Chat Message.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="playChatSpeech" type="checkbox" role="switch">
+            <label class="form-check-label" for="playChatSpeech" aria-describedby="playChatSpeechHelp">
+                Play Text to Speech in Chat
+                <span data-bs-toggle="tooltip" data-bs-title="Play Text to Speech in Chat.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
