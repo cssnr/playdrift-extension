@@ -113,7 +113,7 @@ async function onMessage(message, sender, sendResponse) {
         }
         if (source3 && source3.readyState === 1) {
             source3.close()
-            console.debug('close sse2 source3', source3)
+            console.debug('close sse3 source3', source3)
         }
     }
 }
@@ -150,6 +150,10 @@ async function processRoom(room) {
 
     console.debug(`Process Room: ${room}`)
     await sse1(room)
+
+    // TODO: Query Selectors for Players header to add kicked players
+    // parent.querySelector('div[data-testid="home-header"]')
+    // parent.querySelector('.MuiTypography-h5')
 }
 
 /**
@@ -196,22 +200,24 @@ async function sse1(room) {
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('msg:', msg)
-        if (msg.t === 'rs' && msg.state?.tid) {
-            console.debug('Room State:', msg.state)
+        const state = msg.state
+        // console.debug('state:', state)
+        if (msg.t === 'rs' && state?.tid) {
+            console.debug('Room state:', state)
             if (rooms[room]) {
-                if (!rooms[room].game && msg.state.game) {
-                    gameStart(msg.state).then()
+                if (!rooms[room].game && state.game) {
+                    gameStart(state).then()
                 }
-                if (rooms[room].game && !msg.state.game) {
-                    gameEnd(msg.state).then()
+                if (rooms[room].game && !state.game) {
+                    gameEnd(state).then()
                 }
-                if (rooms[room].players.length !== msg.state.players.length) {
-                    roomPlayerChange(rooms[room].players, msg.state.players)
+                if (rooms[room].players.length !== state.players.length) {
+                    roomPlayerChange(rooms[room], state).then()
                 }
             }
-            rooms[room] = msg.state
+            rooms[room] = state
             // source.close()
-            // setTimeout(sse2, 150, msg.state.tid)
+            // setTimeout(sse2, 150, state.tid)
         }
         if (msg.t === 'helo') {
             setTimeout(sse2, 250, room)
@@ -292,62 +298,76 @@ async function sse3(game) {
 /**
  * Room Player Update Handler
  * @function roomPlayerChange
- * @param {Array} before
- * @param {Array} after
+ * @param {Object} before
+ * @param {Object} after
  */
-function roomPlayerChange(before, after) {
+async function roomPlayerChange(before, after) {
     console.debug('roomPlayerChange:', before, after)
     const left = []
     const joined = []
-    for (const player of before) {
-        if (!after.includes(player)) {
+    for (const player of before.players) {
+        if (!after.players.includes(player)) {
             left.push(player)
         }
     }
-    playersLeaveRoom(left)
-    for (const player of after) {
-        if (!before.includes(player)) {
+    await playersLeaveRoom(after, left)
+    for (const player of after.players) {
+        if (!before.players.includes(player)) {
             joined.push(player)
         }
     }
-    playersJoinRoom(joined)
+    await playersJoinRoom(after, joined)
 }
 
 /**
  * Players Leave Room Handler
  * @function playersLeaveRoom
+ * @param {Object} state
  * @param {Array} players
  */
-function playersLeaveRoom(players) {
+async function playersLeaveRoom(state, players) {
     if (!players.length) {
         return
     }
-    console.debug('playersLeaveRoom:', players)
-    // const { options } = await chrome.storage.sync.get(['options'])
-    chrome.storage.sync.get(['options']).then((result) => {
-        // console.log('result:', result)
-        if (result.options.playPlayersAudio) {
-            leaveAudio.play().then()
-        }
-    })
+    console.debug('playersLeaveRoom:', state, players)
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (options.playPlayersAudio) {
+        leaveAudio.play().then()
+    }
+    // TODO: Make this an option
+    const pids = state.game?.gameOptions?.pids
+    if (pids) {
+        // console.debug('player left during game, processing...')
+        players.forEach((playerID) => {
+            if (pids.includes(playerID)) {
+                // const name = profiles[player]?.username || player
+                // const profile = await getProfile(playerID)
+                // const message = `Player ${profile.username} has left.`
+                // sendChatMessage(message).then()
+                getProfile(playerID).then((profile) => {
+                    const message = `Player ${profile.username} has left.`
+                    sendChatMessage(message).then()
+                })
+            }
+        })
+    }
 }
 
 /**
  * Players Join Room Handler
  * @function playersJoinRoom
+ * @param {Object} state
  * @param {Array} players
  */
-function playersJoinRoom(players) {
+async function playersJoinRoom(state, players) {
     if (!players.length) {
         return
     }
-    console.debug('playersJoinRoom:', players)
-    chrome.storage.sync.get(['options']).then((result) => {
-        // console.log('result:', result)
-        if (result.options.playPlayersAudio) {
-            joinAudio.play().then()
-        }
-    })
+    console.debug('playersJoinRoom:', state, players)
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (options.playPlayersAudio) {
+        joinAudio.play().then()
+    }
 }
 
 async function gameStart(state) {
@@ -788,7 +808,7 @@ async function updateUserProfile(profile) {
     // console.debug('last, current:', last, current)
     if (
         !last ||
-        last.games_won + last.games_lost !==
+        last.games_won + last.games_lost <
             current.games_won + current.games_lost
     ) {
         if (last && current.games_won > last.games_won) {

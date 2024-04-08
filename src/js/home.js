@@ -57,6 +57,7 @@ function showProfile(profile) {
 function updateHistory(history) {
     console.debug('updateHistory:', history)
     const tbody = historyTable.querySelector('tbody')
+    tbody.innerHTML = ''
     const tr = historyTable.querySelector('tfoot tr')
     history
         .slice()
@@ -92,14 +93,11 @@ function updateBanned(banned) {
     console.debug('updateBanned:', banned)
     const tbody = document.querySelector('#banned-table tbody')
     tbody.innerHTML = ''
-
-    banned.forEach((value, i) => {
+    const trashCan = document.querySelector('.fa-regular.fa-trash-can')
+    banned.forEach((value) => {
         const row = tbody.insertRow()
-
         const button = document.createElement('a')
-        const svg = document
-            .querySelector('.fa-regular.fa-trash-can')
-            .cloneNode(true)
+        const svg = trashCan.cloneNode(true)
         button.appendChild(svg)
         button.title = 'Delete'
         button.dataset.id = value
@@ -145,7 +143,7 @@ async function deleteBanned(event) {
     // console.debug('banned:', banned)
     const anchor = event.target.closest('a')
     const playerID = anchor?.dataset?.id
-    console.log(`playerID: ${playerID}`)
+    console.debug(`playerID: ${playerID}`)
     let index
     if (playerID && banned.includes(playerID)) {
         index = banned.indexOf(playerID)
@@ -168,8 +166,8 @@ async function openOptions(event) {
 
 async function playDominoes(event) {
     console.debug('playDominoes:', event)
-    event.preventDefault()
-    await playGame()
+    // event.preventDefault()
+    await playGame(event)
 }
 
 // async function openPage(event) {
@@ -190,10 +188,10 @@ async function playDominoes(event) {
  * @param {String} namespace
  */
 export function onChanged(changes, namespace) {
-    console.debug('onChanged:', changes, namespace)
+    // console.debug('onChanged:', changes, namespace)
     for (const [key, { newValue }] of Object.entries(changes)) {
         if (namespace === 'sync') {
-            // console.debug('newValue:', newValue)
+            console.debug('key:', key, newValue)
             if (key === 'profile') {
                 // TODO: This should reload if profile changed from empty to set
                 const noProfile = document.getElementById('no-profile')
