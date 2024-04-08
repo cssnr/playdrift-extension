@@ -19,7 +19,7 @@ Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rank
 *   [Development](#development)
     -   [Building](#building)
 
-[![GitHub Image](https://repository-images.githubusercontent.com/779112610/ff9e457a-234f-44df-b61a-56c272564343)](https://github.com/smashedr/playdrift-extension)
+[![GitHub Image](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://github.com/smashedr/playdrift-extension)
 
 # Install
 

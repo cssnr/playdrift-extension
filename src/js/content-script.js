@@ -43,6 +43,8 @@ document.body.appendChild(tooltip)
     if (profile && !Object.keys(profile).length) {
         setTimeout(setUserProfile, 3000)
     }
+
+    setTimeout(processLoad, 3000)
 })()
 
 // Popper Mouse Listener
@@ -70,6 +72,14 @@ document.addEventListener('blur', function (event) {
     tooltip.style.display = 'none'
     instance.update()
 })
+
+async function processLoad() {
+    console.debug('processLoad')
+    // const homeHeader = document.querySelector(
+    //     'div[data-testid="home-header-backdrop"]'
+    // )
+    // homeHeader.style.backgroundImage = 'none'
+}
 
 /**
  * On Message Callback
@@ -221,6 +231,8 @@ async function sse1(room) {
             // setTimeout(sse2, 150, state.tid)
         }
         if (msg.t === 'helo') {
+            // TODO: This Needs to be Stateful
+            // console.log('SSE1 HELO - Trigger: SSE2 and sendPlayerStats')
             setTimeout(sse2, 250, room)
             if (options.sendSelfOnJoin) {
                 // sendPlayerStats(profile.id).then()
