@@ -756,7 +756,7 @@ async function updateUserProfile(profile) {
     if (!profile) {
         return console.warn('updateUserProfile: No profile:', profile)
     }
-    const historyMax = 80
+    const historyMax = 50
     await chrome.storage.sync.set({ profile })
     // userProfile = profile
 

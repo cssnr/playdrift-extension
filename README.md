@@ -46,14 +46,17 @@ All **Chromium** Based Browsers can install the extension from the
 # Features
 
 - Show User Rating and Record (Win/Loss)
-- Track Game History, Win/Loss, Rating and Date
-- Automatically Send Stats to Chat on User Join
-- Automatically Send Your Own Stats to Chat When You Join
+- Track Recent Game History, Wins/Losses, Rating and Date
 - Show Stats Tooltip on Mouse Over
 - Show Stats on Icon on Mouse Over
+- Automatically Send Stats to Chat on User Join
+- Automatically Send Your Own Stats to Chat When You Join
+- Play Audio on Your Turn to Make a Move
 - Play Audio When Users Join or Leave a Room
-- Auto Kick Users Below X Win Percentage
+- Auto Update Options on Room Creation
+- Auto Kick Users Below X Win Rate Percentage
 - Ban User Feature that Automatically Kicks User in Future
+- Send Customizable Message on Game Start
 
 Please submit a [Feature Request](https://github.com/smashedr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/smashedr/playdrift-extension/issues).

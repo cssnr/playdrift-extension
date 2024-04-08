@@ -43,9 +43,49 @@
                 Games Won: <span id="games_won" class="text-success-emphasis fw-bold"></span>
                 Games Lost: <span id="games_lost" class="text-danger-emphasis fw-bold"></span>
             </p>
-            <h3>Last 80 Games</h3>
+
+            <div class="accordion mb-2" id="accordionBanned">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBanned" aria-expanded="false" aria-controls="collapseBanned">
+                            Banned Users
+                        </button>
+                    </h2>
+                    <div id="collapseBanned" class="accordion-collapse collapse" data-bs-parent="#accordionBanned">
+                        <div class="accordion-body">
+<!--                            <form id="filters-form">-->
+<!--                                <label class="form-label" for="add-filter"><i class="fa-solid fa-filter me-2"></i> Filters</label>-->
+<!--                                <div class="input-group mb-3">-->
+<!--                                    <input type="text" class="form-control" placeholder="Add Filter" aria-label="Filter" id="add-filter" aria-describedby="add-filter-btn">-->
+<!--                                    <button class="btn btn-outline-success" type="submit" id="add-filter-btn">-->
+<!--                                        Add <i class="fa-solid fa-plus ms-1"></i>-->
+<!--                                    </button>-->
+<!--                                </div>-->
+<!--                            </form>-->
+                            <table id="banned-table" class="table table-sm table-hover bg-transparent">
+                                <caption>
+                                    Banned Users
+                                    <span data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Click on an Existing Filter to Edit it.">
+                                        <i class="fa-solid fa-lightbulb text-warning-emphasis ms-1"></i>
+                                    </span>
+                                </caption>
+                                <thead><tr>
+                                    <th scope="col" class="text-center" style="width: 36px;">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </th>
+                                    <th scope="col">User or ID</th>
+                                </tr></thead>
+                                <tbody></tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Last 50 Games</h3>
             <table id="history-table" class="table table-hover table-sm">
-                <caption class="visually-hidden">Last 80 Games</caption>
+                <caption class="visually-hidden">Last 50 Games</caption>
                 <thead>
                 <tr>
                     <th scope="col">Date</th>
@@ -71,6 +111,16 @@
             </table>
         </div>
     </div>
+</div>
+
+<div class="d-none">
+    <div class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-body"></div>
+    </div>
+    <i class="fa-regular fa-trash-can"></i>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" id="bi-dot" viewBox="0 0 16 16">
+        <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+    </svg>
 </div>
 
 <script type="text/javascript" src="../dist/jquery/jquery.min.js"></script>
