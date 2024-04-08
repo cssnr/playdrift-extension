@@ -13,8 +13,8 @@
 <body>
 
 <div class="container-fluid px-3 py-2">
-    <p id="no-profile" class="lead text-center d-none">
-        First Log In at <a href="https://dominoes.playdrift.com/" target="_blank" rel="noopener">PlayDrift</a>.
+    <p id="no-profile" class="lead text-center d-none mb-1">
+        To Get Started Log In at <a href="https://dominoes.playdrift.com/" target="_blank" rel="noopener">PlayDrift</a>
     </p>
 
     <div class="profile">
@@ -114,6 +114,15 @@
             <label class="form-check-label" for="sendSelfOnJoin" aria-describedby="sendSelfOnJoinHelp">
                 Send Self Stats on Room Join
                 <span data-bs-toggle="tooltip" data-bs-title="Send Self Stats on Room Join.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="sendPlayerLeft" type="checkbox" role="switch">
+            <label class="form-check-label" for="sendPlayerLeft" aria-describedby="sendPlayerLeftHelp">
+                Send Player Left Game Alert
+                <span data-bs-toggle="tooltip" data-bs-title="Send Player Left Game Alert.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>

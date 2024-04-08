@@ -86,9 +86,10 @@ async function onMessage(message, sender, sendResponse) {
     const url = new URL(message.url)
     if (url.searchParams.get('profile')) {
         const profileID = url.searchParams.get('profile')
+        // console.debug('profileID', profileID)
         const profile = await getProfile(profileID)
         const { banned } = await chrome.storage.sync.get(['banned'])
-        setTimeout(updateProfile, 150, profile, banned)
+        setTimeout(updateProfile, 250, profile, banned)
     } else if (url.pathname.includes('/room/')) {
         const split = url.pathname.split('/')
         const room = split[2]
@@ -334,9 +335,8 @@ async function playersLeaveRoom(state, players) {
     if (options.playPlayersAudio) {
         leaveAudio.play().then()
     }
-    // TODO: Make this an option
     const pids = state.game?.gameOptions?.pids
-    if (pids) {
+    if (options.sendPlayerLeft && pids) {
         // console.debug('player left during game, processing...')
         players.forEach((playerID) => {
             if (pids.includes(playerID)) {
@@ -831,18 +831,17 @@ async function updateUserProfile(profile) {
  */
 function updateProfile(profile, banned) {
     // console.debug('updateProfile:', profile, banned)
-    document
-        .querySelector('.MuiDialog-container')
-        .addEventListener('click', profileCloseClick)
-
-    const root = document
-        .querySelector('.MuiDialog-container')
-        .querySelectorAll('.MuiBox-root')[4]
-    if (!root) {
-        return console.warn('root not found')
+    const container = document.querySelector('.MuiDialog-container')
+    container.addEventListener('click', profileCloseClick)
+    // const parent = container.querySelectorAll('.MuiBox-root')[4]
+    const root = container?.querySelector('h2')?.nextSibling
+    const parent = root?.querySelector('h5')?.nextSibling?.nextSibling
+    // console.debug('parent:', parent)
+    if (!parent) {
+        return console.warn('parent not found', container, root, parent)
     }
-    root.style.marginTop = 0
-    root.style.marginBottom = '10px'
+    parent.style.marginTop = 0
+    parent.style.marginBottom = '10px'
 
     const divText = document.createElement('div')
     divText.style.textAlign = 'center'
@@ -866,7 +865,7 @@ function updateProfile(profile, banned) {
     spanGames.textContent = ` W/L: ${stats.games_won.toLocaleString()} / ${stats.games_lost.toLocaleString()} (${stats.wl_percent}%) `
     divText.appendChild(spanGames)
 
-    root.appendChild(divText)
+    parent.appendChild(divText)
     const divBtns = document.createElement('div')
     divBtns.style.textAlign = 'center'
 
@@ -907,7 +906,7 @@ function updateProfile(profile, banned) {
     sendButton.style.marginLeft = '20px'
     divBtns.appendChild(sendButton)
 
-    root.appendChild(divBtns)
+    parent.appendChild(divBtns)
 
     // TODO: Add whole profile to form
     const profileForm = document.createElement('form')
@@ -921,7 +920,7 @@ function updateProfile(profile, banned) {
         input.value = profile[key]
         profileForm.appendChild(input)
     }
-    root.appendChild(profileForm)
+    parent.appendChild(profileForm)
 }
 
 /**

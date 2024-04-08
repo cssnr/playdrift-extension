@@ -41,6 +41,7 @@ async function onInstalled(details) {
             showMouseover: false,
             sendOnJoin: false,
             sendSelfOnJoin: false,
+            sendPlayerLeft: false,
             autoUpdateOptions: false,
             // sendMouseover: false,
             playTurnAudio: false,
