@@ -500,6 +500,9 @@ async function newChatMessage(msg) {
                 return
             }
         }
+        if (banned.includes(playerID)) {
+            await sendChatMessage(`Banned User Joined: ${player.username}`)
+        }
         if (options.sendOnJoin) {
             return await sendStatsChat(playerID)
         }
