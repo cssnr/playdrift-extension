@@ -1,5 +1,7 @@
 // JS Content Script
 
+console.info('RUNNING content-script.js')
+
 chrome.runtime.onMessage.addListener(onMessage)
 
 document.addEventListener('mouseover', documentMouseover)
@@ -66,15 +68,25 @@ window.addEventListener('load', function load(event) {
     // console.debug('window.load', event)
     window.removeEventListener('load', load)
 
-    // startMutation()
     const app = document.getElementById('app')
     console.debug('window.load app:', app)
+    startMutation()
+    const url = new URL(window.location.href)
+    if (url.searchParams.has('profile')) {
+        console.info('Profile Only View')
+        const pid = url.searchParams.get('profile')
+        console.debug('pid:', pid)
+        const container = document.querySelector('.MuiDialog-container')
+        console.debug('container:', container)
+        const parent = container?.querySelectorAll('.MuiBox-root')[4]
+        console.debug('parent:', parent)
+        updateProfile(parent).then()
+    }
 })
 
 document.addEventListener('blur', function blur(event) {
     // console.debug('documentBlur', event)
     // document.removeEventListener('blur', blur)
-
     tooltip.style.display = 'none'
     instance.update()
 })
@@ -87,36 +99,51 @@ document.addEventListener('blur', function blur(event) {
 //     // homeHeader.style.backgroundImage = 'none'
 // }
 
-// function startMutation() {
-//     const app = document.getElementById('app')
-//     console.debug('app:', app)
-//     const observer = new MutationObserver(mutationCallback)
-//     observer.observe(app, {
-//         attributes: true,
-//         characterData: true,
-//         childList: true,
-//         subtree: true,
-//         attributeOldValue: true,
-//         characterDataOldValue: true,
-//     })
-//
-//     function mutationCallback(mutationList, observer) {
-//         // console.info('mutationCallback, mutationList:', mutationList, observer)
-//         for (const mutation of mutationList) {
-//             if (mutation.type === 'childList') {
-//                 if (mutation.addedNodes) {
-//                     mutation.addedNodes.forEach((el) => {
-//                         if (el.classList?.contains('MuiBox-root')) {
-//                             console.info('mutation:', mutation)
-//                         }
-//                     })
-//                 }
-//             } else if (mutation.type === 'attributes') {
-//                 // console.info('attributes', mutation)
-//             }
-//         }
-//     }
-// }
+function startMutation() {
+    // const app = document.getElementById('app')
+    const element = document.body
+    console.debug('startMutation: element:', element)
+    const observer = new MutationObserver(mutationCallback)
+    observer.observe(element, {
+        attributes: true,
+        characterData: true,
+        childList: true,
+        subtree: true,
+        attributeOldValue: true,
+        characterDataOldValue: true,
+    })
+
+    function mutationCallback(mutationList, observer) {
+        // console.info('mutationCallback, mutationList:', mutationList, observer)
+        for (const mutation of mutationList) {
+            if (mutation.type === 'childList') {
+                if (mutation.addedNodes) {
+                    mutation.addedNodes.forEach((el) => {
+                        // if (el.classList?.contains('MuiBox-root')) {
+                        //     console.info('mutation:', mutation)
+                        // }
+                        if (
+                            mutation.target.children.length > 5 &&
+                            mutation.target.children[2].nodeName === 'H5'
+                        ) {
+                            let parent = mutation.target.children[4]
+                            // setTimeout(updateProfile, 250, parent)
+                            updateProfile(parent).then()
+                        }
+                    })
+
+                    // mutation.addedNodes.forEach((el) => {
+                    //     if (el.classList?.contains('MuiBox-root')) {
+                    //         console.info('mutation:', mutation)
+                    //     }
+                    // })
+                }
+            } else if (mutation.type === 'attributes') {
+                // console.info('attributes', mutation)
+            }
+        }
+    }
+}
 
 /**
  * On Message Callback
@@ -132,12 +159,14 @@ async function onMessage(message, sender, sendResponse) {
     }
     const url = new URL(message.url)
     if (url.searchParams.get('profile')) {
-        const profileID = url.searchParams.get('profile')
-        // console.debug('profileID', profileID)
-        const profile = await getProfile(profileID)
-        const { banned } = await chrome.storage.sync.get(['banned'])
-        setTimeout(updateProfile, 250, profile, banned)
+        console.debug('this handler has been moved to a MutationObserver')
+        // const profileID = url.searchParams.get('profile')
+        // // console.debug('profileID', profileID)
+        // const profile = await getProfile(profileID)
+        // const { banned } = await chrome.storage.sync.get(['banned'])
+        // setTimeout(updateProfile, 250, profile, banned)
     } else if (url.pathname.includes('/room/')) {
+        // TODO: Look into moving this to a MutationObserver
         const split = url.pathname.split('/')
         const room = split[2]
         const game = split[3]
@@ -151,18 +180,27 @@ async function onMessage(message, sender, sendResponse) {
         }
     } else {
         // TODO: This can be done at the sse function level
-        if (source1 && source1.readyState === 1) {
-            source1.close()
-            console.debug('close sse1 source1', source1)
-        }
-        if (source2 && source2.readyState === 1) {
-            source2.close()
-            console.debug('close sse2 source2', source2)
-        }
-        if (source3 && source3.readyState === 1) {
-            source3.close()
-            console.debug('close sse3 source3', source3)
-        }
+        closeEventSources()
+    }
+}
+
+/**
+ * Close All Event Sources
+ * @function closeEventSources
+ */
+function closeEventSources() {
+    // TODO: This can be done at the sse function level
+    if (source1 && source1.readyState === 1) {
+        source1.close()
+        console.debug('close sse1 source1', source1)
+    }
+    if (source2 && source2.readyState === 1) {
+        source2.close()
+        console.debug('close sse2 source2', source2)
+    }
+    if (source3 && source3.readyState === 1) {
+        source3.close()
+        console.debug('close sse3 source3', source3)
     }
 }
 
@@ -202,6 +240,9 @@ async function processRoom(room) {
     // TODO: Query Selectors for Players header to add kicked players
     // parent.querySelector('div[data-testid="home-header"]')
     // parent.querySelector('.MuiTypography-h5')
+    //
+    // TODO: Use Mutation Events
+    // app.querySelectorAll('div[data-id].MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded')
 }
 
 /**
@@ -419,6 +460,11 @@ async function playersJoinRoom(state, players) {
     }
 }
 
+/**
+ * Game Start Handler
+ * @function gameStart
+ * @param {Object} state
+ */
 async function gameStart(state) {
     console.info('Game Start:', state.game.id, state)
     const { options, profile } = await chrome.storage.sync.get([
@@ -440,9 +486,72 @@ async function gameStart(state) {
     }
 }
 
+/**
+ * Game End Handler
+ * @function gameEnd
+ * @param {Object} state
+ */
 async function gameEnd(state) {
-    console.info('Game End:', state.game.id, state)
-    // TODO: Need to get results and process
+    console.info('Game End:', state)
+    // Game Results
+    const result = await getGameResults(state)
+    console.debug('result:', result)
+    // Process Own Game Results
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    if (state.gameResult.players.includes(profile.id)) {
+        console.info('You were Playing in this Game!')
+        await processPlayerGame(state)
+        if (options.sendGameStart) {
+            await sendChatMessage(result)
+        }
+    }
+}
+
+/**
+ * Process Player Game Results Handler
+ * @function processPlayerGame
+ * @param {Object} state
+ */
+async function processPlayerGame(state) {
+    console.debug('processPlayerGame:', state.gameResult)
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    const win = state.gameResult.playersWin.includes(profile.id)
+    const rating = state.gameResult.ratings[profile.id].rating
+    const diff = state.gameResult.ratings[profile.id].diff
+    console.info(`Result: ${win.toString()} - Rating: (${rating}) ${diff}`)
+}
+
+/**
+ * Get Game Results String
+ * @function gameStart
+ * @param {Object} state
+ * @return {String}
+ */
+async function getGameResults(state) {
+    console.debug('gameResults:', state.gameResult)
+    let players = state.gameResult.players
+    let winners = state.gameResult.playersWin
+    let ratings = state.gameResult.ratings
+    // String Creation
+    let won = 'Winners:'
+    let lost = 'Losers:'
+    for (const pid of players) {
+        const pp = await getProfile(pid)
+        if (winners.includes(pid)) {
+            won += ` ${pp.username} +${ratings[pid].diff} (${ratings[pid].rating}),`
+        } else {
+            lost += ` ${pp.username} ${ratings[pid].diff} (${ratings[pid].rating}),`
+        }
+    }
+    won = won.replace(/,\s*$/, '')
+    lost = lost.replace(/,\s*$/, '')
+    // Send Results
+    // console.info(won)
+    // console.info(lost)
+    return `${won}; ${lost}`
 }
 
 /**
@@ -469,6 +578,7 @@ async function newChatMessage(msg) {
     const owner = room?.players.length && room.players[0] === profile.id
     // console.debug('owner, room:', owner, room)
 
+    // TODO: Use SSE to Monitor Join/Leave Events
     if (message.startsWith('Joined the game.')) {
         console.debug('Process Join Message')
         if (profile.id === playerID) {
@@ -776,7 +886,12 @@ function profileCloseClick(event) {
         event.target.classList.contains('MuiDialog-container') &&
         event.target.classList.contains('MuiDialog-scrollPaper')
     ) {
-        history.back()
+        if (history.length > 1) {
+            history.back()
+        } else {
+            window.close()
+            // window.location.href = window.location.origin
+        }
     }
 }
 
@@ -794,9 +909,11 @@ async function setUserProfile() {
         return
     }
 
-    const pid = document.querySelector('div[data-id]')?.dataset.id
+    // const pid = document.querySelector('div[data-id]')?.dataset.id
+    const pid = document.querySelector('div[data-id][aria-haspopup="true"]')
+        ?.dataset.id
     if (!pid) {
-        console.warn('pid not found:', pid)
+        console.warn('User pid Not Found:', pid)
         return
     }
     console.info('User Profile Set to pid:', pid)
@@ -884,22 +1001,31 @@ async function updateUserProfile(profile) {
 }
 
 /**
- * copyClick Callback
- * @function saveOptions
- * @param {Object} profile
- * @param {Array} banned
+ * Update Profile Dialog
+ * @function updateProfile
+ * @param {HTMLElement} parent
  */
-function updateProfile(profile, banned) {
-    // console.debug('updateProfile:', profile, banned)
+async function updateProfile(parent) {
+    console.debug('updateProfile:', parent)
+    const url = new URL(window.location)
+    const pid = url.searchParams.get('profile')
+    const profile = await getProfile(pid)
+    const { banned } = await chrome.storage.sync.get(['banned'])
+
     const container = document.querySelector('.MuiDialog-container')
-    container.addEventListener('click', profileCloseClick)
+    console.debug('container:', container)
+    container?.addEventListener('click', profileCloseClick)
+
     // const parent = container.querySelectorAll('.MuiBox-root')[4]
-    const root = container?.querySelector('h2')?.nextSibling
-    const parent = root?.querySelector('h5')?.nextSibling?.nextSibling
+
+    // const root = container?.querySelector('h2')?.nextSibling
+    // const parent = root?.querySelector('h5')?.nextSibling?.nextSibling
+
     // console.debug('parent:', parent)
-    if (!parent) {
-        return console.warn('parent not found', container, root, parent)
-    }
+    // if (!parent) {
+    //     return console.warn('parent not found', container, root, parent)
+    // }
+
     parent.style.marginTop = 0
     parent.style.marginBottom = '10px'
 
@@ -1022,7 +1148,8 @@ async function sendKickClick(event) {
     const playerID = document.getElementById('profile-id').value
     console.debug('sendKickClick:', playerID, event)
     await kickPlayer(playerID)
-    await sendChatMessage(`Kicked Player: ${profiles[playerID] || playerID}`)
+    const name = profiles[playerID].username || playerID
+    await sendChatMessage(`Kicked Player: ${name}`)
 }
 
 /**
