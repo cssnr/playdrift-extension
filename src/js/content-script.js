@@ -4,7 +4,9 @@ chrome.runtime.onMessage.addListener(onMessage)
 
 document.addEventListener('mouseover', documentMouseover)
 
+// Intervals
 setInterval(updateUserInterval, 2 * 60000)
+let userIntervalID = setInterval(setUserProfile, 1000)
 
 // SSE
 let source1
@@ -30,23 +32,6 @@ tooltip.setAttribute('role', 'tooltip')
 tooltip.innerHTML = 'Loading...'
 document.body.appendChild(tooltip)
 
-// async
-;(async () => {
-    console.info('RUNNING content-script.js')
-    const { options, profile } = await chrome.storage.sync.get([
-        'options',
-        'profile',
-    ])
-    console.debug('options, profile:', options, profile)
-
-    // if profile object is empty, wait 3 seconds and check user profile
-    if (profile && !Object.keys(profile).length) {
-        setTimeout(setUserProfile, 3000)
-    }
-
-    setTimeout(processLoad, 3000)
-})()
-
 // Popper Mouse Listener
 const virtualElement = {
     getBoundingClientRect: generateGetBoundingClientRect(),
@@ -67,19 +52,71 @@ function generateGetBoundingClientRect(x = 0, y = 0) {
     })
 }
 
-document.addEventListener('blur', function (event) {
+// // async
+// ;(async () => {
+//     console.info('RUNNING content-script.js')
+//     const { options, profile } = await chrome.storage.sync.get([
+//         'options',
+//         'profile',
+//     ])
+//     console.debug('options, profile:', options, profile)
+// })()
+
+window.addEventListener('load', function load(event) {
+    // console.debug('window.load', event)
+    window.removeEventListener('load', load)
+
+    // startMutation()
+    const app = document.getElementById('app')
+    console.debug('window.load app:', app)
+})
+
+document.addEventListener('blur', function blur(event) {
     // console.debug('documentBlur', event)
+    // document.removeEventListener('blur', blur)
+
     tooltip.style.display = 'none'
     instance.update()
 })
 
-async function processLoad() {
-    console.debug('processLoad')
-    // const homeHeader = document.querySelector(
-    //     'div[data-testid="home-header-backdrop"]'
-    // )
-    // homeHeader.style.backgroundImage = 'none'
-}
+// async function processLoad() {
+//     console.debug('processLoad')
+//     // const homeHeader = document.querySelector(
+//     //     'div[data-testid="home-header-backdrop"]'
+//     // )
+//     // homeHeader.style.backgroundImage = 'none'
+// }
+
+// function startMutation() {
+//     const app = document.getElementById('app')
+//     console.debug('app:', app)
+//     const observer = new MutationObserver(mutationCallback)
+//     observer.observe(app, {
+//         attributes: true,
+//         characterData: true,
+//         childList: true,
+//         subtree: true,
+//         attributeOldValue: true,
+//         characterDataOldValue: true,
+//     })
+//
+//     function mutationCallback(mutationList, observer) {
+//         // console.info('mutationCallback, mutationList:', mutationList, observer)
+//         for (const mutation of mutationList) {
+//             if (mutation.type === 'childList') {
+//                 if (mutation.addedNodes) {
+//                     mutation.addedNodes.forEach((el) => {
+//                         if (el.classList?.contains('MuiBox-root')) {
+//                             console.info('mutation:', mutation)
+//                         }
+//                     })
+//                 }
+//             } else if (mutation.type === 'attributes') {
+//                 // console.info('attributes', mutation)
+//             }
+//         }
+//     }
+// }
 
 /**
  * On Message Callback
@@ -747,13 +784,21 @@ function profileCloseClick(event) {
  */
 async function setUserProfile() {
     console.debug('setUserProfile')
-    const userId = document.querySelector('div[data-id]')?.dataset.id
-    if (!userId) {
-        return console.warn('userId not found!', userId)
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    if (profile && Object.keys(profile).length) {
+        clearInterval(userIntervalID)
+        console.debug('User Profile Exist. clearInterval:', userIntervalID)
+        return
     }
-    console.info('User Profile Set to userId:', userId)
-    const profile = await getProfile(userId)
-    await updateUserProfile(profile)
+
+    const pid = document.querySelector('div[data-id]')?.dataset.id
+    if (!pid) {
+        console.warn('pid not found:', pid)
+        return
+    }
+    console.info('User Profile Set to pid:', pid)
+    const userProfile = await getProfile(pid)
+    await updateUserProfile(userProfile)
 }
 
 /**

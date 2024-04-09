@@ -3,7 +3,7 @@
   "description": "PlayDrift Web Extension.",
   "homepage_url": "https://github.com/smashedr/playdrift-extension",
   "author": "Shane",
-  "version": "0.1.13",
+  "version": "0.2.1",
   "manifest_version": 3,
   "commands": {
     "_execute_action": {
