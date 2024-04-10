@@ -618,7 +618,9 @@ async function newChatMessage(msg) {
         }
         return
     }
+    // TODO: Make Custom Commands an Option
     if (message.startsWith('!')) {
+        let msg
         if (
             message.startsWith('!stat') ||
             message.startsWith('!rating') ||
@@ -630,8 +632,17 @@ async function newChatMessage(msg) {
             message.startsWith('!info') ||
             message.startsWith('!addon')
         ) {
-            const msg1 = `Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more. More Info on GitHub: https://github.com/smashedr/playdrift-extension`
-            await sendChatMessage(msg1)
+            msg =
+                'Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: https://github.com/smashedr/playdrift-extension'
+        } else if (message.startsWith('!hack')) {
+            msg =
+                'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.'
+        } else if (message.startsWith('!fast')) {
+            msg =
+                'That is a great idea and I strongly agree! You should play as fast as you can...'
+        }
+        if (msg) {
+            await sendChatMessage(msg)
         }
     } else if (playerID !== profile.id) {
         if (options.playChatSpeech) {

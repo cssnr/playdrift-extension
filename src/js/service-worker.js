@@ -35,6 +35,11 @@ function onStartup() {
 async function onInstalled(details) {
     console.log('onInstalled:', details)
     const githubURL = 'https://github.com/smashedr/playdrift-extension'
+    // const defaultCommands = {
+    //     info: `Stats and Rating are hidden in your profile. I wrote an web extension to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: ${githubURL}`,
+    //     hack: 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.',
+    //     stats: `_send_stats_`,
+    // }
     const options = await Promise.resolve(
         setDefaultOptions({
             showTooltipMouseover: true,
@@ -52,6 +57,7 @@ async function onInstalled(details) {
             kickLowRate: 40,
             sendGameStart: false,
             gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
+            // chatCommands: defaultCommands,
             contextMenu: true,
             showUpdate: false,
         })
