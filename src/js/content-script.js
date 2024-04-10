@@ -92,11 +92,15 @@ async function processLoad() {
         console.info('Profile Only View')
         const pid = url.searchParams.get('profile')
         console.debug('pid:', pid)
-        const container = document.querySelector('.MuiDialog-container')
-        console.debug('container:', container)
-        const parent = container?.querySelectorAll('.MuiBox-root')[4]
-        console.debug('parent:', parent)
-        updateProfile(parent).then()
+
+        // const container = document.querySelector('.MuiDialog-container')
+        // console.debug('container:', container)
+
+        // const parent = container?.querySelectorAll('.MuiBox-root')[4]
+        // console.debug('parent:', parent)
+        // await updateProfile(parent)
+
+        await updateProfile()
     }
 }
 
@@ -124,9 +128,13 @@ function startMutation() {
                         mutation.target.children.length > 5 &&
                         mutation.target.children[2].nodeName === 'H5'
                     ) {
-                        let parent = mutation.target.children[4]
-                        // setTimeout(updateProfile, 250, parent)
-                        updateProfile(parent).then()
+                        // let parent = mutation.target.children[4]
+                        // updateProfile(parent).then()
+                        // const container =
+                        //     mutation.target.parentElement.parentElement
+                        //         .parentElement
+                        // updateProfile(container).then()
+                        updateProfile().then()
                     }
                     // TODO: Detect aside for onMessage replacement
                     if (mutation.target.tagName === 'ASIDE') {
@@ -269,7 +277,6 @@ async function processGame(game) {
  */
 async function sse1(room) {
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
-    // const url = `https://api-v2.playdrift.com/api/v1/chat/messages/h3KnXwaJqEmA8o9rNAENq/sse`
     console.debug('connecting to sse1 url:', url)
     source1 = new EventSource(url, {
         withCredentials: true,
@@ -285,28 +292,12 @@ async function sse1(room) {
         const state = msg.state
         // console.debug('state:', state)
         if (msg.t === 'rs' && state?.tid) {
-            console.debug('Room state:', state)
-            if (rooms[room]) {
-                if (!rooms[room].game && state.game) {
-                    gameStart(state).then()
-                }
-                if (rooms[room].game && !state.game) {
-                    gameEnd(state).then()
-                }
-                if (rooms[room].players.length !== state.players.length) {
-                    roomPlayerChange(rooms[room], state).then()
-                }
-            }
-            rooms[room] = state
-            // source.close()
-            // setTimeout(sse2, 150, state.tid)
+            roomStateUpdate(room, state)
         }
         if (msg.t === 'helo') {
             // TODO: This Needs to be Stateful
-            // console.log('SSE1 HELO - Trigger: SSE2 and sendPlayerStats')
             setTimeout(sse2, 250, room)
             if (options.sendSelfOnJoin) {
-                // sendPlayerStats(profile.id).then()
                 setTimeout(sendPlayerStats, 250, profile.id)
             }
         }
@@ -377,6 +368,28 @@ async function sse3(game) {
             }
         }
     })
+}
+
+/**
+ * Room State Update Handler
+ * @function roomStateUpdate
+ * @param {String} room
+ * @param {Object} state
+ */
+async function roomStateUpdate(room, state) {
+    console.debug('Room state:', state)
+    if (rooms[room]) {
+        if (!rooms[room].game && state.game) {
+            await gameStart(state)
+        }
+        if (rooms[room].game && !state.game) {
+            await gameEnd(state)
+        }
+        if (rooms[room].players.length !== state.players.length) {
+            await roomPlayerChange(rooms[room], state)
+        }
+    }
+    rooms[room] = state
 }
 
 /**
@@ -599,7 +612,7 @@ async function newChatMessage(msg) {
             speech.text = message
             window.speechSynthesis.speak(speech)
         } else if (options.playMessageAudio) {
-            messageAudio.play().then()
+            await messageAudio.play()
         }
     }
 }
@@ -637,7 +650,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
         }
         if (options.autoKickLowRate && stats.wl_percent < options.kickLowRate) {
             await kickPlayer(pid)
-            const ss = `${player.username} ${stats.games_won}/${stats.games_lost} (${stats.wl_percent}%)`
+            const ss = `${player.username} ${stats.won}/${stats.lost} (${stats.wl_percent}%)`
             await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
             return
         }
@@ -755,7 +768,7 @@ async function showTooltipMouseover(event) {
     }
     tooltip.appendChild(span2)
     const span3 = span.cloneNode(true)
-    span3.textContent = `W/L: ${stats.games_won} / ${stats.games_lost}`
+    span3.textContent = `W/L: ${stats.won} / ${stats.lost}`
     if (stats.wl_percent < 45) {
         span3.style.color = '#EE4B2B'
     } else {
@@ -879,7 +892,15 @@ function calStats(profile) {
     const wl_percent =
         parseInt((games_won / (games_won + games_lost)) * 100) || 0
     const text = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
-    return { rating, games_won, games_lost, wl_percent, text }
+    return {
+        rating,
+        games_won,
+        games_lost,
+        wl_percent,
+        text,
+        won: games_won.toLocaleString(),
+        lost: games_lost.toLocaleString(),
+    }
 }
 
 /**
@@ -1010,20 +1031,38 @@ async function updateUserProfile(profile) {
 /**
  * Update Profile Dialog
  * @function updateProfile
- * @param {HTMLElement} parent
  */
-async function updateProfile(parent) {
-    console.debug('updateProfile:', parent)
+async function updateProfile() {
+    // console.debug('updateProfile:', container)
     const url = new URL(window.location)
     const pid = url.searchParams.get('profile')
     const profile = await getProfile(pid)
+    const stats = calStats(profile)
     const { banned } = await chrome.storage.sync.get(['banned'])
 
     const container = document.querySelector('.MuiDialog-container')
-    console.debug('container:', container)
     container?.addEventListener('click', profileCloseClick)
+    const parent = container.querySelectorAll('.MuiBox-root')[1]
+    const root = container.querySelectorAll('.MuiBox-root')[4]
 
-    // const parent = container.querySelectorAll('.MuiBox-root')[4]
+    if (parent.dataset.processed) {
+        return console.debug('already processed parent:', parent)
+    }
+    parent.dataset.processed = 'yes'
+
+    // const name = container.querySelector('.MuiBox-root h5')
+    // const name = parent.querySelector('h5')
+
+    console.debug('updateProfile:', pid, profile, stats, container, root)
+
+    // const h5 = name.cloneNode(true)
+    const h5 = document.createElement('h6')
+    h5.classList.add('MuiTypography-root', 'MuiTypography-h6')
+    h5.textContent = profile.id
+    // h5.style.color = '#314157'
+    // h5.style.color = 'rgba(255, 255, 255, 0.7)'
+    h5.style.margin = '0'
+    parent.insertBefore(h5, parent.children[3])
 
     // const root = container?.querySelector('h2')?.nextSibling
     // const parent = root?.querySelector('h5')?.nextSibling?.nextSibling
@@ -1033,13 +1072,11 @@ async function updateProfile(parent) {
     //     return console.warn('parent not found', container, root, parent)
     // }
 
-    parent.style.marginTop = 0
-    parent.style.marginBottom = '10px'
+    root.style.marginTop = 0
+    root.style.marginBottom = '10px'
 
     const divText = document.createElement('div')
     divText.style.textAlign = 'center'
-
-    const stats = calStats(profile)
 
     const spanStats = document.createElement('span')
     spanStats.id = 'stats-text'
@@ -1055,10 +1092,10 @@ async function updateProfile(parent) {
     const spanGames = document.createElement('span')
     spanGames.style.color = stats.wl_percent < 45 ? '#EE4B2B' : '#50C878'
     // spanGames.id = 'stats-text'
-    spanGames.textContent = ` W/L: ${stats.games_won.toLocaleString()} / ${stats.games_lost.toLocaleString()} (${stats.wl_percent}%) `
+    spanGames.textContent = ` W/L: ${stats.won} / ${stats.lost} (${stats.wl_percent}%) `
     divText.appendChild(spanGames)
 
-    parent.appendChild(divText)
+    root.appendChild(divText)
     const divBtns = document.createElement('div')
     divBtns.style.textAlign = 'center'
 
@@ -1099,7 +1136,7 @@ async function updateProfile(parent) {
     sendButton.style.marginLeft = '20px'
     divBtns.appendChild(sendButton)
 
-    parent.appendChild(divBtns)
+    root.appendChild(divBtns)
 
     // TODO: Add whole profile to form
     const profileForm = document.createElement('form')
@@ -1113,7 +1150,7 @@ async function updateProfile(parent) {
         input.value = profile[key]
         profileForm.appendChild(input)
     }
-    parent.appendChild(profileForm)
+    root.appendChild(profileForm)
 }
 
 /**
