@@ -86,7 +86,8 @@ async function processLoad() {
     console.info('processLoad:', app)
     // TODO:    Not sure why this does not reliably load...
     //          Will most likely move back to Tabs onMessage
-    setTimeout(startMutation, 3000)
+    // setTimeout(startMutation, 3000)
+    startMutation()
     const url = new URL(window.location.href)
     if (url.searchParams.has('profile')) {
         console.info('Profile Only View')
@@ -292,7 +293,21 @@ async function sse1(room) {
         const state = msg.state
         // console.debug('state:', state)
         if (msg.t === 'rs' && state?.tid) {
-            roomStateUpdate(room, state)
+            // roomStateUpdate(room, state)
+            // TODO: This Fires Multiple Times as a Function
+            console.debug('Room state:', state)
+            if (rooms[room]) {
+                if (!rooms[room].game && state.game) {
+                    gameStart(state).then()
+                }
+                if (rooms[room].game && !state.game) {
+                    gameEnd(state).then()
+                }
+                if (rooms[room].players.length !== state.players.length) {
+                    roomPlayerChange(rooms[room], state).then()
+                }
+            }
+            rooms[room] = state
         }
         if (msg.t === 'helo') {
             // TODO: This Needs to be Stateful
@@ -370,27 +385,27 @@ async function sse3(game) {
     })
 }
 
-/**
- * Room State Update Handler
- * @function roomStateUpdate
- * @param {String} room
- * @param {Object} state
- */
-async function roomStateUpdate(room, state) {
-    console.debug('Room state:', state)
-    if (rooms[room]) {
-        if (!rooms[room].game && state.game) {
-            await gameStart(state)
-        }
-        if (rooms[room].game && !state.game) {
-            await gameEnd(state)
-        }
-        if (rooms[room].players.length !== state.players.length) {
-            await roomPlayerChange(rooms[room], state)
-        }
-    }
-    rooms[room] = state
-}
+// /**
+//  * Room State Update Handler
+//  * @function roomStateUpdate
+//  * @param {String} room
+//  * @param {Object} state
+//  */
+// async function roomStateUpdate(room, state) {
+//     console.debug('Room state:', state)
+//     if (rooms[room]) {
+//         if (!rooms[room].game && state.game) {
+//             await gameStart(state)
+//         }
+//         if (rooms[room].game && !state.game) {
+//             await gameEnd(state)
+//         }
+//         if (rooms[room].players.length !== state.players.length) {
+//             await roomPlayerChange(rooms[room], state)
+//         }
+//     }
+//     rooms[room] = state
+// }
 
 /**
  * Room Player Update Handler
@@ -435,7 +450,7 @@ async function playersLeaveRoom(state, players) {
     if (options.sendPlayerLeft && pids) {
         console.debug(`${players.length} players left during game`)
         for (const pid of players) {
-            const profile = getProfile(pid)
+            const profile = await getProfile(pid)
             const message = `${profile.username} left the game.`
             await sendChatMessage(message)
         }
@@ -473,7 +488,7 @@ async function gameStart(state) {
         'options',
         'profile',
     ])
-    // console.debug('options, profile:', options, profile)
+    console.debug('options, profile:', options, profile)
     if (state.game.gameOptions.teams) {
         // TODO: Requires Processing of state.game.teams
         console.info('Teams:', state.game.gameOptions.teams)
@@ -528,7 +543,7 @@ async function processPlayerGame(state) {
 
 /**
  * Get Game Results String
- * @function gameStart
+ * @function getGameResults
  * @param {Object} state
  * @return {String}
  */
@@ -1283,6 +1298,7 @@ async function sendChatMessage(message) {
         return sendChatMessageLegacy(message)
     }
     const url = `https://api-v2.playdrift.com/api/v1/chat/${tid}/send`
+    console.debug('url:', url)
     const response = await fetch(url, {
         method: 'POST',
         credentials: 'include',
