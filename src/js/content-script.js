@@ -416,23 +416,16 @@ async function playersLeaveRoom(state, players) {
     console.debug('playersLeaveRoom:', state, players)
     const { options } = await chrome.storage.sync.get(['options'])
     if (options.playPlayersAudio) {
-        leaveAudio.play().then()
+        await leaveAudio.play()
     }
     const pids = state.game?.gameOptions?.pids
     if (options.sendPlayerLeft && pids) {
-        // console.debug('player left during game, processing...')
-        players.forEach((playerID) => {
-            if (pids.includes(playerID)) {
-                // const name = profiles[player]?.username || player
-                // const profile = await getProfile(playerID)
-                // const message = `Player ${profile.username} has left.`
-                // sendChatMessage(message).then()
-                getProfile(playerID).then((profile) => {
-                    const message = `${profile.username} left the game.`
-                    sendChatMessage(message).then()
-                })
-            }
-        })
+        console.debug(`${players.length} players left during game`)
+        for (const pid of players) {
+            const profile = getProfile(pid)
+            const message = `${profile.username} left the game.`
+            await sendChatMessage(message)
+        }
     }
 }
 
@@ -449,7 +442,10 @@ async function playersJoinRoom(state, players) {
     console.debug('playersJoinRoom:', state, players)
     const { options } = await chrome.storage.sync.get(['options'])
     if (options.playPlayersAudio) {
-        joinAudio.play().then()
+        await joinAudio.play()
+    }
+    for (const pid of players) {
+        await userJoinRoom(pid)
     }
 }
 
@@ -560,55 +556,20 @@ async function newChatMessage(msg) {
     const message = msg.json.message
     const pid = msg.json.cid
 
-    const { banned, options, profile } = await chrome.storage.sync.get([
-        'banned',
+    const { options, profile } = await chrome.storage.sync.get([
         'options',
         'profile',
     ])
     // console.debug('banned, options, profile:', banned, options, profile)
 
-    const room = rooms[currentRoom]
-    const owner = room?.players.length && room.players[0] === profile.id
+    // const room = rooms[currentRoom]
+    // const owner = room?.players.length && room.players[0] === profile.id
     const player = await getProfile(pid)
     // console.debug('owner, room, player:', owner, room, player)
 
     // TODO: Use SSE to Monitor Join/Leave Events
     if (message.startsWith('Joined the game.')) {
-        console.debug('Process Join Message')
-        if (profile.id === pid) {
-            // console.debug('ignoring self user join events')
-            return
-        }
-        if (room?.kicked.includes(pid)) {
-            // console.debug('return on kicked user:', pid)
-            return
-        }
-        const stats = await calStats(player)
-        if (owner) {
-            if (banned.includes(pid)) {
-                await kickPlayer(pid)
-                await sendChatMessage(
-                    `Auto Kicked Banned User: ${player.username}`
-                )
-                // console.debug('return and kicked banned:', pid)
-                return
-            }
-            if (
-                options.autoKickLowRate &&
-                stats.wl_percent < options.kickLowRate
-            ) {
-                await kickPlayer(pid)
-                const ss = `${player.username} ${stats.games_won}/${stats.games_lost} (${stats.wl_percent}%)`
-                await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
-                return
-            }
-        }
-        if (banned.includes(pid)) {
-            await sendChatMessage(`Banned User Joined: ${player.username}`)
-        }
-        if (options.sendOnJoin) {
-            return await sendStatsChat(pid)
-        }
+        console.debug('Join Events Moved to SSE Handler!')
         return
     }
     // TODO: Make Custom Commands an Option
@@ -640,6 +601,52 @@ async function newChatMessage(msg) {
         } else if (options.playMessageAudio) {
             messageAudio.play().then()
         }
+    }
+}
+
+/**
+ * User Join Room Handler
+ * @function userJoinRoom
+ * @param {String} pid Player ID
+ * @param {String} rid Room ID
+ */
+async function userJoinRoom(pid, rid = currentRoom) {
+    const player = await getProfile(pid)
+    const room = rooms[rid]
+    const { banned, options, profile } = await chrome.storage.sync.get([
+        'banned',
+        'options',
+        'profile',
+    ])
+    const owner = room?.players.length && room.players[0] === profile.id
+    console.debug(`${pid} joined ${rid}`, room, banned, options, profile)
+    if (profile.id === pid) {
+        // console.debug('ignoring self user join events')
+        return
+    }
+    if (room?.kicked.includes(pid)) {
+        // console.debug('return on kicked user:', pid)
+        return
+    }
+    const stats = await calStats(player)
+    if (owner) {
+        if (banned.includes(pid)) {
+            await kickPlayer(pid)
+            await sendChatMessage(`Auto Kicked Banned User: ${player.username}`)
+            return
+        }
+        if (options.autoKickLowRate && stats.wl_percent < options.kickLowRate) {
+            await kickPlayer(pid)
+            const ss = `${player.username} ${stats.games_won}/${stats.games_lost} (${stats.wl_percent}%)`
+            await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
+            return
+        }
+    }
+    if (banned.includes(pid)) {
+        await sendChatMessage(`Banned User Joined: ${player.username}`)
+    }
+    if (options.sendOnJoin) {
+        await sendStatsChat(pid)
     }
 }
 
