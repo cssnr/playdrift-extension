@@ -69,8 +69,10 @@ window.addEventListener('load', function load(event) {
     window.removeEventListener('load', load)
 
     const app = document.getElementById('app')
-    console.debug('window.load app:', app)
-    startMutation()
+    console.info('window.load app:', app)
+    // TODO:    Not sure why this does not reliably load...
+    //          Will most likely move back to Tabs onMessage
+    setTimeout(startMutation, 3000)
     const url = new URL(window.location.href)
     if (url.searchParams.has('profile')) {
         console.info('Profile Only View')
@@ -102,7 +104,7 @@ document.addEventListener('blur', function blur(event) {
 function startMutation() {
     // const app = document.getElementById('app')
     const element = document.body
-    console.debug('startMutation: element:', element)
+    console.info('startMutation: element:', element)
     const observer = new MutationObserver(mutationCallback)
     observer.observe(element, {
         // attributes: true,
@@ -557,7 +559,7 @@ async function newChatMessage(msg) {
         return console.debug('NO msg.json')
     }
     const message = msg.json.message
-    const playerID = msg.json.cid
+    const pid = msg.json.cid
 
     const { banned, options, profile } = await chrome.storage.sync.get([
         'banned',
@@ -568,64 +570,60 @@ async function newChatMessage(msg) {
 
     const room = rooms[currentRoom]
     const owner = room?.players.length && room.players[0] === profile.id
-    // console.debug('owner, room:', owner, room)
+    const player = await getProfile(pid)
+    // console.debug('owner, room, player:', owner, room, player)
 
     // TODO: Use SSE to Monitor Join/Leave Events
     if (message.startsWith('Joined the game.')) {
         console.debug('Process Join Message')
-        if (profile.id === playerID) {
+        if (profile.id === pid) {
             // console.debug('ignoring self user join events')
             return
         }
-        if (room?.kicked.includes(playerID)) {
-            // console.debug('return on kicked user:', playerID)
+        if (room?.kicked.includes(pid)) {
+            // console.debug('return on kicked user:', pid)
             return
         }
-        const player = await getProfile(playerID)
         const stats = await calStats(player)
         if (owner) {
-            if (banned.includes(playerID)) {
-                await kickPlayer(playerID)
+            if (banned.includes(pid)) {
+                await kickPlayer(pid)
                 await sendChatMessage(
                     `Auto Kicked Banned User: ${player.username}`
                 )
-                // console.debug('return and kicked banned:', playerID)
+                // console.debug('return and kicked banned:', pid)
                 return
             }
             if (
                 options.autoKickLowRate &&
                 stats.wl_percent < options.kickLowRate
             ) {
-                await kickPlayer(playerID)
+                await kickPlayer(pid)
                 const ss = `${player.username} ${stats.games_won}/${stats.games_lost} (${stats.wl_percent}%)`
                 await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
                 return
             }
         }
-        if (banned.includes(playerID)) {
+        if (banned.includes(pid)) {
             await sendChatMessage(`Banned User Joined: ${player.username}`)
         }
         if (options.sendOnJoin) {
-            return await sendStatsChat(playerID)
+            return await sendStatsChat(pid)
         }
         return
     }
     // TODO: Make Custom Commands an Option
     if (message.startsWith('!')) {
         let msg
-        if (
-            message.startsWith('!stat') ||
-            message.startsWith('!rating') ||
-            message.startsWith('!record')
-        ) {
-            await sendPlayerStats(playerID)
-        } else if (
-            message.startsWith('!help') ||
-            message.startsWith('!info') ||
-            message.startsWith('!addon')
-        ) {
+        if (message.startsWith('!profile') || message.startsWith('!stat')) {
+            await sendPlayerStats(pid)
+        } else if (message.startsWith('!help') || message.startsWith('!info')) {
             msg =
                 'Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: https://github.com/smashedr/playdrift-extension'
+        } else if (message.startsWith('!id')) {
+            msg = `${player.username} ID: ${pid}`
+        } else if (message.startsWith('!url')) {
+            msg = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"${pid}","game":"dominoes"}`
         } else if (message.startsWith('!hack')) {
             msg =
                 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.'
@@ -636,7 +634,7 @@ async function newChatMessage(msg) {
         if (msg) {
             await sendChatMessage(msg)
         }
-    } else if (playerID !== profile.id) {
+    } else if (pid !== profile.id) {
         if (options.playChatSpeech) {
             speech.text = message
             window.speechSynthesis.speak(speech)

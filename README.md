@@ -58,7 +58,8 @@ All **Chromium** Based Browsers can install the extension from the
 - Auto Update Options on Room Creation
 - Auto Kick Users Below X Win Rate Percentage
 - Ban User Feature that Automatically Kicks User in Future
-- Send Customizable Message on Game Start
+- Send Customizable Message on Game Start and Stats at End
+- Close Profiles by Clicking Anywhere Outside the Profile
 
 Please submit a [Feature Request](https://github.com/smashedr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/smashedr/playdrift-extension/issues).
