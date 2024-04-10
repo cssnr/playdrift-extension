@@ -105,41 +105,33 @@ function startMutation() {
     console.debug('startMutation: element:', element)
     const observer = new MutationObserver(mutationCallback)
     observer.observe(element, {
-        attributes: true,
-        characterData: true,
+        // attributes: true,
+        // characterData: true,
         childList: true,
         subtree: true,
-        attributeOldValue: true,
-        characterDataOldValue: true,
+        // attributeOldValue: true,
+        // characterDataOldValue: true,
     })
 
     function mutationCallback(mutationList, observer) {
         // console.info('mutationCallback, mutationList:', mutationList, observer)
         for (const mutation of mutationList) {
-            if (mutation.type === 'childList') {
-                if (mutation.addedNodes) {
-                    mutation.addedNodes.forEach((el) => {
-                        // if (el.classList?.contains('MuiBox-root')) {
-                        //     console.info('mutation:', mutation)
-                        // }
-                        if (
-                            mutation.target.children.length > 5 &&
-                            mutation.target.children[2].nodeName === 'H5'
-                        ) {
-                            let parent = mutation.target.children[4]
-                            // setTimeout(updateProfile, 250, parent)
-                            updateProfile(parent).then()
-                        }
-                    })
-
-                    // mutation.addedNodes.forEach((el) => {
-                    //     if (el.classList?.contains('MuiBox-root')) {
-                    //         console.info('mutation:', mutation)
-                    //     }
-                    // })
-                }
-            } else if (mutation.type === 'attributes') {
-                // console.info('attributes', mutation)
+            if (mutation.type === 'childList' && mutation.addedNodes) {
+                mutation.addedNodes.forEach((el) => {
+                    // console.info('mutation:', mutation)
+                    if (
+                        mutation.target.children.length > 5 &&
+                        mutation.target.children[2].nodeName === 'H5'
+                    ) {
+                        let parent = mutation.target.children[4]
+                        // setTimeout(updateProfile, 250, parent)
+                        updateProfile(parent).then()
+                    }
+                    // TODO: Detect aside for onMessage replacement
+                    if (mutation.target.tagName === 'ASIDE') {
+                        console.info('ASIDE')
+                    }
+                })
             }
         }
     }
