@@ -6,7 +6,8 @@ chrome.runtime.onMessage.addListener(onMessage)
 
 document.addEventListener('mouseover', documentMouseover)
 
-// Intervals
+// Intervals and Timeouts
+setTimeout(processLoad, 3000)
 setInterval(updateUserInterval, 2 * 60000)
 let userIntervalID = setInterval(setUserProfile, 1000)
 
@@ -65,11 +66,24 @@ function generateGetBoundingClientRect(x = 0, y = 0) {
 // })()
 
 window.addEventListener('load', function load(event) {
-    // console.debug('window.load', event)
+    console.info('window.load EventListener', event)
     window.removeEventListener('load', load)
+})
 
+document.addEventListener('blur', function blur(event) {
+    // console.debug('documentBlur', event)
+    // document.removeEventListener('blur', blur)
+    tooltip.style.display = 'none'
+    instance.update()
+})
+
+async function processLoad() {
+    // const homeHeader = document.querySelector(
+    //     'div[data-testid="home-header-backdrop"]'
+    // )
+    // homeHeader.style.backgroundImage = 'none'
     const app = document.getElementById('app')
-    console.info('window.load app:', app)
+    console.info('processLoad:', app)
     // TODO:    Not sure why this does not reliably load...
     //          Will most likely move back to Tabs onMessage
     setTimeout(startMutation, 3000)
@@ -84,22 +98,7 @@ window.addEventListener('load', function load(event) {
         console.debug('parent:', parent)
         updateProfile(parent).then()
     }
-})
-
-document.addEventListener('blur', function blur(event) {
-    // console.debug('documentBlur', event)
-    // document.removeEventListener('blur', blur)
-    tooltip.style.display = 'none'
-    instance.update()
-})
-
-// async function processLoad() {
-//     console.debug('processLoad')
-//     // const homeHeader = document.querySelector(
-//     //     'div[data-testid="home-header-backdrop"]'
-//     // )
-//     // homeHeader.style.backgroundImage = 'none'
-// }
+}
 
 function startMutation() {
     // const app = document.getElementById('app')
