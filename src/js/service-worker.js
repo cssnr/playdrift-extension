@@ -178,6 +178,18 @@ async function onUpdate(tabId, changeInfo, tab) {
     }
 }
 
+// chrome.webRequest.onBeforeRequest.addListener(
+//     onBeforeRequest,
+//     {
+//         urls: ['*://*.playdrift.com/*'],
+//     },
+//     ['requestBody']
+// )
+//
+// function onBeforeRequest(event) {
+//     console.log(event)
+// }
+
 // /**
 //  * On Alarm Callback
 //  * @function onAlarm

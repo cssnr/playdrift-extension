@@ -1204,7 +1204,11 @@ async function banClick(event) {
     const name = profiles[playerID]?.username || playerID
     await sendChatMessage(`Banned User: ${name}`)
     await kickPlayer(playerID)
-    history.back()
+    if (history.length > 1) {
+        history.back()
+    } else {
+        window.close()
+    }
 }
 
 /**
@@ -1221,7 +1225,11 @@ async function unbanClick(event) {
         banned.splice(index, 1)
         await chrome.storage.sync.set({ banned })
     }
-    history.back()
+    if (history.length > 1) {
+        history.back()
+    } else {
+        window.close()
+    }
 }
 
 /**
