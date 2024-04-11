@@ -56,7 +56,8 @@ All **Chromium** Based Browsers can install the extension from the
 - Play Audio on New Chat Message
 - Play Chat Message as Audio (TTS)
 - Auto Update Options on Room Creation
-- Auto Kick Users Below X Win Rate Percentage
+- Chat Notifications on Player Leaving an Active Game
+- Auto Kick Users Below Set Win Rate Percentage
 - Ban User Feature that Automatically Kicks User in Future
 - Send Customizable Message on Game Start and Stats at End
 - Close Profiles by Clicking Anywhere Outside the Profile

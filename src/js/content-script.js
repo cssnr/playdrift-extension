@@ -943,26 +943,26 @@ async function updateUserInterval() {
 /**
  * Get Profile by User ID
  * @function saveOptions
- * @param {string} profileID
+ * @param {string} pid
  * @returns {Object}
  */
-async function getProfile(profileID) {
-    if (profiles[profileID]) {
+async function getProfile(pid) {
+    if (profiles[pid]) {
         const age =
-            Math.floor(Date.now() / 1000) - profiles[profileID].ts_updated
+            Math.floor(Date.now() / 1000) - profiles[pid].ts_updated
         if (age < 150) {
             // console.debug('using cached profile, age:', age)
-            return profiles[profileID]
+            return profiles[pid]
         }
         // console.debug('cached profile expired, age:', age)
     }
-    const profileUrl = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input=%7B%22id%22%3A%22${profileID}%22%2C%22game%22%3A%22dominoes%22%7D`
+    const profileUrl = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input=%7B%22id%22%3A%22${pid}%22%2C%22game%22%3A%22dominoes%22%7D`
     // console.debug('profileUrl:', profileUrl)
     const response = await fetch(profileUrl)
     const data = await response.json()
     const profile = data.result.data
     profile.ts_updated = Math.floor(Date.now() / 1000)
-    profiles[profileID] = profile
+    profiles[pid] = profile
     console.info('profile:', profile)
     return profile
 }
