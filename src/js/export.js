@@ -148,20 +148,20 @@ export function updateOptions(options, text = false) {
             } else {
                 el.value = value
             }
-            if (key === 'autoKickLowRate') {
-                const kickLowRate = document.getElementById('kickLowRate')
-                if (kickLowRate) {
-                    kickLowRate.disabled = !value
-                }
+            const extra = {
+                autoKickLowRate: 'kickLowRate',
+                sendGameStart: 'gameStartMessage',
             }
-            if (key === 'sendGameStart') {
-                const kickLowRate = document.getElementById('gameStartMessage')
-                if (kickLowRate) {
-                    kickLowRate.disabled = !value
+            if (Object.keys(extra).includes(key)) {
+                const element = $(`#${extra[key]}`)
+                console.log('element', element)
+                if (value) {
+                    element.show('slow')
+                } else {
+                    element.hide('slow')
                 }
             }
         }
-        // el.classList.remove('is-invalid')
     }
 }
 
