@@ -148,14 +148,8 @@ export function updateOptions(options, text = false) {
             } else {
                 el.value = value
             }
-            const extra = {
-                autoKickLowRate: 'kickLowRate',
-                autoKickLowGames: 'kickLowGames',
-                sendGameStart: 'gameStartMessage',
-            }
-            if (Object.keys(extra).includes(key)) {
-                const element = $(`#${extra[key]}`)
-                console.log('element', element)
+            if (el.dataset.related) {
+                const element = $(`#${el.dataset.related}`)
                 if (value) {
                     element.show('fast')
                 } else {

@@ -146,9 +146,6 @@
                 <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Teams Change.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Extra Setting.">-->
-<!--                    <i class="fa-solid fa-circle-plus text-success-emphasis ms-1"></i>-->
-<!--                </span>-->
             </label>
         </div>
         <div class="form-check form-switch">
@@ -171,7 +168,7 @@
         </div>
         <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-solid fa-gamepad me-2"></i> Game Options</h6>
         <div class="form-check form-switch">
-            <input class="form-check-input" id="autoKickLowRate" type="checkbox" role="switch">
+            <input class="form-check-input" id="autoKickLowRate" type="checkbox" role="switch" data-related="kickLowRate">
             <label class="form-check-label" for="autoKickLowRate" aria-describedby="autoKickLowRateHelp">
                 Auto Kick Low Win Rate Users
                 <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Low Win Rate Users.">
@@ -186,7 +183,7 @@
         </div>
 
         <div class="form-check form-switch">
-            <input class="form-check-input" id="autoKickLowGames" type="checkbox" role="switch">
+            <input class="form-check-input" id="autoKickLowGames" type="checkbox" role="switch" data-related="kickLowGames">
             <label class="form-check-label" for="autoKickLowGames" aria-describedby="autoKickLowGamesHelp">
                 Auto Kick Low Total Game Users
                 <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Low Total Game Users.">
@@ -197,11 +194,11 @@
         <div class="ms-5" style="width: 100px;">
             <label for="kickLowGames" class="form-label visually-hidden"><i class="fa-solid fa-list-ol me-2"></i> Kick Low Games</label>
             <input id="kickLowGames" aria-describedby="kickLowGamesHelp" type="number" class="form-control form-control-sm mb-2" autocomplete="off" style="display: none">
-            <!--            <div class="form-text" id="kickLowGamesHelp">Popup Recent Files. <span class="d-inline-block">0 to Disable.</span></div>-->
+<!--            <div class="form-text" id="kickLowGamesHelp">Popup Recent Files. <span class="d-inline-block">0 to Disable.</span></div>-->
         </div>
 
         <div class="form-check form-switch">
-            <input class="form-check-input" id="sendGameStart" type="checkbox" role="switch">
+            <input class="form-check-input" id="sendGameStart" type="checkbox" role="switch" data-related="gameStartMessage">
             <label class="form-check-label text-success-emphasis" for="sendGameStart" aria-describedby="sendGameStartHelp">
                 Send Message on Game Start/End
                 <span data-bs-toggle="tooltip" data-bs-title="Send Message on Game Start/End.">
