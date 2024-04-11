@@ -27,6 +27,7 @@ const audio = {
     join: new Audio(chrome.runtime.getURL('/audio/join.mp3')),
     leave: new Audio(chrome.runtime.getURL('/audio/leave.mp3')),
     message: new Audio(chrome.runtime.getURL('/audio/message.mp3')),
+    team: new Audio(chrome.runtime.getURL('/audio/team.mp3')),
     turn: new Audio(chrome.runtime.getURL('/audio/turn.mp3')),
 }
 
@@ -320,6 +321,15 @@ async function sse1(room) {
                 if (rooms[room].kicked.length !== state.kicked.length) {
                     roomKickedChange(rooms[room], state).then()
                 }
+                // if (
+                //     cmpArrays(rooms[room].teamsAvailable, state.teamsAvailable)
+                // ) {
+                //     console.info('Teams Changed - Array')
+                // }
+                if (cmpObjects(rooms[room].teams, state.teams)) {
+                    // console.info('Teams Changed - Object')
+                    roomTeamsChanged(rooms[room], state).then()
+                }
             }
             rooms[room] = state
         }
@@ -496,6 +506,28 @@ async function roomKickedChange(before, after) {
             }
         }
     }
+}
+
+/**
+ * Room Teams Changed Handler
+ * @function roomTeamsChanged
+ * @param {Object} before
+ * @param {Object} after
+ * @return {Boolean}
+ */
+async function roomTeamsChanged(before, after) {
+    console.debug('roomTeamsChanged:', before, after)
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (options.playTeamsAudio) {
+        await audio.team.play()
+    }
+    // const changes = []
+    // for (const [key, value] of Object.entries(before)) {
+    //     if (obj2[key] !== value) {
+    //         return true
+    //     }
+    // }
+    // return false
 }
 
 /**
@@ -689,6 +721,16 @@ async function userJoinRoom(pid, rid = currentRoom) {
         if (banned.includes(pid)) {
             await kickPlayer(pid)
             await sendChatMessage(`Auto Kicked Banned User: ${player.username}`)
+            return
+        }
+        if (
+            options.autoKickLowGames &&
+            player.stats.games_won + player.stats.games_lost <
+                options.kickLowGames
+        ) {
+            await kickPlayer(pid)
+            const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
+            await sendChatMessage(`Auto Kicked Low Total Game Player: ${ss}`)
             return
         }
         if (
@@ -1385,4 +1427,42 @@ async function selectTeam(rid, team) {
     }
     const response = await fetch('https://api-v2.playdrift.com/graphql', init)
     console.debug('response:', response)
+}
+
+/**
+ * Compare Two Arrays for Equality
+ * @function cmpArrays
+ * @param {Array} arr1 Array 1
+ * @param {Array} arr2 Array 2
+ * @return {Boolean}
+ */
+function cmpArrays(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        return true
+    }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return true
+        }
+    }
+    return false
+}
+
+/**
+ * Compare Two Objects for Equality
+ * @function cmpObjects
+ * @param {Object} obj1 Object 1
+ * @param {Object} obj2 Object 2
+ * @return {Boolean}
+ */
+function cmpObjects(obj1, obj2) {
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+        return true
+    }
+    for (const [key, value] of Object.entries(obj1)) {
+        if (obj2[key] !== value) {
+            return true
+        }
+    }
+    return false
 }

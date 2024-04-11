@@ -150,15 +150,16 @@ export function updateOptions(options, text = false) {
             }
             const extra = {
                 autoKickLowRate: 'kickLowRate',
+                autoKickLowGames: 'kickLowGames',
                 sendGameStart: 'gameStartMessage',
             }
             if (Object.keys(extra).includes(key)) {
                 const element = $(`#${extra[key]}`)
                 console.log('element', element)
                 if (value) {
-                    element.show('slow')
+                    element.show('fast')
                 } else {
-                    element.hide('slow')
+                    element.hide('fast')
                 }
             }
         }
