@@ -285,6 +285,10 @@ async function setDefaultOptions(defaultOptions) {
         profile = {}
         await chrome.storage.sync.set({ profile })
     }
+    // if (!profiles) {
+    //     profiles = {}
+    //     await chrome.storage.sync.set({ profiles })
+    // }
     options = options || {}
     let changed = false
     for (const [key, value] of Object.entries(defaultOptions)) {

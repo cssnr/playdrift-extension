@@ -317,6 +317,9 @@ async function sse1(room) {
                 if (rooms[room].players.length !== state.players.length) {
                     roomPlayerChange(rooms[room], state).then()
                 }
+                if (rooms[room].kicked.length !== state.kicked.length) {
+                    roomKickedChange(rooms[room], state).then()
+                }
             }
             rooms[room] = state
         }
@@ -439,7 +442,7 @@ async function playersLeaveRoom(state, players) {
     if (options.sendPlayerLeft && pids) {
         console.debug(`${players.length} players left during game`)
         for (const pid of players) {
-            const profile = await getProfile(pid)
+            const profile = await getProfile(pid, true)
             const message = `${profile.username} left the game.`
             await sendChatMessage(message)
         }
@@ -463,6 +466,35 @@ async function playersJoinRoom(state, players) {
     }
     for (const pid of players) {
         await userJoinRoom(pid)
+    }
+}
+
+/**
+ * Room Player Kicked Handler
+ * @function roomKickedChange
+ * @param {Object} before
+ * @param {Object} after
+ */
+async function roomKickedChange(before, after) {
+    console.debug('roomKickedChange:', before, after)
+    const kicked = []
+    for (const pid of after.kicked) {
+        if (!before.kicked.includes(pid)) {
+            kicked.push(pid)
+        }
+    }
+    console.debug('kicked players:', kicked)
+    const { options } = await chrome.storage.sync.get(['options'])
+    const pids = after.game?.gameOptions?.pids
+    if (options.sendPlayerLeft && pids) {
+        console.debug(`${players.length} players left during game`)
+        for (const pid of kicked) {
+            if (pids.includes(pid)) {
+                const player = await getProfile(pid, true)
+                const message = `${player.username} was kicked from the game.`
+                await sendChatMessage(message)
+            }
+        }
     }
 }
 
@@ -545,7 +577,7 @@ async function getGameResults(state) {
     let won = 'Winners:'
     let lost = 'Losers:'
     for (const pid of players) {
-        const pp = await getProfile(pid)
+        const pp = await getProfile(pid, true)
         if (winners.includes(pid)) {
             won += ` ${pp.username} +${ratings[pid].diff} (${ratings[pid].rating}),`
         } else {
@@ -573,6 +605,11 @@ async function newChatMessage(msg) {
     const message = msg.json.message
     const pid = msg.json.cid
 
+    if (message.startsWith('Joined the game.')) {
+        console.debug('Join Events Moved to SSE Handler!')
+        return
+    }
+
     const { options, profile } = await chrome.storage.sync.get([
         'options',
         'profile',
@@ -581,32 +618,34 @@ async function newChatMessage(msg) {
 
     // const room = rooms[currentRoom]
     // const owner = room?.players.length && room.players[0] === profile.id
-    const player = await getProfile(pid)
+    const player = await getProfile(pid, true)
     // console.debug('owner, room, player:', owner, room, player)
-
-    if (message.startsWith('Joined the game.')) {
-        console.debug('Join Events Moved to SSE Handler!')
-        return
-    }
 
     // TODO: Make Custom Commands an Option
     if (message.startsWith('!')) {
+        let cmd = message.split(' ')[0]
+        cmd = cmd.substring(1).toLocaleLowerCase()
+        console.debug('chat command:', cmd)
         let msg
-        if (message.startsWith('!profile') || message.startsWith('!stat')) {
+        if (['me', 'profile', 'rating', 'stat', 'stats'].includes(cmd)) {
             await sendPlayerStats(pid)
-        } else if (message.startsWith('!help') || message.startsWith('!info')) {
+        } else if (cmd.startsWith('kick')) {
+            await sendKickedPlayers()
+        } else if (['info', 'help'].includes(cmd)) {
             msg =
                 'Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: https://github.com/smashedr/playdrift-extension'
-        } else if (message.startsWith('!id')) {
+        } else if (cmd === 'id') {
             msg = `${player.username} ID: ${pid}`
-        } else if (message.startsWith('!url')) {
+        } else if (cmd === 'url') {
             msg = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"${pid}","game":"dominoes"}`
-        } else if (message.startsWith('!hack')) {
+        } else if (cmd === 'hack') {
             msg =
                 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.'
-        } else if (message.startsWith('!fast')) {
+        } else if (cmd === 'fast') {
             msg =
                 'That is a great idea and I strongly agree! You should play as fast as you can...'
+        } else if (cmd === 'zzz') {
+            msg = 'Is your keyboard stuck? Or do you need to take a nap?'
         }
         if (msg) {
             await sendChatMessage(msg)
@@ -636,7 +675,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
         'profile',
     ])
     const owner = room?.players.length && room.players[0] === profile.id
-    console.debug(`${pid} joined ${rid}`, room, banned, options, profile)
+    console.debug(`${pid}/${rid}`, player, room, banned, options, profile)
     if (profile.id === pid) {
         // console.debug('ignoring self user join events')
         return
@@ -645,16 +684,19 @@ async function userJoinRoom(pid, rid = currentRoom) {
         // console.debug('return on kicked user:', pid)
         return
     }
-    const stats = await calStats(player)
+    // const stats = await calStats(player)
     if (owner) {
         if (banned.includes(pid)) {
             await kickPlayer(pid)
             await sendChatMessage(`Auto Kicked Banned User: ${player.username}`)
             return
         }
-        if (options.autoKickLowRate && stats.wl_percent < options.kickLowRate) {
+        if (
+            options.autoKickLowRate &&
+            player.stats.wl_percent < options.kickLowRate
+        ) {
             await kickPlayer(pid)
-            const ss = `${player.username} ${stats.won}/${stats.lost} (${stats.wl_percent}%)`
+            const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
             await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
             return
         }
@@ -665,6 +707,24 @@ async function userJoinRoom(pid, rid = currentRoom) {
     if (options.sendOnJoin) {
         await sendStatsChat(pid)
     }
+}
+
+async function sendKickedPlayers() {
+    const room = rooms[currentRoom]
+    if (!room.kicked.length) {
+        return await sendChatMessage('No Kicked Players.')
+    }
+    const players = []
+    for (const pid of room.kicked) {
+        const player = getProfile(pid, true)
+        players.push(player.username)
+    }
+    let msg = 'Kicked Players: '
+    for (const name of players) {
+        msg += `${name}, `
+    }
+    msg = msg.replace(/,\s*$/, '')
+    await sendChatMessage(msg)
 }
 
 /**
@@ -684,20 +744,14 @@ async function documentMouseover(event) {
         }
         return
     }
+
     const { options } = await chrome.storage.sync.get(['options'])
 
     // Cache the profile
-    if (
-        options.showMouseover ||
-        // options.sendMouseover ||
-        options.showTooltipMouseover
-    ) {
+    if (options.showMouseover || options.showTooltipMouseover) {
         await getProfile(event.target.parentNode.dataset.id)
     }
 
-    // if (options.sendMouseover) {
-    //     await sendMouseover(event)
-    // }
     if (options.showTooltipMouseover) {
         await showTooltipMouseover(event)
     }
@@ -729,9 +783,9 @@ async function showTooltipMouseover(event) {
     // console.debug('show tooltip')
     tooltip.style.display = 'block'
     instance.update()
-    const userID = event.target.parentNode.dataset.id
-    const profile = await getProfile(userID)
-    const stats = calStats(profile)
+    const pid = event.target.parentNode.dataset.id
+    const profile = await getProfile(pid)
+    // const stats = calStats(profile)
     tooltip.innerHTML = ''
     const span = document.createElement('span')
     span.style.width = '100%'
@@ -740,7 +794,7 @@ async function showTooltipMouseover(event) {
     span1.textContent = profile.username
     tooltip.appendChild(span1)
     const span2 = span.cloneNode(true)
-    span2.textContent = `Rating: ${stats.rating} - ${stats.wl_percent}%`
+    span2.textContent = `Rating: ${profile.stats.rating} - ${profile.stats.wl_percent}%`
     if (profile.rating < 200) {
         span2.style.color = '#EE4B2B'
     } else {
@@ -748,8 +802,8 @@ async function showTooltipMouseover(event) {
     }
     tooltip.appendChild(span2)
     const span3 = span.cloneNode(true)
-    span3.textContent = `W/L: ${stats.won} / ${stats.lost}`
-    if (stats.wl_percent < 45) {
+    span3.textContent = `W/L: ${profile.stats.won} / ${profile.stats.lost}`
+    if (profile.stats.wl_percent < 45) {
         span3.style.color = '#EE4B2B'
     } else {
         span3.style.color = '#50C878'
@@ -777,10 +831,10 @@ async function showMouseover(event) {
     element.dataset.processed = 'yes'
     element.parentNode.style.position = 'relative'
 
-    const userID = element.dataset.id
-    // console.debug('userID', userID)
-    const profile = await getProfile(userID)
-    const stats = calStats(profile)
+    const pid = element.dataset.id
+    // console.debug('pid', pid)
+    const profile = await getProfile(pid)
+    // const stats = calStats(profile)
     const div = document.createElement('div')
     div.style.position = 'absolute'
     div.style.marginTop = '-3px'
@@ -811,13 +865,13 @@ async function showMouseover(event) {
     // div.appendChild(br)
 
     const spanRate = document.createElement('span')
-    spanRate.textContent = `${stats.wl_percent}%`
+    spanRate.textContent = `${profile.stats.wl_percent}%`
     spanRating.style.width = '100%'
     // spanRate.style.margin = '-5px 0'
     spanRate.style.display = 'inline-block'
     // spanRate.style.position = 'fixed'
 
-    if (stats.wl_percent < 45) {
+    if (profile.stats.wl_percent < 45) {
         spanRate.style.color = '#EE4B2B'
     } else {
         spanRate.style.color = '#50C878'
@@ -832,55 +886,30 @@ async function showMouseover(event) {
 /**
  * Send Stats to Chat One Time
  * @function sendStatsChat
- * @param {string} playerID
+ * @param {string} pid
  */
-async function sendStatsChat(playerID) {
+async function sendStatsChat(pid) {
     const aside = document.querySelector('aside')
-    const sent = aside.querySelector(`#userid-${playerID}`)
+    const sent = aside.querySelector(`#userid-${pid}`)
     if (sent) {
-        console.debug('already sent stats for playerID:', playerID)
+        console.debug('already sent stats for pid:', pid)
         return
     }
     const div = document.createElement('div')
     div.style.display = 'none'
-    div.id = `userid-${playerID}`
+    div.id = `userid-${pid}`
     aside.appendChild(div)
-    await sendPlayerStats(playerID)
+    await sendPlayerStats(pid)
 }
 
 /**
  * Send Player Stats to Chat
  * @function sendPlayerStats
- * @param {string} playerID
+ * @param {string} pid
  */
-async function sendPlayerStats(playerID) {
-    const profile = await getProfile(playerID)
-    const stats = calStats(profile)
-    await sendChatMessage(stats.text)
-}
-
-/**
- * Calculate Stats from profile
- * @function calStats
- * @param {Object} profile
- * @return {Object}
- */
-function calStats(profile) {
-    const rating = parseInt(profile.rating)
-    const games_won = parseInt(profile.games_won)
-    const games_lost = parseInt(profile.games_lost)
-    const wl_percent =
-        parseInt((games_won / (games_won + games_lost)) * 100) || 0
-    const text = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
-    return {
-        rating,
-        games_won,
-        games_lost,
-        wl_percent,
-        text,
-        won: games_won.toLocaleString(),
-        lost: games_lost.toLocaleString(),
-    }
+async function sendPlayerStats(pid) {
+    const profile = await getProfile(pid)
+    await sendChatMessage(profile.stats.text)
 }
 
 /**
@@ -943,13 +972,16 @@ async function updateUserInterval() {
 /**
  * Get Profile by User ID
  * @function saveOptions
- * @param {string} pid
+ * @param {String} pid Player ID
+ * @param {Boolean} skip Skip Expire Check
  * @returns {Object}
  */
-async function getProfile(pid) {
+async function getProfile(pid, skip) {
     if (profiles[pid]) {
-        const age =
-            Math.floor(Date.now() / 1000) - profiles[pid].ts_updated
+        if (skip) {
+            return profiles[pid]
+        }
+        const age = Math.floor(Date.now() / 1000) - profiles[pid].ts_updated
         if (age < 150) {
             // console.debug('using cached profile, age:', age)
             return profiles[pid]
@@ -960,11 +992,36 @@ async function getProfile(pid) {
     // console.debug('profileUrl:', profileUrl)
     const response = await fetch(profileUrl)
     const data = await response.json()
-    const profile = data.result.data
+    const profile = structuredClone(data.result.data)
     profile.ts_updated = Math.floor(Date.now() / 1000)
+    profile.stats = calStats(profile)
     profiles[pid] = profile
     console.info('profile:', profile)
     return profile
+}
+
+/**
+ * Calculate Stats from profile
+ * @function calStats
+ * @param {Object} profile
+ * @return {Object}
+ */
+function calStats(profile) {
+    const rating = parseInt(profile.rating)
+    const games_won = parseInt(profile.games_won)
+    const games_lost = parseInt(profile.games_lost)
+    const wl_percent =
+        parseInt((games_won / (games_won + games_lost)) * 100) || 0
+    const text = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
+    return {
+        rating,
+        games_won,
+        games_lost,
+        wl_percent,
+        text,
+        won: games_won.toLocaleString(),
+        lost: games_lost.toLocaleString(),
+    }
 }
 
 /**
@@ -1017,7 +1074,6 @@ async function updateProfile() {
     const url = new URL(window.location)
     const pid = url.searchParams.get('profile')
     const profile = await getProfile(pid)
-    const stats = calStats(profile)
     const { banned } = await chrome.storage.sync.get(['banned'])
 
     const container = document.querySelector('.MuiDialog-container')
@@ -1033,7 +1089,7 @@ async function updateProfile() {
     // const name = container.querySelector('.MuiBox-root h5')
     // const name = parent.querySelector('h5')
 
-    console.debug('updateProfile:', pid, profile, stats, container, root)
+    console.debug('updateProfile:', pid, profile, container, root)
 
     // const h5 = name.cloneNode(true)
     const h5 = document.createElement('h6')
@@ -1060,19 +1116,20 @@ async function updateProfile() {
 
     const spanStats = document.createElement('span')
     spanStats.id = 'stats-text'
-    spanStats.textContent = stats.text
+    spanStats.textContent = profile.stats.text
     spanStats.hidden = true
     divText.appendChild(spanStats)
 
     const spanRating = document.createElement('span')
-    spanRating.style.color = stats.rating < 200 ? '#EE4B2B' : '#50C878'
-    spanRating.textContent = ` Rating: ${stats.rating} `
+    spanRating.style.color = profile.stats.rating < 200 ? '#EE4B2B' : '#50C878'
+    spanRating.textContent = ` Rating: ${profile.stats.rating} `
     divText.appendChild(spanRating)
 
     const spanGames = document.createElement('span')
-    spanGames.style.color = stats.wl_percent < 45 ? '#EE4B2B' : '#50C878'
-    // spanGames.id = 'stats-text'
-    spanGames.textContent = ` W/L: ${stats.won} / ${stats.lost} (${stats.wl_percent}%) `
+    spanGames.style.color =
+        profile.stats.wl_percent < 45 ? '#EE4B2B' : '#50C878'
+    // spanGames.id = 'profile.stats-text'
+    spanGames.textContent = ` W/L: ${profile.stats.won} / ${profile.stats.lost} (${profile.stats.wl_percent}%) `
     divText.appendChild(spanGames)
 
     root.appendChild(divText)
@@ -1169,11 +1226,11 @@ function sendClick(event) {
  * @param {MouseEvent} event
  */
 async function sendKickClick(event) {
-    const playerID = document.getElementById('profile-id').value
-    console.debug('sendKickClick:', playerID, event)
-    await kickPlayer(playerID)
-    const name = profiles[playerID].username || playerID
-    await sendChatMessage(`Kicked Player: ${name}`)
+    const pid = document.getElementById('profile-id').value
+    console.debug('sendKickClick:', pid, event)
+    await kickPlayer(pid)
+    const player = await getProfile(pid)
+    await sendChatMessage(`Kicked Player: ${player.username}`)
 }
 
 /**
@@ -1182,9 +1239,9 @@ async function sendKickClick(event) {
  * @param {MouseEvent} event
  */
 async function kickClick(event) {
-    const playerID = document.getElementById('profile-id').value
-    console.debug('kickClick:', playerID, event)
-    await kickPlayer(playerID)
+    const pid = document.getElementById('profile-id').value
+    console.debug('kickClick:', pid, event)
+    await kickPlayer(pid)
     history.back()
 }
 
@@ -1194,16 +1251,16 @@ async function kickClick(event) {
  * @param {MouseEvent} event
  */
 async function banClick(event) {
-    const playerID = document.getElementById('profile-id').value
+    const pid = document.getElementById('profile-id').value
     const { banned } = await chrome.storage.sync.get(['banned'])
-    console.debug('banClick:', playerID, banned, event)
-    if (!banned.includes(playerID)) {
-        banned.push(playerID)
+    console.debug('banClick:', pid, banned, event)
+    if (!banned.includes(pid)) {
+        banned.push(pid)
         await chrome.storage.sync.set({ banned })
     }
-    const name = profiles[playerID]?.username || playerID
-    await sendChatMessage(`Banned User: ${name}`)
-    await kickPlayer(playerID)
+    const player = await getProfile(pid)
+    await sendChatMessage(`Banned User: ${player.username}`)
+    await kickPlayer(pid)
     if (history.length > 1) {
         history.back()
     } else {
@@ -1217,10 +1274,10 @@ async function banClick(event) {
  * @param {MouseEvent} event
  */
 async function unbanClick(event) {
-    const playerID = document.getElementById('profile-id').value
+    const pid = document.getElementById('profile-id').value
     const { banned } = await chrome.storage.sync.get(['banned'])
-    console.debug('banClick:', playerID, banned, event)
-    const index = banned.indexOf(playerID)
+    console.debug('banClick:', pid, banned, event)
+    const index = banned.indexOf(pid)
     if (index !== undefined) {
         banned.splice(index, 1)
         await chrome.storage.sync.set({ banned })
@@ -1235,14 +1292,14 @@ async function unbanClick(event) {
 /**
  * Kick a Player by ID
  * @function kickPlayer
- * @param {string} playerID
+ * @param {string} pid
  */
-async function kickPlayer(playerID) {
-    console.debug('kickPlayer:', playerID)
+async function kickPlayer(pid) {
+    console.debug('kickPlayer:', pid)
     const { profile } = await chrome.storage.sync.get(['profile'])
     const room = rooms[currentRoom]
     const owner = room?.players.length && room.players[0] === profile.id
-    if (!owner || room.kicked.includes(playerID)) {
+    if (!owner || room.kicked.includes(pid)) {
         return console.debug('not owner or user already kicked')
     }
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${currentRoom}/action/kick`
@@ -1253,7 +1310,7 @@ async function kickPlayer(playerID) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ player: playerID }),
+        body: JSON.stringify({ player: pid }),
     })
     const data = await response.json()
     console.debug('data:', data)
