@@ -243,6 +243,13 @@ async function processRoom(room) {
     console.debug(`Process Room: ${room}`)
     await sse1(room)
 
+    // TODO: Add Option to Auto Select Team
+    // await selectTeam(room, '1')
+
+    // TODO: Query Selectors for Player Box in Room
+    // const parent = document.querySelector('div[data-testid="room"]')
+    // const user = parent.querySelector(`div[data-id="${profile}"].MuiPaper-root`)
+
     // TODO: Query Selectors for Players header to add kicked players
     // parent.querySelector('div[data-testid="home-header"]')
     // parent.querySelector('.MuiTypography-h5')
@@ -577,10 +584,10 @@ async function newChatMessage(msg) {
     const player = await getProfile(pid)
     // console.debug('owner, room, player:', owner, room, player)
 
-    // if (message.startsWith('Joined the game.')) {
-    //     console.debug('Join Events Moved to SSE Handler!')
-    //     return
-    // }
+    if (message.startsWith('Joined the game.')) {
+        console.debug('Join Events Moved to SSE Handler!')
+        return
+    }
 
     // TODO: Make Custom Commands an Option
     if (message.startsWith('!')) {
@@ -1286,4 +1293,31 @@ function sendChatMessageLegacy(message) {
         }
         document.querySelector('button[aria-label="send message"]')?.click()
     }
+}
+
+/**
+ * Select Team for Room
+ * @function selectTeam
+ * @param {String} rid Room ID
+ * @param {String} team Team Number
+ */
+async function selectTeam(rid, team) {
+    const body = {
+        operationName: 'RoomTeamSelect',
+        variables: { id: rid, gtype: 'dominoes#v3', team: team.toString() },
+        query: 'mutation RoomTeamSelect($id: ID!, $gtype: String!, $team: String!) {\n  roomTeamSelect(id: $id, gtype: $gtype, team: $team)\n}',
+    }
+    const init = {
+        credentials: 'include',
+        headers: {
+            Accept: '*/*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        method: 'POST',
+        mode: 'cors',
+    }
+    const response = await fetch('https://api-v2.playdrift.com/graphql', init)
+    console.debug('response:', response)
 }
