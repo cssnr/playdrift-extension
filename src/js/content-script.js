@@ -23,10 +23,12 @@ let currentRoom = ''
 
 // Audio
 const speech = new SpeechSynthesisUtterance()
-const joinAudio = new Audio(chrome.runtime.getURL('/audio/join.mp3'))
-const leaveAudio = new Audio(chrome.runtime.getURL('/audio/leave.mp3'))
-const messageAudio = new Audio(chrome.runtime.getURL('/audio/message.mp3'))
-const turnAudio = new Audio(chrome.runtime.getURL('/audio/turn.mp3'))
+const audio = {
+    join: new Audio(chrome.runtime.getURL('/audio/join.mp3')),
+    leave: new Audio(chrome.runtime.getURL('/audio/leave.mp3')),
+    message: new Audio(chrome.runtime.getURL('/audio/message.mp3')),
+    turn: new Audio(chrome.runtime.getURL('/audio/turn.mp3')),
+}
 
 // Popper Tooltip
 const tooltip = document.createElement('div')
@@ -84,10 +86,12 @@ async function processLoad() {
     // homeHeader.style.backgroundImage = 'none'
     const app = document.getElementById('app')
     console.info('processLoad:', app)
+
     // TODO:    Not sure why this does not reliably load...
     //          Will most likely move back to Tabs onMessage
     // setTimeout(startMutation, 3000)
     startMutation()
+
     const url = new URL(window.location.href)
     if (url.searchParams.has('profile')) {
         console.info('Profile Only View')
@@ -377,35 +381,13 @@ async function sse3(game) {
                         'options',
                     ])
                     if (options.playTurnAudio) {
-                        await turnAudio.play()
+                        await audio.turn.play()
                     }
                 }
             }
         }
     })
 }
-
-// /**
-//  * Room State Update Handler
-//  * @function roomStateUpdate
-//  * @param {String} room
-//  * @param {Object} state
-//  */
-// async function roomStateUpdate(room, state) {
-//     console.debug('Room state:', state)
-//     if (rooms[room]) {
-//         if (!rooms[room].game && state.game) {
-//             await gameStart(state)
-//         }
-//         if (rooms[room].game && !state.game) {
-//             await gameEnd(state)
-//         }
-//         if (rooms[room].players.length !== state.players.length) {
-//             await roomPlayerChange(rooms[room], state)
-//         }
-//     }
-//     rooms[room] = state
-// }
 
 /**
  * Room Player Update Handler
@@ -444,7 +426,7 @@ async function playersLeaveRoom(state, players) {
     console.debug('playersLeaveRoom:', state, players)
     const { options } = await chrome.storage.sync.get(['options'])
     if (options.playPlayersAudio) {
-        await leaveAudio.play()
+        await audio.leave.play()
     }
     const pids = state.game?.gameOptions?.pids
     if (options.sendPlayerLeft && pids) {
@@ -470,7 +452,7 @@ async function playersJoinRoom(state, players) {
     console.debug('playersJoinRoom:', state, players)
     const { options } = await chrome.storage.sync.get(['options'])
     if (options.playPlayersAudio) {
-        await joinAudio.play()
+        await audio.join.play()
     }
     for (const pid of players) {
         await userJoinRoom(pid)
@@ -588,18 +570,18 @@ async function newChatMessage(msg) {
         'options',
         'profile',
     ])
-    // console.debug('banned, options, profile:', banned, options, profile)
+    console.debug('options, profile:', options, profile)
 
     // const room = rooms[currentRoom]
     // const owner = room?.players.length && room.players[0] === profile.id
     const player = await getProfile(pid)
     // console.debug('owner, room, player:', owner, room, player)
 
-    // TODO: Use SSE to Monitor Join/Leave Events
-    if (message.startsWith('Joined the game.')) {
-        console.debug('Join Events Moved to SSE Handler!')
-        return
-    }
+    // if (message.startsWith('Joined the game.')) {
+    //     console.debug('Join Events Moved to SSE Handler!')
+    //     return
+    // }
+
     // TODO: Make Custom Commands an Option
     if (message.startsWith('!')) {
         let msg
@@ -627,7 +609,7 @@ async function newChatMessage(msg) {
             speech.text = message
             window.speechSynthesis.speak(speech)
         } else if (options.playMessageAudio) {
-            await messageAudio.play()
+            await audio.message.play()
         }
     }
 }
@@ -716,30 +698,6 @@ async function documentMouseover(event) {
         await showMouseover(event)
     }
 }
-
-// /**
-//  * Send Chat Message Mouse Over Handler
-//  * @function sendMouseover
-//  * @param {MouseEvent} event
-//  */
-// async function sendMouseover(event) {
-//     // if (
-//     //     event.target.tagName !== 'IMG' ||
-//     //     !event.target.parentNode?.dataset?.id
-//     // ) {
-//     //     return
-//     // }
-//
-//     // check if this mouse over is in chat
-//     const parent =
-//         event.target.parentNode.parentNode.parentNode.parentNode.parentNode
-//             .parentNode
-//     if (parent.dataset.testid !== 'app-layout-aside') {
-//         return
-//     }
-//     const userID = event.target.parentNode.dataset.id
-//     await sendStatsChat(userID)
-// }
 
 /**
  * Show Tooltip on Mouse Over Handler
