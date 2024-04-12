@@ -523,7 +523,6 @@ async function sse4() {
     source4.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse4:', msg)
-        console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
         if (msg.t === 'm' && msg.json?.ts > now) {
             if (options.playInboxAudio && msg.json.cid !== profile.id) {
                 // newInboxMessage(msg.json)
