@@ -68,7 +68,7 @@ All **Chromium** Based Browsers can install the extension from the
 Please submit a [Feature Request](https://github.com/smashedr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/smashedr/playdrift-extension/issues).
 
-## Planned Features and Ideas
+#### Planned Features and Ideas
 
 *   Custom Audio Sounds and Volume
 *   Custom Chat Commands and Options
@@ -88,7 +88,9 @@ You may also access the Options and Home page from a Right Click if Enabled in O
 
 # Browser Console
 
-You can view user profiles manually in your browser console using the following method.
+You can view user profiles manually in your browser console using the following methods.
+
+#### Console
 
 Make sure you are at `https://dominoes.playdrift.com/` and logged in before proceeding.
 
@@ -100,6 +102,16 @@ Make sure you are at `https://dominoes.playdrift.com/` and logged in before proc
 *   From these new tabs, select the `Response` tab. It should be the 4th tab in (Headers, Cookies, Request, Response, etc).
 *   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
 *   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
+
+#### Browser
+
+First, get the user ID by clicking on their profile and extracting it from the URL in the address bar.  
+Example: https://dominoes.playdrift.com/?profile=fdb82ace-7826-45b1-922b-416d4e9ded9d  
+The ID is the part after the ?profile=  
+Example: `fdb82ace-7826-45b1-922b-416d4e9ded9d`  
+
+Second, use the above ID with the following URL:  
+https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"fdb82ace-7826-45b1-922b-416d4e9ded9d","game":"dominoes"}
 
 # Development
 
