@@ -1,5 +1,75 @@
 // JS Content Script
 
+const bidMap = {
+    27: '0/0',
+    26: '0/1',
+    24: '0/2',
+    21: '0/3',
+    17: '0/4',
+    12: '0/5',
+    6: '0/6',
+    25: '1/1',
+    23: '1/2',
+    20: '1/3',
+    16: '1/4',
+    11: '1/5',
+    5: '1/6',
+    22: '2/2',
+    19: '2/3',
+    15: '2/4',
+    10: '2/5',
+    4: '2/6',
+    18: '3/3',
+    14: '3/4',
+    9: '3/5',
+    3: '3/6',
+    13: '4/4',
+    8: '4/5',
+    2: '4/6',
+    7: '5/5',
+    1: '5/6',
+    0: '6/6',
+}
+
+const dominoMapping = {
+    '0/0': 27,
+    '0/1': 26,
+    '0/2': 24,
+    '0/3': 21,
+    '0/4': 17,
+    '0/5': 12,
+    '0/6': 6,
+    '1/1': 25,
+    '1/2': 23,
+    '1/3': 20,
+    '1/4': 16,
+    '1/5': 11,
+    '1/6': 5,
+    '2/2': 22,
+    '2/3': 19,
+    '2/4': 15,
+    '2/5': 10,
+    '2/6': 4,
+    '3/3': 18,
+    '3/4': 14,
+    '3/5': 9,
+    '3/6': 3,
+    '4/4': 13,
+    '4/5': 8,
+    '4/6': 2,
+    '5/5': 7,
+    '5/6': 1,
+    '6/6': 0,
+}
+
+const treeMap = {
+    '-1': 'first',
+    0: 'left',
+    1: 'top',
+    2: 'right',
+    3: 'bottom',
+}
+
 console.info('RUNNING content-script.js')
 
 chrome.runtime.onMessage.addListener(onMessage)
@@ -95,6 +165,7 @@ async function processLoad() {
 
     const url = new URL(window.location.href)
     if (url.searchParams.has('profile')) {
+        // TODO: Direct Loads do not trigger the MutationObserver
         console.info('Profile Only View')
         const pid = url.searchParams.get('profile')
         console.debug('pid:', pid)
@@ -107,6 +178,21 @@ async function processLoad() {
         // await updateProfile(parent)
 
         await updateProfile()
+    } else if (url.pathname.includes('/room/')) {
+        // TODO: This is not yet on a MutationObserver (but might not work on direct loads)
+        // TODO: This code is Copy Pasta - make into a function
+        console.info('Direct Room View')
+        const split = url.pathname.split('/')
+        const room = split[2]
+        const game = split[3]
+        currentRoom = room
+        // console.debug('SET currentRoom:', currentRoom)
+        if (room) {
+            setTimeout(processRoom, 250, room)
+        }
+        if (game) {
+            await processGame(game)
+        }
     }
 }
 
@@ -301,9 +387,8 @@ async function sse1(room) {
     ])
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
-        // console.debug('msg:', msg)
+        // console.debug('sse1:', msg)
         const state = msg.state
-        // console.debug('state:', state)
         if (msg.t === 'rs' && state?.tid) {
             // roomStateUpdate(room, state)
             // TODO: This Fires Multiple Times as a Function
@@ -362,6 +447,7 @@ async function sse2(room) {
     const now = Date.now()
     source2.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
+        // console.debug('sse2:', msg)
         if (msg.t === 'm' && msg.json?.ts > now) {
             newChatMessage(msg).then()
         }
@@ -385,27 +471,26 @@ async function sse3(game) {
     source3 = new EventSource(url, {
         withCredentials: true,
     })
-    // console.debug('source3:', source3)
-    // const { options, profile } = await chrome.storage.sync.get([
-    //     'options',
-    //     'profile',
-    // ])
-    const { profile } = await chrome.storage.sync.get(['profile'])
-    source3.addEventListener('msg', async (event) => {
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    source3.addEventListener('msg', (event) => {
         const msg = JSON.parse(event.data)
-        // console.debug('msg:', msg)
-        if (msg.t === 'a') {
-            if (msg.a.t === 'player') {
-                if (msg.a.pid === profile.id) {
-                    const { options } = await chrome.storage.sync.get([
-                        'options',
-                    ])
-                    if (options.playTurnAudio) {
-                        await audio.turn.play()
-                    }
+        // console.debug('sse3:', msg)
+        if (msg.a?.t === 'player') {
+            if (msg.a.pid === profile.id) {
+                if (options.playTurnAudio) {
+                    audio.turn.play().then()
                 }
             }
         }
+        // if (msg.a?.t === 'move') {
+        //     const bid = msg.a.bid
+        //     console.debug(
+        //         `bid ${bid} - ${bidMap[bid]} on tree ${msg.a.tree}: ${treeMap[msg.a.tree]}`
+        //     )
+        // }
     })
 }
 
@@ -613,9 +698,9 @@ async function processPlayerGame(state) {
  */
 async function getGameResults(state) {
     console.debug('gameResults:', state.gameResult)
-    let players = state.gameResult.players
-    let winners = state.gameResult.playersWin
-    let ratings = state.gameResult.ratings
+    const players = state.gameResult.players
+    const winners = state.gameResult.playersWin
+    const ratings = state.gameResult.ratings
     // String Creation
     let won = 'Winners:'
     let lost = 'Losers:'
