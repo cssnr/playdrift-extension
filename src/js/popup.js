@@ -14,7 +14,6 @@ chrome.storage.onChanged.addListener(onChanged)
 
 document.addEventListener('DOMContentLoaded', initPopup)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
-// document.getElementById('revoke-perms').addEventListener('click', revokePerms)
 // document.getElementById('inject-script').addEventListener('click', injectScript)
 document
     .querySelectorAll('a[href]')
@@ -25,27 +24,6 @@ document
 document
     .querySelectorAll('[data-bs-toggle="tooltip"]')
     .forEach((el) => new bootstrap.Tooltip(el))
-
-// async function saveOptionsPage(event) {
-//     console.debug('saveOptionsPage:', event)
-//     if (event.target.id === 'sendMouseover') {
-//         console.debug('event.target.checked:', event.target.checked)
-//         const [tab] = await chrome.tabs.query({
-//             currentWindow: true,
-//             active: true,
-//         })
-//         console.debug('tab:', tab)
-//         try {
-//             const response = await chrome.tabs.sendMessage(tab.id, {
-//                 sendMouseover: event.target.checked,
-//             })
-//             console.debug('response:', response)
-//         } catch (e) {
-//             console.debug(e)
-//             showToast(e.toString(), 'warning')
-//         }
-//     }
-// }
 
 /**
  * Initialize Popup
@@ -143,22 +121,6 @@ function grantPerms(event) {
     })
     window.close()
 }
-
-// /**
-//  * Revoke Permissions Button Click Callback
-//  * TODO: Determine how to remove host permissions on chrome
-//  * @function revokePerms
-//  * @param {Event} event
-//  */
-// async function revokePerms(event) {
-//     console.debug('revokePerms:', event)
-//     const permissions = await chrome.permissions.getAll()
-//     console.log('permissions:', permissions)
-//     await chrome.permissions.remove({
-//         origins: permissions.origins,
-//     })
-//     window.close()
-// }
 
 // /**
 //  * Grant Permissions Button Click Callback

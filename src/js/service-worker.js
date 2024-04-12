@@ -35,10 +35,17 @@ function onStartup() {
 async function onInstalled(details) {
     console.log('onInstalled:', details)
     const githubURL = 'https://github.com/smashedr/playdrift-extension'
-    // const defaultCommands = {
+    // const chatCommands = {
     //     info: `Stats and Rating are hidden in your profile. I wrote an web extension to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: ${githubURL}`,
     //     hack: 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.',
     //     stats: `_send_stats_`,
+    // }
+    // const audio = {
+    //     join: { file: '/audio/join.mp3', volume: 1.0 },
+    //     leave: { file: '/audio/leave.mp3', volume: 1.0 },
+    //     message: { file: '/audio/message.mp3', volume: 1.0 },
+    //     team: { file: '/audio/team.mp3', volume: 1.0 },
+    //     turn: { file: '/audio/join.mp3', volume: 1.0 },
     // }
     const options = await Promise.resolve(
         setDefaultOptions({
@@ -49,7 +56,6 @@ async function onInstalled(details) {
             sendPlayerLeft: false,
             sendTeamsChanged: false,
             autoUpdateOptions: false,
-            // sendMouseover: false,
             playTurnAudio: false,
             playPlayersAudio: false,
             playTeamsAudio: false,
@@ -61,7 +67,7 @@ async function onInstalled(details) {
             kickLowGames: 100,
             sendGameStart: false,
             gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
-            // chatCommands: defaultCommands,
+            // chatCommands: chatCommands,
             contextMenu: true,
             showUpdate: false,
         })
