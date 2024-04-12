@@ -522,12 +522,12 @@ async function sse4() {
     const now = Date.now()
     source4.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
-        console.debug('sse4:', msg)
+        // console.debug('sse4:', msg)
         console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
         if (msg.t === 'm' && msg.json?.ts > now) {
             if (options.playInboxAudio && msg.json.cid !== profile.id) {
                 // newInboxMessage(msg.json)
-                console.log('play audio')
+                console.log('New Message:', msg)
                 audio.inbox.play().then()
             }
         }
