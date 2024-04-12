@@ -56,6 +56,7 @@ async function onInstalled(details) {
             sendPlayerLeft: false,
             sendTeamsChanged: false,
             autoUpdateOptions: false,
+            autoContinueGameEnd: false,
             disableBanKick: false,
             playTurnAudio: false,
             playPlayersAudio: false,

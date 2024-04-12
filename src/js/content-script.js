@@ -31,7 +31,7 @@ const bidMap = {
     0: '6/6',
 }
 
-const dominoMapping = {
+const dominoMap = {
     '0/0': 27,
     '0/1': 26,
     '0/2': 24,
@@ -165,7 +165,7 @@ async function processLoad() {
     // setTimeout(startMutation, 3000)
     startMutation()
 
-    sse4()
+    await sse4()
 
     const url = new URL(window.location.href)
     if (url.searchParams.has('profile')) {
@@ -235,6 +235,12 @@ function startMutation() {
                     // TODO: Detect aside for onMessage replacement
                     if (mutation.target.tagName === 'ASIDE') {
                         console.info('ASIDE')
+                    }
+                    // document.querySelectorAll('button[data-testid="button-continue"]')
+                    if (mutation.target.dataset.testid === 'button-continue') {
+                        console.info('button-continue:', mutation.target)
+                        setTimeout(buttonContinue, 150, mutation.target)
+                        setTimeout(buttonContinue, 250, mutation.target)
                     }
                 })
             }
@@ -509,14 +515,17 @@ async function sse4() {
         withCredentials: true,
     })
     // console.debug('source2:', source2)
-    const { options } = await chrome.storage.sync.get(['options'])
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
     const now = Date.now()
     source4.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         console.debug('sse4:', msg)
         console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
         if (msg.t === 'm' && msg.json?.ts > now) {
-            if (options.playInboxAudio) {
+            if (options.playInboxAudio && msg.json.cid !== profile.id) {
                 // newInboxMessage(msg.json)
                 console.log('play audio')
                 audio.inbox.play().then()
@@ -577,9 +586,11 @@ async function playersLeaveRoom(state, players) {
     if (options.sendPlayerLeft && pids) {
         console.debug(`${players.length} players left during game`)
         for (const pid of players) {
-            const profile = await getProfile(pid, true)
-            const message = `${profile.username} left the game.`
-            await sendChatMessage(message)
+            if (pids.includes(pid)) {
+                const profile = await getProfile(pid, true)
+                const message = `${profile.username} left the game.`
+                await sendChatMessage(message)
+            }
         }
     }
 }
@@ -1241,6 +1252,20 @@ async function updateUserProfile(profile) {
             history.splice(0, history.length - historyMax)
         }
         await chrome.storage.sync.set({ history })
+    }
+}
+
+/**
+ * Button Continue Handler
+ * @function buttonContinue
+ * @param {HTMLButtonElement} el
+ */
+async function buttonContinue(el) {
+    const { options } = await chrome.storage.sync.get(['options'])
+    console.debug('buttonContinue:', el, options)
+    if (el && options.autoContinueGameEnd) {
+        console.debug('clicking:', el)
+        el.click()
     }
 }
 

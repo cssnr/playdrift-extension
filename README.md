@@ -58,12 +58,13 @@ All **Chromium** Based Browsers can install the extension from the
 *   Play Audio on New Inbox Message
 *   Play Audio on New Chat Message
 *   Play Chat Message as Audio (TTS)
-*   Auto Update Options on Room Creation
 *   Chat Notifications on Player Leaving an Active Game
 *   Auto Kick Users Below Set Win Rate Percentage
 *   Auto Kick Users Below Set Total Games Played
 *   Ban User Feature that Automatically Kicks User in Future
 *   Send Customizable Message on Game Start and Stats at End
+*   Auto Update Game Options Dialog on Room Creation
+*   Auto Continue Through the Game Stats at End of Game
 *   Close Profiles by Clicking Anywhere Outside the Profile
 
 Please submit a [Feature Request](https://github.com/smashedr/playdrift-extension/discussions/categories/feature-requests) for new features.  
