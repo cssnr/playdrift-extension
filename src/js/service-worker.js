@@ -47,6 +47,7 @@ async function onInstalled(details) {
             sendOnJoin: false,
             sendSelfOnJoin: false,
             sendPlayerLeft: false,
+            sendTeamsChanged: false,
             autoUpdateOptions: false,
             // sendMouseover: false,
             playTurnAudio: false,

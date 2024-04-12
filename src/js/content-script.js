@@ -518,16 +518,27 @@ async function roomKickedChange(before, after) {
 async function roomTeamsChanged(before, after) {
     console.debug('roomTeamsChanged:', before, after)
     const { options } = await chrome.storage.sync.get(['options'])
-    if (options.playTeamsAudio) {
-        await audio.team.play()
+    if (options.sendTeamsChanged || options.playTeamsAudio) {
+        for (const pid of after.players) {
+            if (before.teams[pid] !== after.teams[pid]) {
+                const player = await getProfile(pid, true)
+                const from = before.teams[pid]
+                    ? `Team ${before.teams[pid]}`
+                    : 'No Team'
+                const to = after.teams[pid]
+                    ? `Team ${after.teams[pid]}`
+                    : 'No Team'
+                if (options.playTeamsAudio) {
+                    await audio.team.play()
+                }
+                if (options.sendTeamsChanged) {
+                    await sendChatMessage(
+                        `${player.username} Changed from ${from} to ${to}`
+                    )
+                }
+            }
+        }
     }
-    // const changes = []
-    // for (const [key, value] of Object.entries(before)) {
-    //     if (obj2[key] !== value) {
-    //         return true
-    //     }
-    // }
-    // return false
 }
 
 /**
