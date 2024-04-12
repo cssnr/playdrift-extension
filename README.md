@@ -49,15 +49,18 @@ All **Chromium** Based Browsers can install the extension from the
 *   Track Recent Game History, Wins/Losses, Rating and Date
 *   Show Stats Tooltip on Mouse Over
 *   Show Stats on Icon on Mouse Over
-*   Automatically Send Stats to Chat on User Join
-*   Automatically Send Your Own Stats to Chat When You Join
+*   Send Stats to Chat on User Join
+*   Send Your Own Stats to Chat When You Join
+*   Send Team Change Notifications to Chat
 *   Play Audio on Your Turn to Make a Move
 *   Play Audio When Users Join or Leave a Room
+*   Play Audio When Users Changes Teams
 *   Play Audio on New Chat Message
 *   Play Chat Message as Audio (TTS)
 *   Auto Update Options on Room Creation
 *   Chat Notifications on Player Leaving an Active Game
 *   Auto Kick Users Below Set Win Rate Percentage
+*   Auto Kick Users Below Set Total Games Played
 *   Ban User Feature that Automatically Kicks User in Future
 *   Send Customizable Message on Game Start and Stats at End
 *   Close Profiles by Clicking Anywhere Outside the Profile
@@ -69,11 +72,9 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/smas
 
 *   Custom Audio Sounds and Volume
 *   Custom Chat Commands and Options
-*   Team Change Audio Alert
 *   Auto Select Team # and Keep it Set
 *   Player Stats (Total Points, Time Taken)
 *   Option to Disable Kicking Banned Players
-*   Auto Kick Players with Less Than Set Total Games
 
 # Configuration
 
