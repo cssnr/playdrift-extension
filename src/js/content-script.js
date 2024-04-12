@@ -85,6 +85,7 @@ let userIntervalID = setInterval(setUserProfile, 1000)
 let source1
 let source2
 let source3
+let source4
 
 // State
 const profiles = {}
@@ -94,6 +95,7 @@ let currentRoom = ''
 // Audio
 const speech = new SpeechSynthesisUtterance()
 const audio = {
+    inbox: new Audio(chrome.runtime.getURL('/audio/inbox.mp3')),
     join: new Audio(chrome.runtime.getURL('/audio/join.mp3')),
     leave: new Audio(chrome.runtime.getURL('/audio/leave.mp3')),
     message: new Audio(chrome.runtime.getURL('/audio/message.mp3')),
@@ -162,6 +164,8 @@ async function processLoad() {
     //          Will most likely move back to Tabs onMessage
     // setTimeout(startMutation, 3000)
     startMutation()
+
+    sse4()
 
     const url = new URL(window.location.href)
     if (url.searchParams.has('profile')) {
@@ -495,6 +499,42 @@ async function sse3(game) {
 }
 
 /**
+ * Server-Sent Event Inbox Handler
+ * @function sse4
+ */
+async function sse4() {
+    const url = 'https://api-v2.playdrift.com/api/v1/chat/inbox/sse'
+    console.debug('connecting to sse4 url:', url)
+    source4 = new EventSource(url, {
+        withCredentials: true,
+    })
+    // console.debug('source2:', source2)
+    const { options } = await chrome.storage.sync.get(['options'])
+    const now = Date.now()
+    source4.addEventListener('msg', function (event) {
+        const msg = JSON.parse(event.data)
+        console.debug('sse4:', msg)
+        console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
+        if (msg.t === 'm' && msg.json?.ts > now) {
+            if (options.playInboxAudio) {
+                // newInboxMessage(msg.json)
+                console.log('play audio')
+                audio.inbox.play().then()
+            }
+        }
+    })
+}
+
+// /**
+//  * New Inbox Message Handler
+//  * @function newInboxMessage
+//  * @param {Object} msg
+//  */
+// function newInboxMessage(msg) {
+//     console.log('newInboxMessage:', msg)
+// }
+
+/**
  * Room Player Update Handler
  * @function roomPlayerChange
  * @param {Object} before
@@ -602,26 +642,27 @@ async function roomKickedChange(before, after) {
  */
 async function roomTeamsChanged(before, after) {
     console.debug('roomTeamsChanged:', before, after)
+    if (after.game) {
+        return console.debug('not sending team change because game active')
+    }
     const { options } = await chrome.storage.sync.get(['options'])
-    if (options.sendTeamsChanged || options.playTeamsAudio) {
-        for (const pid of after.players) {
-            if (before.teams[pid] !== after.teams[pid]) {
-                const player = await getProfile(pid, true)
-                const from = before.teams[pid]
-                    ? `Team ${before.teams[pid]}`
-                    : 'No Team'
-                const to = after.teams[pid]
-                    ? `Team ${after.teams[pid]}`
-                    : 'No Team'
-                if (options.playTeamsAudio) {
-                    await audio.team.play()
-                }
-                if (options.sendTeamsChanged) {
-                    await sendChatMessage(
-                        `${player.username} Changed from ${from} to ${to}`
-                    )
-                }
-            }
+    if (!options.sendTeamsChanged && !options.playTeamsAudio) {
+        return
+    }
+    for (const pid of after.players) {
+        if (before.teams[pid] === after.teams[pid]) {
+            continue
+        }
+        const player = await getProfile(pid, true)
+        const from = before.teams[pid] ? `Team ${before.teams[pid]}` : 'No Team'
+        const to = after.teams[pid] ? `Team ${after.teams[pid]}` : 'No Team'
+        if (options.playTeamsAudio) {
+            await audio.team.play()
+        }
+        if (options.sendTeamsChanged) {
+            await sendChatMessage(
+                `${player.username} Changed from ${from} to ${to}`
+            )
         }
     }
 }
@@ -814,7 +855,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
     }
     // const stats = await calStats(player)
     if (owner) {
-        if (banned.includes(pid)) {
+        if (!options.disableBanKick && banned.includes(pid)) {
             await kickPlayer(pid)
             await sendChatMessage(`Auto Kicked Banned User: ${player.username}`)
             return
@@ -854,7 +895,7 @@ async function sendKickedPlayers() {
     }
     const players = []
     for (const pid of room.kicked) {
-        const player = getProfile(pid, true)
+        const player = await getProfile(pid, true)
         players.push(player.username)
     }
     let msg = 'Kicked Players: '

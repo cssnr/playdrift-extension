@@ -55,6 +55,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Play Audio on Your Turn to Make a Move
 *   Play Audio When Users Join or Leave a Room
 *   Play Audio When Users Changes Teams
+*   Play Audio on New Inbox Message
 *   Play Audio on New Chat Message
 *   Play Chat Message as Audio (TTS)
 *   Auto Update Options on Room Creation
@@ -73,8 +74,9 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/smas
 *   Custom Audio Sounds and Volume
 *   Custom Chat Commands and Options
 *   Auto Select Team # and Keep it Set
+*   Remember Recent Game and Room URLs
+*   Remember Recent Players who Kicked You
 *   Player Stats (Total Points, Time Taken)
-*   Option to Disable Kicking Banned Players
 
 # Configuration
 
