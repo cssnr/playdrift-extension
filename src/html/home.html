@@ -61,13 +61,21 @@
                         <div class="accordion-body">
                             <form id="banned-form">
                                 <label class="form-label" for="add-banned"><i class="fa-solid fa-user-plus me-2"></i> Add Banned User</label>
-                                <div class="input-group mb-3">
+                                <div class="input-group mb-1">
                                     <input type="text" class="form-control" placeholder="User ID" aria-label="Filter" id="add-banned" aria-describedby="add-banned-btn">
                                     <button class="btn btn-outline-success" type="submit" id="add-banned-btn">
                                         Add <i class="fa-solid fa-plus ms-1"></i>
                                     </button>
                                 </div>
                             </form>
+                            <div>
+                                <input type="file" id="import-banned-input" style="display: none;" />
+                                <a id="import-banned" class="link-body-emphasis text-decoration-none fst-italic small" role="button">
+                                    Import <i class="fa-solid fa-file-arrow-up ms-1"></i></a>
+                                <span class="ms-2 me-1">/</span>
+                                <a id="export-banned" class="link-body-emphasis text-decoration-none fst-italic small" role="button">
+                                    Export <i class="fa-solid fa-file-arrow-down ms-1"></i></a>
+                            </div>
                             <table id="banned-table" class="table table-sm table-hover bg-transparent">
                                 <caption>
                                     Banned Users <i class="fa-solid fa-poo"></i>

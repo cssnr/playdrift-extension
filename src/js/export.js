@@ -140,23 +140,30 @@ export function updateOptions(options, text = false) {
     for (const [key, value] of Object.entries(options)) {
         // console.debug(`${key}: ${value}`)
         const el = document.getElementById(key)
-        if (el) {
-            if (text) {
-                el.textContent = value.toString()
-            } else if (typeof value === 'boolean') {
-                el.checked = value
-            } else {
-                el.value = value
-            }
-            if (el.dataset.related) {
-                const element = $(`#${el.dataset.related}`)
-                if (value) {
-                    element.show('fast')
-                } else {
-                    element.hide('fast')
-                }
-            }
+        if (!el) {
+            continue
         }
+        if (text) {
+            el.textContent = value.toString()
+        } else if (typeof value === 'boolean') {
+            el.checked = value
+        } else if (typeof value === 'object') {
+            console.info(`Options Object for: ${key}`, value)
+        } else {
+            el.value = value
+        }
+        if (el.dataset.related) {
+            hideShowElement(`#${el.dataset.related}`, value)
+        }
+    }
+}
+
+function hideShowElement(selector, show, speed = 'fast') {
+    const element = $(`${selector}`)
+    if (show) {
+        element.show(speed)
+    } else {
+        element.hide(speed)
     }
 }
 
