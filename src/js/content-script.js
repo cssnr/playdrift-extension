@@ -865,7 +865,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
     }
     // const stats = await calStats(player)
     if (owner) {
-        if (!options.disableBanKick && banned.includes(pid)) {
+        if (options.autoKickBanned && banned.includes(pid)) {
             await kickPlayer(pid)
             await sendChatMessage(`Auto Kicked Banned User: ${player.username}`)
             return
