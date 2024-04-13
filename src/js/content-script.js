@@ -88,8 +88,8 @@ let source3
 let source4
 
 // State
-const profiles = {}
-const rooms = {}
+const profilesCache = {}
+const roomState = {}
 let currentRoom = ''
 
 // Audio
@@ -403,30 +403,30 @@ async function sse1(room) {
             // roomStateUpdate(room, state)
             // TODO: This Fires Multiple Times as a Function
             console.debug('Room state:', state)
-            if (rooms[room]) {
-                if (!rooms[room].game && state.game) {
+            if (roomState[room]) {
+                if (!roomState[room].game && state.game) {
                     gameStart(state).then()
                 }
-                if (rooms[room].game && !state.game) {
+                if (roomState[room].game && !state.game) {
                     gameEnd(state).then()
                 }
-                if (rooms[room].players.length !== state.players.length) {
-                    roomPlayerChange(rooms[room], state).then()
+                if (roomState[room].players.length !== state.players.length) {
+                    roomPlayerChange(roomState[room], state).then()
                 }
-                if (rooms[room].kicked.length !== state.kicked.length) {
-                    roomKickedChange(rooms[room], state).then()
+                if (roomState[room].kicked.length !== state.kicked.length) {
+                    roomKickedChange(roomState[room], state).then()
                 }
                 // if (
-                //     cmpArrays(rooms[room].teamsAvailable, state.teamsAvailable)
+                //     cmpArrays(roomState[room].teamsAvailable, state.teamsAvailable)
                 // ) {
                 //     console.info('Teams Changed - Array')
                 // }
-                if (cmpObjects(rooms[room].teams, state.teams)) {
+                if (cmpObjects(roomState[room].teams, state.teams)) {
                     // console.info('Teams Changed - Object')
-                    roomTeamsChanged(rooms[room], state).then()
+                    roomTeamsChanged(roomState[room], state).then()
                 }
             }
-            rooms[room] = state
+            roomState[room] = state
         }
         if (msg.t === 'helo') {
             // TODO: This Needs to be Stateful
@@ -444,10 +444,10 @@ async function sse1(room) {
  * @param {String} room
  */
 async function sse2(room) {
-    if (!rooms[room]?.tid) {
-        return console.warn('room not found in rooms:', room, rooms)
+    if (!roomState[room]?.tid) {
+        return console.warn('room not found in room:', room, roomState)
     }
-    const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${rooms[room].tid}/sse`
+    const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${roomState[room].tid}/sse`
     console.debug('connecting to sse2 url:', url)
     source2 = new EventSource(url, {
         withCredentials: true,
@@ -629,15 +629,29 @@ async function roomKickedChange(before, after) {
         }
     }
     console.debug('kicked players:', kicked)
-    const { options } = await chrome.storage.sync.get(['options'])
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
     const pids = after.game?.gameOptions?.pids
-    if (options.sendPlayerLeft && pids) {
-        console.debug(`${players.length} players left during game`)
+
+    for (const pid of kicked) {
+        if (profile.id === pid) {
+            console.info('1 - You were KICKED')
+        }
+    }
+    if (pids) {
+        console.debug(`${players.length} players kicked during game`)
         for (const pid of kicked) {
             if (pids.includes(pid)) {
                 const player = await getProfile(pid, true)
                 const message = `${player.username} was kicked from the game.`
-                await sendChatMessage(message)
+                if (profile.id === pid) {
+                    console.info('2 - You were KICKED')
+                }
+                if (options.sendPlayerLeft) {
+                    await sendChatMessage(message)
+                }
             }
         }
     }
@@ -756,11 +770,11 @@ async function getGameResults(state) {
     let won = 'Winners:'
     let lost = 'Losers:'
     for (const pid of players) {
-        const pp = await getProfile(pid, true)
+        const player = await getProfile(pid, true)
         if (winners.includes(pid)) {
-            won += ` ${pp.username} +${ratings[pid].diff} (${ratings[pid].rating}),`
+            won += ` ${player.username} +${ratings[pid].diff} (${ratings[pid].rating}),`
         } else {
-            lost += ` ${pp.username} ${ratings[pid].diff} (${ratings[pid].rating}),`
+            lost += ` ${player.username} ${ratings[pid].diff} (${ratings[pid].rating}),`
         }
     }
     won = won.replace(/,\s*$/, '')
@@ -795,7 +809,7 @@ async function newChatMessage(msg) {
     ])
     console.debug('options, profile:', options, profile)
 
-    // const room = rooms[currentRoom]
+    // const room = roomState[currentRoom]
     // const owner = room?.players.length && room.players[0] === profile.id
     const player = await getProfile(pid, true)
     // console.debug('owner, room, player:', owner, room, player)
@@ -847,7 +861,7 @@ async function newChatMessage(msg) {
  */
 async function userJoinRoom(pid, rid = currentRoom) {
     const player = await getProfile(pid)
-    const room = rooms[rid]
+    const room = roomState[rid]
     const { banned, options, profile } = await chrome.storage.sync.get([
         'banned',
         'options',
@@ -899,7 +913,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
 }
 
 async function sendKickedPlayers() {
-    const room = rooms[currentRoom]
+    const room = roomState[currentRoom]
     if (!room.kicked.length) {
         return await sendChatMessage('No Kicked Players.')
     }
@@ -1166,14 +1180,15 @@ async function updateUserInterval() {
  * @returns {Object}
  */
 async function getProfile(pid, skip) {
-    if (profiles[pid]) {
+    if (profilesCache[pid]) {
         if (skip) {
-            return profiles[pid]
+            return profilesCache[pid]
         }
-        const age = Math.floor(Date.now() / 1000) - profiles[pid].ts_updated
+        const age =
+            Math.floor(Date.now() / 1000) - profilesCache[pid].ts_updated
         if (age < 150) {
             // console.debug('using cached profile, age:', age)
-            return profiles[pid]
+            return profilesCache[pid]
         }
         // console.debug('cached profile expired, age:', age)
     }
@@ -1184,7 +1199,7 @@ async function getProfile(pid, skip) {
     const profile = structuredClone(data.result.data)
     profile.ts_updated = Math.floor(Date.now() / 1000)
     profile.stats = calStats(profile)
-    profiles[pid] = profile
+    profilesCache[pid] = profile
     console.info('profile:', profile)
     return profile
 }
@@ -1500,7 +1515,7 @@ async function unbanClick(event) {
 async function kickPlayer(pid) {
     console.debug('kickPlayer:', pid)
     const { profile } = await chrome.storage.sync.get(['profile'])
-    const room = rooms[currentRoom]
+    const room = roomState[currentRoom]
     const owner = room?.players.length && room.players[0] === profile.id
     if (!owner || room.kicked.includes(pid)) {
         return console.debug('not owner or user already kicked')
@@ -1525,7 +1540,7 @@ async function kickPlayer(pid) {
  * @param {string} message
  */
 async function sendChatMessage(message) {
-    const tid = rooms[currentRoom]?.tid
+    const tid = roomState[currentRoom]?.tid
     console.debug('sendChatMessage:', currentRoom, tid, message)
     if (!tid) {
         return sendChatMessageLegacy(message)
