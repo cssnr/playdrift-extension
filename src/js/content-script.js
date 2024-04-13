@@ -1,77 +1,8 @@
 // JS Content Script
 
-const bidMap = {
-    27: '0/0',
-    26: '0/1',
-    24: '0/2',
-    21: '0/3',
-    17: '0/4',
-    12: '0/5',
-    6: '0/6',
-    25: '1/1',
-    23: '1/2',
-    20: '1/3',
-    16: '1/4',
-    11: '1/5',
-    5: '1/6',
-    22: '2/2',
-    19: '2/3',
-    15: '2/4',
-    10: '2/5',
-    4: '2/6',
-    18: '3/3',
-    14: '3/4',
-    9: '3/5',
-    3: '3/6',
-    13: '4/4',
-    8: '4/5',
-    2: '4/6',
-    7: '5/5',
-    1: '5/6',
-    0: '6/6',
-}
-
-const dominoMap = {
-    '0/0': 27,
-    '0/1': 26,
-    '0/2': 24,
-    '0/3': 21,
-    '0/4': 17,
-    '0/5': 12,
-    '0/6': 6,
-    '1/1': 25,
-    '1/2': 23,
-    '1/3': 20,
-    '1/4': 16,
-    '1/5': 11,
-    '1/6': 5,
-    '2/2': 22,
-    '2/3': 19,
-    '2/4': 15,
-    '2/5': 10,
-    '2/6': 4,
-    '3/3': 18,
-    '3/4': 14,
-    '3/5': 9,
-    '3/6': 3,
-    '4/4': 13,
-    '4/5': 8,
-    '4/6': 2,
-    '5/5': 7,
-    '5/6': 1,
-    '6/6': 0,
-}
-
-const treeMap = {
-    '-1': 'first',
-    0: 'left',
-    1: 'top',
-    2: 'right',
-    3: 'bottom',
-}
-
 console.info('RUNNING content-script.js')
 
+// chrome.storage.onChanged.addListener(onChanged)
 chrome.runtime.onMessage.addListener(onMessage)
 
 document.addEventListener('mouseover', documentMouseover)
@@ -132,7 +63,7 @@ function generateGetBoundingClientRect(x = 0, y = 0) {
 
 // // async
 // ;(async () => {
-//     console.info('RUNNING content-script.js')
+//     console.info('ASYNC content-script.js')
 //     const { options, profile } = await chrome.storage.sync.get([
 //         'options',
 //         'profile',
@@ -140,10 +71,10 @@ function generateGetBoundingClientRect(x = 0, y = 0) {
 //     console.debug('options, profile:', options, profile)
 // })()
 
-window.addEventListener('load', function load(event) {
-    console.info('window.load EventListener', event)
-    window.removeEventListener('load', load)
-})
+// window.addEventListener('load', function load(event) {
+//     console.info('window.load EventListener', event)
+//     window.removeEventListener('load', load)
+// })
 
 document.addEventListener('blur', function blur(event) {
     // console.debug('documentBlur', event)
@@ -247,6 +178,21 @@ function startMutation() {
         }
     }
 }
+
+// /**
+//  * On Changed Callback
+//  * @function onChanged
+//  * @param {Object} changes
+//  * @param {String} namespace
+//  */
+// function onChanged(changes, namespace) {
+//     console.debug('onChanged:', changes, namespace)
+//     // for (const [key, { newValue }] of Object.entries(changes)) {
+//     //     if (namespace === 'sync' && key === 'options') {
+//     //         console.debug('newValue:', newValue)
+//     //     }
+//     // }
+// }
 
 /**
  * On Message Callback
@@ -1157,8 +1103,8 @@ async function setUserProfile() {
         return
     }
     console.info('User Profile Set to pid:', pid)
-    const userProfile = await getProfile(pid)
-    await updateUserProfile(userProfile)
+    const player = await getProfile(pid)
+    await updateUserProfile(player)
 }
 
 /**
