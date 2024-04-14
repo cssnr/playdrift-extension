@@ -3,8 +3,8 @@
 import {
     checkPerms,
     grantPerms,
-    playGame,
     showToast,
+    tabOpen,
     updateOptions,
 } from './export.js'
 
@@ -19,16 +19,18 @@ document
 document
     .getElementById('import-banned')
     .addEventListener('click', importBannedUsers)
-document
-    .querySelectorAll('.open-options')
-    .forEach((el) => el.addEventListener('click', openOptions))
-document
-    .querySelectorAll('.play-dominoes')
-    .forEach((el) => el.addEventListener('click', playDominoes))
-
+// document
+//     .querySelectorAll('.open-options')
+//     .forEach((el) => el.addEventListener('click', openOptions))
+// document
+//     .querySelectorAll('.play-dominoes')
+//     .forEach((el) => el.addEventListener('click', playDominoes))
 // document
 //     .querySelectorAll('.open-page')
 //     .forEach((el) => el.addEventListener('click', openPage))
+document
+    .querySelectorAll('[data-open]')
+    .forEach((el) => el.addEventListener('click', tabOpen))
 
 // document.addEventListener('focus', onFocus)
 // function onFocus(e) {
@@ -255,17 +257,17 @@ async function deleteBanned(event) {
     }
 }
 
-async function openOptions(event) {
-    console.debug('openOptions:', event)
-    event.preventDefault()
-    chrome.runtime.openOptionsPage()
-}
+// async function openOptions(event) {
+//     console.debug('openOptions:', event)
+//     event.preventDefault()
+//     chrome.runtime.openOptionsPage()
+// }
 
-async function playDominoes(event) {
-    console.debug('playDominoes:', event)
-    event.preventDefault()
-    await playGame(event)
-}
+// async function playDominoes(event) {
+//     console.debug('playDominoes:', event)
+//     event.preventDefault()
+//     await playGame(event)
+// }
 
 // async function openPage(event) {
 //     console.debug('openPage:', event)

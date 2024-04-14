@@ -61,6 +61,53 @@ export async function focusOpen(url) {
 }
 
 /**
+ * Tab Open Callback
+ * @function focusOpen
+ * @param {MouseEvent} event
+ */
+export async function tabOpen(event) {
+    console.debug('tabOpen', event)
+    event?.preventDefault()
+    const element = event.target.closest('a')
+    console.debug('element', element)
+    const url = element.href
+    console.debug('url', url)
+    if (event.target.dataset.play === 'play') {
+        return await playGame(event)
+    }
+    const queryInfo = {
+        currentWindow: true,
+        url: url,
+    }
+    const tabs = await chrome.tabs.query(queryInfo)
+    console.log('tabs:', tabs)
+    if (tabs.length) {
+        await chrome.tabs.update(tabs[0].id, { active: true })
+    } else {
+        await chrome.tabs.create({ active: true, url: url })
+    }
+    // if (target === 'home') {
+    //     await openHome(event)
+    // } else if (target === 'play') {
+    //     await playGame(event)
+    // } else {
+    //     const url = event.target.href
+    //     console.debug('url', url)
+    //     const queryInfo = {
+    //         currentWindow: true,
+    //         url: url,
+    //     }
+    //     const tabs = await chrome.tabs.query(queryInfo)
+    //     console.log('tabs:', tabs)
+    //     if (tabs.length) {
+    //         await chrome.tabs.update(tabs[0].id, { active: true })
+    //     } else {
+    //         await chrome.tabs.create({ active: true, url: url })
+    //     }
+    // }
+}
+
+/**
  * Grant Permissions Click Callback
  * @function grantPerms
  * @param {MouseEvent} event
@@ -155,8 +202,21 @@ export function updateOptions(options, text = false) {
         if (el.dataset.related) {
             hideShowElement(`#${el.dataset.related}`, value)
         }
+        // if (el.dataset.audio) {
+        //     hideShowElement(`#${el.dataset.related}`, value)
+        // }
     }
 }
+
+// /**
+//  * Update Options based on typeof
+//  * @function initOptions
+//  * @param {HTMLElement} el
+//  */
+// function addAudioElement(el) {
+//     const div = document.getElementById('audio-options').cloneNode(true)
+//     el.parentNode.insertBefore(el)
+// }
 
 function hideShowElement(selector, show, speed = 'fast') {
     const element = $(`${selector}`)

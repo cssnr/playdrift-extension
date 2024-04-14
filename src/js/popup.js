@@ -3,10 +3,9 @@
 import {
     checkPerms,
     onChanged,
-    openHome,
-    playGame,
     saveOptions,
     showToast,
+    tabOpen,
     updateOptions,
 } from './export.js'
 
@@ -88,12 +87,15 @@ async function popupLinks(event) {
             height: 480,
         })
         return window.close()
-    } else if (anchor.href.endsWith('html/home.html')) {
-        await openHome()
+    } else if (anchor.dataset.open) {
+        await tabOpen(event)
         return window.close()
-    } else if (anchor.href.includes('dominoes.playdrift.com')) {
-        await playGame()
-        return window.close()
+        // } else if (anchor.href.endsWith('html/home.html')) {
+        //     await openHome()
+        //     return window.close()
+        // } else if (anchor.href.includes('dominoes.playdrift.com')) {
+        //     await playGame()
+        //     return window.close()
     } else if (
         anchor.href.startsWith('http') ||
         anchor.href.startsWith('chrome-extension')

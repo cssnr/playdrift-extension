@@ -43,7 +43,14 @@
         </tr>
         </tbody>
     </table>
-    <hr>
+    <div class="text-center">
+        <a class="link-body-emphasis text-decoration-none d-inline-block" rel="noopener" data-open="home"
+           href="../html/home.html">Home</a>
+        <svg><use xlink:href="#bi-dot" /></svg>
+        <a class="link-body-emphasis text-decoration-none d-inline-block play-dominoes" rel="noopener" data-open="play"
+           href="https://dominoes.playdrift.com/">Play</a>
+    </div>
+    <hr class="mt-0">
     <div class="d-none grant-perms my-3">
         <a id="grant-perms" class="btn btn-lg btn-success w-100 mb-2" role="button">
             <i class="fa-solid fa-check-double me-1"></i> Grant Host Permissions</a>
@@ -152,6 +159,19 @@
                 </span>
             </label>
         </div>
+<!--        <div id="turnAudio" class="d-flex align-items-start ms-5" style="display: none">-->
+<!--            <div class="" style="width: 120px;">-->
+<!--                <select class="form-select form-select-sm" aria-label="Volume">-->
+<!--                    <option value="team">team</option>-->
+<!--                    <option value="turn">turn</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div class="ms-2" style="width: 100px;">-->
+<!--                <label for="turnAudioVolume" class="form-label visually-hidden">Volume</label>-->
+<!--                <input type="range" class="form-range" min="1" max="10" step="1" id="turnAudioVolume">-->
+<!--            </div>-->
+<!--            <span class="ms-2"></span>-->
+<!--        </div>-->
         <div class="form-check form-switch">
             <input class="form-check-input" id="playPlayersAudio" type="checkbox" role="switch">
             <label class="form-check-label" for="playPlayersAudio" aria-describedby="playPlayersAudioHelp">
@@ -263,7 +283,7 @@
         </div>
     </form>
     <p class="fst-italic mt-3">
-        Note: You can modify Banned Users from the <a class="open-home" target="_blank" rel="noopener" href="../html/home.html">Home Page</a>.
+        Note: You can modify Banned Users from the <a rel="noopener" href="../html/home.html" data-open="home">Home Page</a>.
     </p>
     <hr>
 
@@ -272,10 +292,10 @@
 <!--    </div>-->
 
     <div class="text-center">
-        <a class="link-body-emphasis text-decoration-none d-inline-block open-home" target="_blank" rel="noopener"
+        <a class="link-body-emphasis text-decoration-none d-inline-block" rel="noopener" data-open="home"
            href="../html/home.html">Home</a>
         <svg><use xlink:href="#bi-dot" /></svg>
-        <a class="link-body-emphasis text-decoration-none d-inline-block" target="_blank" rel="noopener"
+        <a class="link-body-emphasis text-decoration-none d-inline-block" rel="noopener" data-open="github"
            href="homepage_url">GitHub</a>
         <svg><use xlink:href="#bi-dot" /></svg>
         <a class="link-body-emphasis text-decoration-none d-inline-block" target="_blank" rel="noopener"
@@ -294,7 +314,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" id="bi-dot" viewBox="0 0 16 16">
         <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
     </svg>
-<!--    <div class="d-flex align-items-start ms-5" id="music-options">-->
+<!--    <div class="d-flex align-items-start ms-5" id="audio-options">-->
 <!--        <div class="" style="width: 120px;">-->
 <!--            <select class="form-select form-select-sm" aria-label="Volume" >-->
 <!--                <option value="team">team</option>-->

@@ -4,8 +4,8 @@ import {
     checkPerms,
     grantPerms,
     onChanged,
-    openHome,
     saveOptions,
+    tabOpen,
     updateOptions,
 } from './export.js'
 // import { Picker } from '../dist/emoji-picker-element/index.js'
@@ -23,8 +23,8 @@ document
     .querySelectorAll('.open-oninstall')
     .forEach((el) => el.addEventListener('click', openOnInstall))
 document
-    .querySelectorAll('.open-home')
-    .forEach((el) => el.addEventListener('click', openHome))
+    .querySelectorAll('[data-open]')
+    .forEach((el) => el.addEventListener('click', tabOpen))
 document
     .querySelectorAll('[data-bs-toggle="tooltip"]')
     .forEach((el) => new bootstrap.Tooltip(el))

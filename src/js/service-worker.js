@@ -49,6 +49,7 @@ async function onInstalled(details) {
     // }
     const options = await Promise.resolve(
         setDefaultOptions({
+            // audio: audio,
             showTooltipMouseover: true,
             showMouseover: false,
             sendOnJoin: false,
