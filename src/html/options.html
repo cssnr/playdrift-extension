@@ -15,7 +15,8 @@
 
 <div class="container-fluid p-3">
 <div class="row">
-<div class="col-xl-6 col-md-8 col-12 m-auto">
+<!--<div class="col-xl-6 col-md-8 col-12 m-auto">-->
+<div class="col-xl-8 col-md-10 col-12 m-auto">
 <div class="card">
 <div class="card-body">
     <div class="d-flex justify-content-center align-items-center">
@@ -43,14 +44,14 @@
         </tr>
         </tbody>
     </table>
-    <div class="text-center">
-        <a class="link-body-emphasis text-decoration-none d-inline-block" rel="noopener" data-open="home"
-           href="../html/home.html">Home</a>
-        <svg><use xlink:href="#bi-dot" /></svg>
-        <a class="link-body-emphasis text-decoration-none d-inline-block play-dominoes" rel="noopener" data-open="play"
-           href="https://dominoes.playdrift.com/">Play</a>
-    </div>
-    <hr class="mt-0">
+<!--    <div class="text-center">-->
+<!--        <a class="link-body-emphasis text-decoration-none d-inline-block" rel="noopener" data-open="home"-->
+<!--           href="../html/home.html">Home</a>-->
+<!--        <svg><use xlink:href="#bi-dot" /></svg>-->
+<!--        <a class="link-body-emphasis text-decoration-none d-inline-block play-dominoes" rel="noopener" data-open="play"-->
+<!--           href="https://dominoes.playdrift.com/">Play</a>-->
+<!--    </div>-->
+    <hr class="">
     <div class="d-none grant-perms my-3">
         <a id="grant-perms" class="btn btn-lg btn-success w-100 mb-2" role="button">
             <i class="fa-solid fa-check-double me-1"></i> Grant Host Permissions</a>
@@ -58,7 +59,7 @@
         <hr>
     </div>
     <p class="fst-italic mt-3">
-        Note: <span class="text-success-emphasis">Options highlighted in green</span> are extra options not available in the Popup.
+        Note: Extra Options are <span class="text-success-emphasis">highlighted in green.</span>
     </p>
 
     <form id="options-form" class="options">
@@ -281,19 +282,76 @@
                 </span>
             </label>
         </div>
+
+        <hr>
+
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="enableCommands" type="checkbox" role="switch" data-related="customCommandsDiv">
+            <label class="form-check-label text-success-emphasis" for="enableCommands" aria-describedby="enableCommandsHelp">
+                Enable Chat Commands
+                <span data-bs-toggle="tooltip" data-bs-title="Enable Chat Commands.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
     </form>
+    <div id="customCommandsDiv" style="display: none;">
+        <form id="cmd-form">
+            <label class="form-label" for="cmd-name"><i class="fa-solid fa-square-plus me-2"></i> Add Custom Command</label>
+            <div class="input-group input-group-sm mb-1">
+                <input type="text" class="form-control" placeholder="Command" aria-label="Filter" id="cmd-name" aria-describedby="add-banned-btn" style="max-width: 100px;">
+                <input type="text" class="form-control" placeholder="Response" aria-label="Filter" id="cmd-resp" aria-describedby="add-banned-btn">
+                <button class="btn btn-outline-success" type="submit" id="add-banned-btn">
+                    Add <i class="fa-solid fa-plus ms-1"></i>
+                </button>
+            </div>
+        </form>
+<!--        <div>-->
+<!--            <input type="file" id="import-banned-input" style="display: none;" />-->
+<!--            <a id="import-banned" class="link-body-emphasis text-decoration-none fst-italic small" role="button">-->
+<!--                Import <i class="fa-solid fa-file-arrow-up ms-1"></i></a>-->
+<!--            <span class="ms-2 me-1">/</span>-->
+<!--            <a id="export-banned" class="link-body-emphasis text-decoration-none fst-italic small" role="button">-->
+<!--                Export <i class="fa-solid fa-file-arrow-down ms-1"></i></a>-->
+<!--        </div>-->
+        <table id="banned-table" class="table table-sm table-hover bg-transparent">
+            <caption>
+                Custom Commands <i class="fa-regular fa-comments"></i>
+            </caption>
+            <thead><tr>
+                <th scope="col" class="text-center" style="width: 36px;">
+                    <i class="fa-solid fa-trash-can"></i>
+                </th>
+                <th scope="col">Command</th>
+                <th scope="col">Response</th>
+            </tr></thead>
+            <tbody></tbody>
+            <tfoot class="d-none">
+            <tr>
+                <td class="text-center align-middle" style="width: 36px;">
+                    <a class="text-danger" role="button" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
+                </td>
+                <td style="max-width: 120px;"></td>
+                <td class="small align-middle"></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
     <p class="fst-italic mt-3">
         Note: You can modify Banned Users from the <a rel="noopener" href="../html/home.html" data-open="home">Home Page</a>.
     </p>
-    <hr>
 
 <!--    <div id="mypicker">-->
 <!--        <emoji-picker></emoji-picker>-->
 <!--    </div>-->
 
+    <hr>
     <div class="text-center">
         <a class="link-body-emphasis text-decoration-none d-inline-block" rel="noopener" data-open="home"
            href="../html/home.html">Home</a>
+        <svg><use xlink:href="#bi-dot" /></svg>
+        <a class="link-body-emphasis text-decoration-none d-inline-block play-dominoes" rel="noopener" data-open="play"
+           href="https://dominoes.playdrift.com/">Play</a>
         <svg><use xlink:href="#bi-dot" /></svg>
         <a class="link-body-emphasis text-decoration-none d-inline-block" rel="noopener" data-open="github"
            href="homepage_url">GitHub</a>
@@ -310,7 +368,19 @@
 </div> <!-- row -->
 </div> <!-- container -->
 
+<div aria-live="polite" aria-atomic="true" class="">
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+</div>
+
+<button type="button" class="btn btn-outline-primary" id="back-to-top">
+    <i class="fa-regular fa-square-caret-up"></i>
+</button>
+
 <div class="d-none">
+    <div class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-body"></div>
+    </div>
+    <i class="fa-regular fa-trash-can"></i>
     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" id="bi-dot" viewBox="0 0 16 16">
         <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
     </svg>
@@ -332,6 +402,7 @@
 <script type="text/javascript" src="../dist/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="../dist/bootstrap/bootstrap.bundle.min.js"></script>
 <!--<script type="text/javascript" src="../dist/emoji-mart/browser.js"></script>-->
+<script type="text/javascript" src="../js/main.js"></script>
 <script type="module" src="../js/options.js"></script>
 
 </body>

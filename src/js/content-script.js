@@ -336,7 +336,6 @@ async function sse1(room) {
     source1 = new EventSource(url, {
         withCredentials: true,
     })
-    // console.debug('source1:', source1)
     const { options, profile } = await chrome.storage.sync.get([
         'options',
         'profile',
@@ -398,12 +397,12 @@ async function sse2(room) {
     source2 = new EventSource(url, {
         withCredentials: true,
     })
-    // console.debug('source2:', source2)
     // TODO: Checking date might not be necessary!
     const now = Date.now()
     source2.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse2:', msg)
+        // console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
         if (msg.t === 'm' && msg.json?.ts > now) {
             newChatMessage(msg).then()
         }
@@ -737,7 +736,7 @@ async function getGameResults(state) {
  * @param {Object} msg
  */
 async function newChatMessage(msg) {
-    // console.debug('newChatMessage:', msg)
+    console.debug('newChatMessage:', msg)
     if (!msg.json) {
         return console.debug('NO msg.json')
     }
@@ -761,30 +760,25 @@ async function newChatMessage(msg) {
     // console.debug('owner, room, player:', owner, room, player)
 
     // TODO: Make Custom Commands an Option
-    if (message.startsWith('!')) {
+    if (options.enableCommands && message.startsWith('!')) {
         let cmd = message.split(' ')[0]
         cmd = cmd.substring(1).toLocaleLowerCase()
         console.debug('chat command:', cmd)
+        const { commands } = await chrome.storage.sync.get(['commands'])
         let msg
-        if (['me', 'profile', 'rating', 'stat', 'stats'].includes(cmd)) {
+        if (['me', 'profile', 'stats'].includes(cmd)) {
             await sendPlayerStats(pid)
         } else if (cmd.startsWith('kick')) {
             await sendKickedPlayers()
-        } else if (['info', 'help'].includes(cmd)) {
-            msg =
-                'Stats and Rating are hidden in your profile. I wrote an addon to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: https://github.com/smashedr/playdrift-extension'
         } else if (cmd === 'id') {
             msg = `${player.username} ID: ${pid}`
         } else if (cmd === 'url') {
             msg = `https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"${pid}","game":"dominoes"}`
-        } else if (cmd === 'hack') {
-            msg =
-                'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.'
-        } else if (cmd === 'fast') {
-            msg =
-                'That is a great idea and I strongly agree! You should play as fast as you can...'
-        } else if (cmd === 'zzz') {
-            msg = 'Is your keyboard stuck? Or do you need to take a nap?'
+        } else if (commands[cmd]) {
+            msg = commands[cmd]
+            if (typeof commands[msg] !== 'undefined') {
+                msg = commands[msg]
+            }
         }
         if (msg) {
             await sendChatMessage(msg)
@@ -940,7 +934,7 @@ async function showTooltipMouseover(event) {
     span.style.width = '100%'
     span.style.display = 'inline-block'
     const span1 = span.cloneNode(true)
-    span1.textContent = profile.username
+    span1.textContent = `(${profile.level}) ${profile.username}`
     tooltip.appendChild(span1)
     const span2 = span.cloneNode(true)
     span2.textContent = `Rating: ${profile.stats.rating} - ${profile.stats.wl_percent}%`

@@ -11,6 +11,8 @@ chrome.tabs.onUpdated.addListener(onUpdate)
 // chrome.alarms.onAlarm.addListener(onAlarm)
 chrome.storage.onChanged.addListener(onChanged)
 
+const githubURL = 'https://github.com/smashedr/playdrift-extension'
+
 /**
  * On Startup Callback
  * @function onStartup
@@ -34,12 +36,6 @@ function onStartup() {
  */
 async function onInstalled(details) {
     console.log('onInstalled:', details)
-    const githubURL = 'https://github.com/smashedr/playdrift-extension'
-    // const chatCommands = {
-    //     info: `Stats and Rating are hidden in your profile. I wrote an web extension to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: ${githubURL}`,
-    //     hack: 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.',
-    //     stats: `_send_stats_`,
-    // }
     // const audio = {
     //     join: { file: '/audio/join.mp3', volume: 1.0 },
     //     leave: { file: '/audio/leave.mp3', volume: 1.0 },
@@ -71,7 +67,7 @@ async function onInstalled(details) {
             kickLowGames: 100,
             sendGameStart: false,
             gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
-            // chatCommands: chatCommands,
+            enableCommands: true,
             contextMenu: true,
             showUpdate: false,
         })
@@ -281,12 +277,21 @@ function createContextMenus() {
  */
 async function setDefaultOptions(defaultOptions) {
     console.log('setDefaultOptions', defaultOptions)
-    let { banned, history, options, profile } = await chrome.storage.sync.get([
-        'banned',
-        'history',
-        'options',
-        'profile',
-    ])
+    let { banned, commands, history, options, profile } =
+        await chrome.storage.sync.get([
+            'banned',
+            'commands',
+            'history',
+            'options',
+            'profile',
+        ])
+    if (!commands) {
+        commands = {
+            info: `Stats and Rating are hidden in your profile. I wrote a web extension to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: ${githubURL}`,
+            hack: 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.',
+        }
+        await chrome.storage.sync.set({ commands })
+    }
     if (!banned) {
         banned = []
         await chrome.storage.sync.set({ banned })
