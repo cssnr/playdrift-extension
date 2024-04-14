@@ -47,6 +47,7 @@ async function onInstalled(details) {
         setDefaultOptions({
             // audio: audio,
             showTooltipMouseover: true,
+            radioTopTip: 'tipTopRating',
             showMouseover: false,
             sendOnJoin: false,
             sendSelfOnJoin: false,

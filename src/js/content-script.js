@@ -988,17 +988,31 @@ async function showMouseover(event) {
     div.classList.add('mouseover-stats')
 
     const spanRating = document.createElement('span')
-    spanRating.textContent = profile.rating
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (options.radioTopTip === 'tipTopLevel') {
+        spanRating.textContent = profile.level
+    } else {
+        spanRating.textContent = profile.rating
+    }
     spanRating.style.width = '100%'
     // spanRating.style.margin = '-5px 0'
     spanRating.style.display = 'inline-block'
     // spanRating.style.position = 'fixed'
 
-    if (profile.rating < 200) {
-        spanRating.style.color = '#EE4B2B'
+    if (options.radioTopTip === 'tipTopLevel') {
+        if (profile.level < 50) {
+            spanRating.style.color = '#EE4B2B'
+        } else {
+            spanRating.style.color = '#50C878'
+        }
     } else {
-        spanRating.style.color = '#50C878'
+        if (profile.rating < 200) {
+            spanRating.style.color = '#EE4B2B'
+        } else {
+            spanRating.style.color = '#50C878'
+        }
     }
+
     spanRating.style.textShadow =
         '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
     div.appendChild(spanRating)
@@ -1009,7 +1023,7 @@ async function showMouseover(event) {
 
     const spanRate = document.createElement('span')
     spanRate.textContent = `${profile.stats.wl_percent}%`
-    spanRating.style.width = '100%'
+    spanRate.style.width = '100%'
     // spanRate.style.margin = '-5px 0'
     spanRate.style.display = 'inline-block'
     // spanRate.style.position = 'fixed'

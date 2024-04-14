@@ -150,16 +150,25 @@ export async function checkPerms() {
 export async function saveOptions(event) {
     console.debug('saveOptions:', event)
     const { options } = await chrome.storage.sync.get(['options'])
+    let key = event.target.id
     let value
-    if (event.target.id === 'kickLowRate') {
+    if (key === 'kickLowRate') {
         const number = parseInt(event.target.value, 10)
-        console.log('kickLowRate:', number)
         if (!isNaN(number) && number >= 1 && number <= 99) {
             event.target.value = number.toString()
             value = number
         } else {
-            event.target.value = options[event.target.id]
+            event.target.value = options[key]
             // TODO: Add Error Handling
+        }
+    } else if (event.target.type === 'radio') {
+        key = event.target.name
+        const radios = document.getElementsByName(key)
+        for (const input of radios) {
+            if (input.checked) {
+                value = input.id
+                break
+            }
         }
     } else if (event.target.type === 'checkbox') {
         value = event.target.checked
@@ -169,11 +178,11 @@ export async function saveOptions(event) {
         value = event.target.value
     }
     if (value !== undefined) {
-        options[event.target.id] = value
-        console.info(`Set: ${event.target.id}:`, value)
+        options[key] = value
+        console.info(`Set: ${key}:`, value)
         await chrome.storage.sync.set({ options })
     } else {
-        console.warn(`No Value for event.target.id: ${event.target.id}`)
+        console.warn(`No Value for key: ${key}`)
     }
 }
 
@@ -184,7 +193,11 @@ export async function saveOptions(event) {
  * @param {boolean} text
  */
 export function updateOptions(options, text = false) {
-    for (const [key, value] of Object.entries(options)) {
+    for (let [key, value] of Object.entries(options)) {
+        if (key.startsWith('radio')) {
+            key = value
+            value = true
+        }
         // console.debug(`${key}: ${value}`)
         const el = document.getElementById(key)
         if (!el) {
@@ -220,6 +233,7 @@ export function updateOptions(options, text = false) {
 
 function hideShowElement(selector, show, speed = 'fast') {
     const element = $(`${selector}`)
+    console.debug('hideShowElement:', show, element)
     if (show) {
         element.show(speed)
     } else {
