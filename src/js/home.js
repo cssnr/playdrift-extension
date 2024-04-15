@@ -19,23 +19,9 @@ document
 document
     .getElementById('import-banned')
     .addEventListener('click', importBannedUsers)
-// document
-//     .querySelectorAll('.open-options')
-//     .forEach((el) => el.addEventListener('click', openOptions))
-// document
-//     .querySelectorAll('.play-dominoes')
-//     .forEach((el) => el.addEventListener('click', playDominoes))
-// document
-//     .querySelectorAll('.open-page')
-//     .forEach((el) => el.addEventListener('click', openPage))
 document
     .querySelectorAll('[data-tabopen]')
     .forEach((el) => el.addEventListener('click', tabOpen))
-
-// document.addEventListener('focus', onFocus)
-// function onFocus(e) {
-//     window.location.reload()
-// }
 
 const bannedInput = document.getElementById('import-banned-input')
 const historyTable = document.getElementById('history-table')
@@ -257,28 +243,25 @@ async function deleteBanned(event) {
     }
 }
 
-// async function openOptions(event) {
-//     console.debug('openOptions:', event)
-//     event.preventDefault()
-//     chrome.runtime.openOptionsPage()
-// }
-
-// async function playDominoes(event) {
-//     console.debug('playDominoes:', event)
-//     event.preventDefault()
-//     await playGame(event)
-// }
-
-// async function openPage(event) {
-//     console.debug('openPage:', event)
-//     event.preventDefault()
-//     await chrome.windows.create({
-//         type: 'detached_panel',
-//         url: '/html/page.html',
-//         width: 720,
-//         height: 480,
-//     })
-// }
+/**
+ * Download filename with text
+ * @function download
+ * @param {String} filename
+ * @param {String} text
+ */
+function download(filename, text) {
+    console.debug(`download: ${filename}`)
+    const element = document.createElement('a')
+    element.setAttribute(
+        'href',
+        'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
+    )
+    element.setAttribute('download', filename)
+    element.classList.add('d-none')
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
+}
 
 /**
  * On Changed Callback
@@ -306,24 +289,4 @@ export function onChanged(changes, namespace) {
             }
         }
     }
-}
-
-/**
- * Download filename with text
- * @function download
- * @param {String} filename
- * @param {String} text
- */
-function download(filename, text) {
-    console.debug(`download: ${filename}`)
-    const element = document.createElement('a')
-    element.setAttribute(
-        'href',
-        'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
-    )
-    element.setAttribute('download', filename)
-    element.classList.add('d-none')
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
 }

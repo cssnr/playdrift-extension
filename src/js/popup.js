@@ -13,7 +13,6 @@ chrome.storage.onChanged.addListener(onChanged)
 
 document.addEventListener('DOMContentLoaded', initPopup)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
-// document.getElementById('inject-script').addEventListener('click', injectScript)
 document
     .querySelectorAll('a[href]')
     .forEach((el) => el.addEventListener('click', popupLinks))
@@ -54,14 +53,6 @@ async function initPopup() {
     if (chrome.runtime.lastError) {
         showToast(chrome.runtime.lastError.message, 'warning')
     }
-
-    // const platformInfo = await chrome.runtime.getPlatformInfo()
-    // console.log('platformInfo:', platformInfo)
-
-    // const views = chrome.extension.getViews()
-    // console.log('views:', views)
-    // const result = views.find((item) => item.location.href.endsWith('html/home.html'))
-    // console.log('result:', result)
 }
 
 /**
@@ -117,23 +108,3 @@ function grantPerms(event) {
     })
     window.close()
 }
-
-// /**
-//  * Grant Permissions Button Click Callback
-//  * @function injectScript
-//  * @param {MouseEvent} event
-//  */
-// async function injectScript(event) {
-//     console.debug('injectScript:', event)
-//     const [tab] = await chrome.tabs.query({ currentWindow: true, active: true })
-//     try {
-//         await chrome.scripting.executeScript({
-//             target: { tabId: tab.id },
-//             files: ['/js/inject.js'],
-//         })
-//         window.close()
-//     } catch (e) {
-//         showToast(e.toString(), 'danger')
-//         console.info(e)
-//     }
-// }
