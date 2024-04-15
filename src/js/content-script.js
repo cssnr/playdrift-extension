@@ -37,6 +37,7 @@ const audio = {
 // Popper Tooltip
 const tooltip = document.createElement('div')
 tooltip.id = 'tooltip'
+tooltip.style.width = '190px'
 tooltip.setAttribute('role', 'tooltip')
 tooltip.innerHTML = 'Loading...'
 document.body.appendChild(tooltip)
@@ -52,7 +53,7 @@ document.addEventListener('mousemove', ({ clientX: x, clientY: y }) => {
 })
 function generateGetBoundingClientRect(x = 0, y = 0) {
     return () => ({
-        width: 200,
+        width: 190,
         height: 0,
         top: y - 10,
         right: x,

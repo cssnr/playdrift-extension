@@ -2,6 +2,7 @@
 
 /**
  * Open Game Tab
+ * TODO: To be replaced with: tabOpen
  * @function playGame
  * @param {MouseEvent} event
  */
@@ -22,6 +23,7 @@ export async function playGame(event = null) {
 
 /**
  * Open Game Tab
+ * TODO: To be replaced with: tabOpen
  * @function playGame
  * @param {MouseEvent} event
  */
@@ -40,28 +42,31 @@ export async function openHome(event = null) {
     }
 }
 
-/**
- * Focus or Open Tab/URL
- * TODO: Not yet in use
- * @function focusOpen
- * @param {string} url
- */
-export async function focusOpen(url) {
-    const queryInfo = {
-        currentWindow: true,
-        url: url,
-    }
-    const tabs = await chrome.tabs.query(queryInfo)
-    console.log('tabs:', tabs)
-    if (tabs.length) {
-        await chrome.tabs.update(tabs[0].id, { active: true })
-    } else {
-        await chrome.tabs.create({ active: true, url: url })
-    }
-}
+// /**
+//  * Focus or Open Tab/URL
+//  * TODO: Replaced with: tabOpen
+//  * @function focusOpen
+//  * @param {string} url
+//  */
+// export async function focusOpen(url) {
+//     const queryInfo = {
+//         currentWindow: true,
+//         url: url,
+//     }
+//     const tabs = await chrome.tabs.query(queryInfo)
+//     console.log('tabs:', tabs)
+//     if (tabs.length) {
+//         await chrome.tabs.update(tabs[0].id, { active: true })
+//     } else {
+//         await chrome.tabs.create({ active: true, url: url })
+//     }
+// }
 
 /**
  * Tab Open Callback
+ * TODO: This Replaces playGame and openHome in all places but
+ *      1. The context menu clicks
+ *      2. Keyboard shortcut commands
  * @function focusOpen
  * @param {MouseEvent} event
  */
@@ -72,12 +77,13 @@ export async function tabOpen(event) {
     console.debug('element', element)
     const url = element.href
     console.debug('url', url)
+    const pattern = element.dataset.pattern || url
     if (event.target.dataset.play === 'play') {
         return await playGame(event)
     }
     const queryInfo = {
         currentWindow: true,
-        url: url,
+        url: pattern,
     }
     const tabs = await chrome.tabs.query(queryInfo)
     console.log('tabs:', tabs)

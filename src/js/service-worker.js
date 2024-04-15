@@ -13,6 +13,48 @@ chrome.storage.onChanged.addListener(onChanged)
 
 const githubURL = 'https://github.com/smashedr/playdrift-extension'
 
+const defaultOptions = {
+    // audio: audio,
+    showTooltipMouseover: true,
+    radioTopTip: 'tipTopRating',
+    showMouseover: false,
+    sendOnJoin: false,
+    sendSelfOnJoin: false,
+    sendPlayerLeft: false,
+    sendTeamsChanged: false,
+    autoUpdateOptions: false,
+    autoContinueGameEnd: false,
+    autoKickBanned: false,
+    playTurnAudio: false,
+    playPlayersAudio: false,
+    playTeamsAudio: false,
+    playInboxAudio: true,
+    playMessageAudio: false,
+    playChatSpeech: false,
+    autoKickLowRate: false,
+    kickLowRate: 40,
+    autoKickLowGames: false,
+    kickLowGames: 100,
+    sendGameStart: false,
+    gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
+    enableCommands: true,
+    contextMenu: true,
+    showUpdate: false,
+}
+
+const defaultCommands = {
+    info: `Stats and Rating are hidden in your profile. I wrote a web extension to display stats, store game history, auto kick low win rate players, ban users, and much more. Info on GitHub: ${githubURL}`,
+    hack: 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.',
+}
+
+// const audio = {
+//     join: { file: '/audio/join.mp3', volume: 1.0 },
+//     leave: { file: '/audio/leave.mp3', volume: 1.0 },
+//     message: { file: '/audio/message.mp3', volume: 1.0 },
+//     team: { file: '/audio/team.mp3', volume: 1.0 },
+//     turn: { file: '/audio/join.mp3', volume: 1.0 },
+// }
+
 /**
  * On Startup Callback
  * @function onStartup
@@ -36,43 +78,7 @@ function onStartup() {
  */
 async function onInstalled(details) {
     console.log('onInstalled:', details)
-    // const audio = {
-    //     join: { file: '/audio/join.mp3', volume: 1.0 },
-    //     leave: { file: '/audio/leave.mp3', volume: 1.0 },
-    //     message: { file: '/audio/message.mp3', volume: 1.0 },
-    //     team: { file: '/audio/team.mp3', volume: 1.0 },
-    //     turn: { file: '/audio/join.mp3', volume: 1.0 },
-    // }
-    const options = await Promise.resolve(
-        setDefaultOptions({
-            // audio: audio,
-            showTooltipMouseover: true,
-            radioTopTip: 'tipTopRating',
-            showMouseover: false,
-            sendOnJoin: false,
-            sendSelfOnJoin: false,
-            sendPlayerLeft: false,
-            sendTeamsChanged: false,
-            autoUpdateOptions: false,
-            autoContinueGameEnd: false,
-            autoKickBanned: false,
-            playTurnAudio: false,
-            playPlayersAudio: false,
-            playTeamsAudio: false,
-            playInboxAudio: true,
-            playMessageAudio: false,
-            playChatSpeech: false,
-            autoKickLowRate: false,
-            kickLowRate: 40,
-            autoKickLowGames: false,
-            kickLowGames: 100,
-            sendGameStart: false,
-            gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
-            enableCommands: true,
-            contextMenu: true,
-            showUpdate: false,
-        })
-    )
+    const options = await Promise.resolve(setDefaultOptions())
     console.debug('options:', options)
     if (options.contextMenu) {
         createContextMenus()
@@ -273,10 +279,9 @@ function createContextMenus() {
 /**
  * Set Default Options
  * @function setDefaultOptions
- * @param {Object} defaultOptions
  * @return {Object}
  */
-async function setDefaultOptions(defaultOptions) {
+async function setDefaultOptions() {
     console.log('setDefaultOptions', defaultOptions)
     let { banned, commands, history, options, profile } =
         await chrome.storage.sync.get([
@@ -287,10 +292,7 @@ async function setDefaultOptions(defaultOptions) {
             'profile',
         ])
     if (!commands) {
-        commands = {
-            info: `Stats and Rating are hidden in your profile. I wrote a web extension to display stats, store game history, auto kick low win rate players, ban users, and much more, info on GitHub: ${githubURL}`,
-            hack: 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.',
-        }
+        commands = defaultCommands
         await chrome.storage.sync.set({ commands })
     }
     if (!banned) {
