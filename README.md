@@ -1,6 +1,6 @@
-[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/coming-soon?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/anlkpnbhiiojmedlkchcdmigkdccnmcn?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
-[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/coming-soon?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
 [![Manifest Version](https://img.shields.io/github/manifest-json/v/cssnr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/cssnr/playdrift-extension/blob/master/manifest.json)
@@ -26,22 +26,23 @@ Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rank
 > [!WARNING]  
 > **Coming Soon**
 > 
+> The addon is currently being published to Chrome and Mozilla, until then...
 > See [Chrome Setup](#chrome-setup) or [Firefox Setup](#firefox-setup) for a manual install!
 >
 
-*   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+*   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 *   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
 
-[![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_48x48.png)](https://addons.mozilla.org/addon/playdrift-extension)
-[![Edge](https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
-[![Chromium](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chromium/chromium_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
-[![Brave](https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
-[![Vivaldi](https://raw.githubusercontent.com/alrra/browser-logos/main/src/vivaldi/vivaldi_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
-[![Opera](https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
+[![Edge](https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Chromium](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chromium/chromium_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Brave](https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Vivaldi](https://raw.githubusercontent.com/alrra/browser-logos/main/src/vivaldi/vivaldi_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Opera](https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 
 All **Chromium** Based Browsers can install the extension from the
-[Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon).
+[Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn).
 
 # Features
 
