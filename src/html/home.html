@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="../dist/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../dist/fontawesome/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/home.css">
     <script type="text/javascript" src="../js/theme.js"></script>
 </head>
 <body>
@@ -70,7 +71,7 @@
                                 </div>
                             </form>
                             <div>
-                                <input type="file" id="import-banned-input" style="display: none;" />
+                                <input type="file" id="banned-input" style="display: none;" />
                                 <a id="import-banned" class="link-body-emphasis text-decoration-none fst-italic small" role="button">
                                     Import <i class="fa-solid fa-file-arrow-up ms-1"></i></a>
                                 <span class="ms-2 me-1">/</span>
@@ -125,13 +126,13 @@
     </div> <!-- row profile -->
 </div> <!-- container -->
 
-<div aria-live="polite" aria-atomic="true" class="">
-    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
-</div>
-
 <button type="button" class="btn btn-outline-primary" id="back-to-top">
     <i class="fa-regular fa-square-caret-up"></i>
 </button>
+
+<div aria-live="polite" aria-atomic="true" class="">
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+</div>
 
 <div class="d-none">
     <div class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
