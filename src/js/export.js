@@ -57,7 +57,7 @@ export async function tabOpen(event) {
     console.debug('element', element)
     const url = element.href
     console.debug('url', url)
-    const pattern = element.dataset.pattern || url
+    const pattern = element.dataset.tabopen || url
     const queryInfo = {
         currentWindow: true,
         url: pattern,
