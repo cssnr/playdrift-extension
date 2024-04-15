@@ -10,7 +10,7 @@
 
 Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss records on player profiles.
 
-*   [Install](#install) (coming soon, use chrome/firefox setup instead)
+*   [Install](#install)
 *   [Features](#features)
 *   [Configuration](#configuration)
 *   [Browser Console](#browser-console)
