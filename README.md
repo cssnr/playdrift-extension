@@ -1,7 +1,7 @@
-[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/anlkpnbhiiojmedlkchcdmigkdccnmcn?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/anlkpnbhiiojmedlkchcdmigkdccnmcn?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
 [![Manifest Version](https://img.shields.io/github/manifest-json/v/cssnr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/cssnr/playdrift-extension/blob/master/manifest.json)
 [![Build](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
@@ -10,8 +10,6 @@
 
 Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss records on player profiles.
 
-*   [Chrome Setup](#chrome-setup)
-*   [Firefox Setup](#firefox-setup)
 *   [Install](#install) (coming soon, use chrome/firefox setup instead)
 *   [Features](#features)
 *   [Configuration](#configuration)
@@ -22,13 +20,6 @@ Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rank
 [![GitHub Image](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://github.com/cssnr/playdrift-extension)
 
 # Install
-
-> [!WARNING]  
-> **Coming Soon**
-> 
-> The addon is currently being published to Chrome and Mozilla, until then...
-> See [Chrome Setup](#chrome-setup) or [Firefox Setup](#firefox-setup) for a manual install!
->
 
 *   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 *   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
@@ -67,6 +58,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Auto Update Game Options Dialog on Room Creation
 *   Auto Continue Through the Game Stats at End of Game
 *   Close Profiles by Clicking Anywhere Outside the Profile
+*   Add Custom Chat Commands for use by Anybody
 
 Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
@@ -74,11 +66,11 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssn
 #### Planned Features and Ideas
 
 *   Custom Audio Sounds and Volume
-*   Custom Chat Commands and Options
 *   Auto Select Team # and Keep it Set
 *   Remember Recent Game and Room URLs
 *   Remember Recent Players who Kicked You
 *   Player Stats (Total Points, Time Taken)
+*   More Detailed History Including Opponents
 
 # Configuration
 
