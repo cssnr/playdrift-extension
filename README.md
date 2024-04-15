@@ -2,9 +2,9 @@
 [![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/coming-soon?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/coming-soon)
 [![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
-[![GitHub Release Version](https://img.shields.io/github/v/release/smashedr/playdrift-extension?logo=github)](https://github.com/smashedr/playdrift-extension/releases/latest)
-[![Manifest Version](https://img.shields.io/github/manifest-json/v/smashedr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/smashedr/playdrift-extension/blob/master/manifest.json)
-[![Build](https://github.com/smashedr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/smashedr/playdrift-extension/actions/workflows/build.yaml)
+[![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
+[![Manifest Version](https://img.shields.io/github/manifest-json/v/cssnr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/cssnr/playdrift-extension/blob/master/manifest.json)
+[![Build](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=smashedr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=smashedr_playdrift-extension)
 # PlayDrift Extension
 
@@ -19,7 +19,7 @@ Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rank
 *   [Development](#development)
     -   [Building](#building)
 
-[![GitHub Image](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://github.com/smashedr/playdrift-extension)
+[![GitHub Image](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://github.com/cssnr/playdrift-extension)
 
 # Install
 
@@ -67,8 +67,8 @@ All **Chromium** Based Browsers can install the extension from the
 *   Auto Continue Through the Game Stats at End of Game
 *   Close Profiles by Clicking Anywhere Outside the Profile
 
-Please submit a [Feature Request](https://github.com/smashedr/playdrift-extension/discussions/categories/feature-requests) for new features.  
-For any issues, bugs or concerns; please [Open an Issue](https://github.com/smashedr/playdrift-extension/issues).
+Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
+For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
 
 #### Planned Features and Ideas
 
@@ -162,7 +162,7 @@ For more information on building, see the scripts in the [package.json](package.
 
 ## Chrome Setup
 
-1.  Build or Download a [Release](https://github.com/smashedr/playdrift-extension/releases).
+1.  Build or Download a [Release](https://github.com/cssnr/playdrift-extension/releases).
 1.  Unzip the archive, place the folder where it must remain and note its location for later.
 1.  Open Chrome, click the `3 dots` in the top right, click `Extensions`, click `Manage Extensions`.
 1.  In the top right, click `Developer Mode` then on the top left click `Load unpacked`.
@@ -173,7 +173,7 @@ For more information on building, see the scripts in the [package.json](package.
 Note: Firefox Temporary addon's will **not** remain after restarting Firefox, therefore;
 it is very useful to keep addon storage after uninstall/restart with `keepStorageOnUninstall`.
 
-1.  Build or Download a [Release](https://github.com/smashedr/playdrift-extension/releases).
+1.  Build or Download a [Release](https://github.com/cssnr/playdrift-extension/releases).
 1.  Unzip the archive, place the folder where it must remain and note its location for later.
 1.  Go to `about:debugging#/runtime/this-firefox` and click `Load Temporary Add-on...`
 1.  Navigate to the folder you extracted earlier, select `manifest.json` then click `Select File`.

@@ -11,7 +11,7 @@ chrome.tabs.onUpdated.addListener(onUpdate)
 // chrome.alarms.onAlarm.addListener(onAlarm)
 chrome.storage.onChanged.addListener(onChanged)
 
-const githubURL = 'https://github.com/smashedr/playdrift-extension'
+const githubURL = 'https://github.com/cssnr/playdrift-extension'
 
 const defaultOptions = {
     // audio: audio,
