@@ -5,7 +5,7 @@
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
 [![Manifest Version](https://img.shields.io/github/manifest-json/v/cssnr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/cssnr/playdrift-extension/blob/master/manifest.json)
 [![Build](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=smashedr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=smashedr_playdrift-extension)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_playdrift-extension)
 # PlayDrift Extension
 
 Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss records on player profiles.
