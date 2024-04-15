@@ -26,7 +26,7 @@ document
     .querySelectorAll('.open-oninstall')
     .forEach((el) => el.addEventListener('click', openOnInstall))
 document
-    .querySelectorAll('[data-open]')
+    .querySelectorAll('[data-tabopen]')
     .forEach((el) => el.addEventListener('click', tabOpen))
 document
     .querySelectorAll('[data-bs-toggle="tooltip"]')

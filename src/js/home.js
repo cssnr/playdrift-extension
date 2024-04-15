@@ -29,7 +29,7 @@ document
 //     .querySelectorAll('.open-page')
 //     .forEach((el) => el.addEventListener('click', openPage))
 document
-    .querySelectorAll('[data-open]')
+    .querySelectorAll('[data-tabopen]')
     .forEach((el) => el.addEventListener('click', tabOpen))
 
 // document.addEventListener('focus', onFocus)

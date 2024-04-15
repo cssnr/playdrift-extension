@@ -78,9 +78,9 @@ export async function tabOpen(event) {
     const url = element.href
     console.debug('url', url)
     const pattern = element.dataset.pattern || url
-    if (event.target.dataset.play === 'play') {
-        return await playGame(event)
-    }
+    // if (event.target.dataset.play === 'play') {
+    //     return await playGame(event)
+    // }
     const queryInfo = {
         currentWindow: true,
         url: pattern,
