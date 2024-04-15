@@ -12,21 +12,24 @@ chrome.storage.onChanged.addListener(onChanged)
 
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
-document.getElementById('banned-form').addEventListener('submit', addBannedUser)
+document
+    .querySelectorAll('[data-tabopen]')
+    .forEach((el) => el.addEventListener('click', tabOpen))
+
 document
     .getElementById('export-banned')
     .addEventListener('click', exportBannedUsers)
 document
     .getElementById('import-banned')
     .addEventListener('click', importBannedUsers)
-document
-    .querySelectorAll('[data-tabopen]')
-    .forEach((el) => el.addEventListener('click', tabOpen))
 
-const bannedInput = document.getElementById('import-banned-input')
+document.getElementById('banned-form').addEventListener('submit', addBannedUser)
+
 const historyTable = document.getElementById('history-table')
+const bannedTable = document.getElementById('banned-table')
+const bannedInput = document.getElementById('banned-input')
 
-bannedInput.addEventListener('change', bannedInputChange)
+bannedInput.addEventListener('change', inputBannedUsers)
 
 /**
  * DOMContentLoaded
@@ -95,7 +98,7 @@ function updateHistory(history) {
  */
 function updateBanned(banned) {
     console.debug('updateBanned:', banned)
-    const tbody = document.querySelector('#banned-table tbody')
+    const tbody = bannedTable.querySelector('tbody')
     tbody.innerHTML = ''
     const trashCan = document.querySelector('.fa-regular.fa-trash-can')
     banned.forEach((value) => {
@@ -176,7 +179,7 @@ async function exportBannedUsers(event) {
         return showToast('No Banned Users Found!', 'warning')
     }
     const json = JSON.stringify(banned)
-    download('banned-users.txt', json)
+    textFileDownload('banned-users.txt', json)
 }
 
 /**
@@ -192,11 +195,11 @@ async function importBannedUsers(event) {
 
 /**
  * Banned Users Input Change Callback
- * @function bannedInputChange
+ * @function inputBannedUsers
  * @param {InputEvent} event
  */
-async function bannedInputChange(event) {
-    console.debug('bannedInputChange:', event, bannedInput)
+async function inputBannedUsers(event) {
+    console.debug('inputBannedUsers:', event, bannedInput)
     event.preventDefault()
     const fileReader = new FileReader()
     fileReader.onload = async function doBannedImport() {
@@ -238,29 +241,9 @@ async function deleteBanned(event) {
         banned.splice(index, 1)
         await chrome.storage.sync.set({ banned })
         // console.debug('banned:', banned)
-        updateBanned(banned)
+        // updateBanned(banned)
         // document.getElementById('add-filter').focus()
     }
-}
-
-/**
- * Download filename with text
- * @function download
- * @param {String} filename
- * @param {String} text
- */
-function download(filename, text) {
-    console.debug(`download: ${filename}`)
-    const element = document.createElement('a')
-    element.setAttribute(
-        'href',
-        'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
-    )
-    element.setAttribute('download', filename)
-    element.classList.add('d-none')
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
 }
 
 /**
