@@ -124,7 +124,7 @@
         </div>
         <div class="form-check form-switch">
             <input class="form-check-input" id="sendTeamsChanged" type="checkbox" role="switch">
-            <label class="form-check-label text-success-emphasis" for="sendTeamsChanged" aria-describedby="sendTeamsChangedHelp">
+            <label class="form-check-label" for="sendTeamsChanged" aria-describedby="sendTeamsChangedHelp">
                 Send Teams Changed Alert
                 <span data-bs-toggle="tooltip" data-bs-title="Send Teams Changed Alert.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
@@ -133,6 +133,15 @@
         </div>
 
         <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-solid fa-house me-2"></i> Room Options</h6>
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="stickyTeams" type="checkbox" role="switch">
+            <label class="form-check-label" for="stickyTeams" aria-describedby="stickyTeamsHelp">
+                Keep Team Set After Selecting
+                <span data-bs-toggle="tooltip" data-bs-title="Keep Team Set After Selecting.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
         <div class="form-check form-switch">
             <input class="form-check-input" id="autoUpdateOptions" type="checkbox" role="switch">
             <label class="form-check-label text-success-emphasis" for="autoUpdateOptions" aria-describedby="autoUpdateOptionsHelp">
@@ -213,7 +222,7 @@
         </div>
         <div class="form-check form-switch">
             <input class="form-check-input" id="playMessageAudio" type="checkbox" role="switch">
-            <label class="form-check-label" for="playMessageAudio" aria-describedby="playMessageAudioHelp">
+            <label class="form-check-label text-success-emphasis" for="playMessageAudio" aria-describedby="playMessageAudioHelp">
                 Play Audio on New Chat Message
                 <span data-bs-toggle="tooltip" data-bs-title="Play Audio on New Chat Message.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
@@ -222,7 +231,7 @@
         </div>
         <div class="form-check form-switch">
             <input class="form-check-input" id="playChatSpeech" type="checkbox" role="switch">
-            <label class="form-check-label" for="playChatSpeech" aria-describedby="playChatSpeechHelp">
+            <label class="form-check-label text-success-emphasis" for="playChatSpeech" aria-describedby="playChatSpeechHelp">
                 Play Text to Speech in Chat
                 <span data-bs-toggle="tooltip" data-bs-title="Play Text to Speech in Chat.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
@@ -316,6 +325,10 @@
                     Add <i class="fa-solid fa-plus ms-1"></i>
                 </button>
             </div>
+            <div class="form-text" id="basic-addon4">
+                To use a command in chat prefix it with the <code>!</code> character.
+                Example: <kbd>!info</kbd>
+            </div>
         </form>
         <div>
             <input type="file" id="commands-input" style="display: none;" />
@@ -339,7 +352,7 @@
             <tbody></tbody>
             <tfoot class="d-none">
             <tr>
-                <td class="text-center align-middle" style="width: 36px;">
+                <td class="text-center" style="width: 36px;">
                     <a class="text-danger" role="button" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
                 </td>
                 <td style="max-width: 120px;"></td>

@@ -21,6 +21,7 @@ let source4
 // State
 const profilesCache = {}
 const roomState = {}
+let stickyTeams = {} // TODO: This should probably cleared on processRoom
 let currentRoom = ''
 
 // Audio
@@ -182,9 +183,34 @@ function startMutation() {
                         setTimeout(buttonContinue, 150, mutation.target)
                         setTimeout(buttonContinue, 250, mutation.target)
                     }
+                    if (typeof mutation.target.dataset.team !== 'undefined') {
+                        console.debug('Adding Team Click Listener')
+                        mutation.target.addEventListener(
+                            'click',
+                            teamChangeClick
+                        )
+                    }
                 })
             }
         }
+    }
+}
+
+async function teamChangeClick(event) {
+    // console.debug('teamChangeClick', event)
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (!options.stickyTeams) {
+        return console.debug('Sticky Teams Disabled')
+    }
+    const li = event.target.closest('li')
+    const team = li.dataset.team
+    console.debug('team:', team)
+    if (!team) {
+        stickyTeams = {}
+        console.debug('Sticky Team Unset', stickyTeams)
+    } else {
+        stickyTeams[`${currentRoom}`] = team
+        console.debug(`Sticky Team Change to ${team}:`, stickyTeams)
     }
 }
 
@@ -633,9 +659,19 @@ async function roomTeamsChanged(before, after) {
     if (after.game) {
         return console.debug('not sending team change because game active')
     }
-    const { options } = await chrome.storage.sync.get(['options'])
-    if (!options.sendTeamsChanged && !options.playTeamsAudio) {
-        return
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    // TODO: We can probably skip checking this during game and leave it down here
+    if (
+        !(
+            options.sendTeamsChanged ||
+            options.playTeamsAudio ||
+            options.stickyTeams
+        )
+    ) {
+        return console.debug('no team options set')
     }
     for (const pid of after.players) {
         if (before.teams[pid] === after.teams[pid]) {
@@ -644,6 +680,13 @@ async function roomTeamsChanged(before, after) {
         const player = await getProfile(pid, true)
         const from = before.teams[pid] ? `Team ${before.teams[pid]}` : 'No Team'
         const to = after.teams[pid] ? `Team ${after.teams[pid]}` : 'No Team'
+        if (options.stickyTeams && player.id === profile.id) {
+            if (after.teams[pid] !== stickyTeams[currentRoom]) {
+                console.info('STICKY TEAM INTERCEPT')
+                await selectTeam(currentRoom, stickyTeams[currentRoom])
+            }
+            return console.info('Stop Processing on Sticky Teams Event')
+        }
         if (options.playTeamsAudio) {
             await audio.team.play()
         }
@@ -1453,7 +1496,10 @@ async function kickClick(event) {
  */
 async function banClick(event) {
     const pid = document.getElementById('profile-id').value
-    const { banned } = await chrome.storage.sync.get(['banned'])
+    const { banned, options } = await chrome.storage.sync.get([
+        'banned',
+        'options',
+    ])
     console.debug('banClick:', pid, banned, event)
     if (!banned.includes(pid)) {
         banned.push(pid)
@@ -1461,12 +1507,10 @@ async function banClick(event) {
     }
     const player = await getProfile(pid)
     await sendChatMessage(`Banned User: ${player.username}`)
-    await kickPlayer(pid)
-    if (history.length > 1) {
-        history.back()
-    } else {
-        window.close()
+    if (options.autoKickBanned) {
+        await kickPlayer(pid)
     }
+    history.back()
 }
 
 /**
@@ -1483,6 +1527,10 @@ async function unbanClick(event) {
         banned.splice(index, 1)
         await chrome.storage.sync.set({ banned })
     }
+    backOrClose()
+}
+
+function backOrClose() {
     if (history.length > 1) {
         history.back()
     } else {
@@ -1568,6 +1616,7 @@ function sendChatMessageLegacy(message) {
  * @param {String} team Team Number
  */
 async function selectTeam(rid, team) {
+    console.debug('selectTeam:', rid, team)
     const body = {
         operationName: 'RoomTeamSelect',
         variables: { id: rid, gtype: 'dominoes#v3', team: team.toString() },
