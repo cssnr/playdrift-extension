@@ -1496,7 +1496,10 @@ async function kickClick(event) {
  */
 async function banClick(event) {
     const pid = document.getElementById('profile-id').value
-    const { banned } = await chrome.storage.sync.get(['banned'])
+    const { banned, options } = await chrome.storage.sync.get([
+        'banned',
+        'options',
+    ])
     console.debug('banClick:', pid, banned, event)
     if (!banned.includes(pid)) {
         banned.push(pid)
@@ -1504,12 +1507,10 @@ async function banClick(event) {
     }
     const player = await getProfile(pid)
     await sendChatMessage(`Banned User: ${player.username}`)
-    await kickPlayer(pid)
-    if (history.length > 1) {
-        history.back()
-    } else {
-        window.close()
+    if (options.autoKickBanned) {
+        await kickPlayer(pid)
     }
+    history.back()
 }
 
 /**
@@ -1526,6 +1527,10 @@ async function unbanClick(event) {
         banned.splice(index, 1)
         await chrome.storage.sync.set({ banned })
     }
+    backOrClose()
+}
+
+function backOrClose() {
     if (history.length > 1) {
         history.back()
     } else {
