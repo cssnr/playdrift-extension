@@ -8,7 +8,9 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_playdrift-extension)
 # PlayDrift Extension
 
-Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss Records on Player Profiles plus much more!
+Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) 
+Web Extension and [Firefox](https://addons.mozilla.org/addon/playdrift-extension) 
+Browser Addon for PlayDrift to view Rankings and Win/Loss Records on Player Profiles plus much more!
 See the [Features](#features) list for a full list of included features.
 
 *   [Install](#install)
@@ -40,6 +42,7 @@ All **Chromium** Based Browsers can install the extension from the
 
 *   Show User Rating and Record (Win/Loss)
 *   Track Recent Game History, Wins/Losses, Rating and Date
+*   Keep Team Set After Selecting One
 *   Show Stats Tooltip on Mouse Over
 *   Show Stats on Icon on Mouse Over
 *   Send Stats to Chat on User Join
@@ -67,11 +70,10 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssn
 #### Planned Features and Ideas
 
 *   Custom Audio Sounds and Volume
-*   Auto Select Team # and Keep it Set
 *   Remember Recent Game and Room URLs
 *   Remember Recent Players who Kicked You
-*   Player Stats (Total Points, Time Taken)
-*   More Detailed History Including Opponents
+*   End Game Player Stats (Total Points, Time Taken)
+*   More Detailed History Including Opponents, Scores, etc.
 
 # Configuration
 

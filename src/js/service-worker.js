@@ -22,6 +22,7 @@ const defaultOptions = {
     sendSelfOnJoin: false,
     sendPlayerLeft: false,
     sendTeamsChanged: false,
+    stickyTeams: false,
     autoUpdateOptions: false,
     autoContinueGameEnd: false,
     autoKickBanned: false,
