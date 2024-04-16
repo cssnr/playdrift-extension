@@ -21,7 +21,7 @@ See the [Features](#features) list for a full list of included features.
 *   [Development](#development)
     -   [Building](#building)
 
-[![GitHub Image](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://github.com/cssnr/playdrift-extension)
+[![GitHub Image](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](#features)
 
 # Install
 
@@ -41,14 +41,18 @@ All **Chromium** Based Browsers can install the extension from the
 
 # Features
 
+> [!NOTE]  
+> All features are **Optional** and disabled by default. Visit the options page to enable them.
+> You can access options through the extension icon, see [Configuration](#configuration).
+
 *   Show User Rating and Record (Win/Loss)
 *   Track Recent Game History, Wins/Losses, Rating and Date
-*   Keep Team Set After Selecting One
 *   Show Stats Tooltip on Mouse Over
 *   Show Stats on Icon on Mouse Over
 *   Send Stats to Chat on User Join
 *   Send Your Own Stats to Chat When You Join
 *   Send Team Change Notifications to Chat
+*   Keep Team Set After Selecting One
 *   Play Audio on Your Turn to Make a Move
 *   Play Audio When Users Join or Leave a Room
 *   Play Audio When Users Changes Teams
@@ -63,10 +67,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Auto Update Game Options Dialog on Room Creation
 *   Auto Continue Through the Game Stats at End of Game
 *   Close Profiles by Clicking Anywhere Outside the Profile
-*   Add Custom Chat Commands for use by Anybody
-
-Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
-For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
+*   Add Custom Chat Commands that Anybody can Use
 
 ### Planned Features and Ideas
 
@@ -75,6 +76,9 @@ For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssn
 *   Remember Recent Players who Kicked You
 *   End Game Player Stats (Total Points, Time Taken)
 *   More Detailed History Including Opponents, Scores, etc.
+
+Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
+For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
 
 # Problems Solved
 
@@ -98,9 +102,9 @@ are done playing and leave as soon as it starts for the extra points.
 
 3. Robot Players
 
-Not sure if done by PlayDrift or externally but many of the players on this site are not humans, but robots. What I have noticed is  
-these bots play the game manually (by posting directly to the /action endpoint), and also send the "Joined the game." message to
-new roms when they join. Not sure if they are using the client at that point, or trying to mimic the client. Either way...
+Not sure if done by PlayDrift or externally but many of the players on this site are not humans, but robots. At a glance
+these bots play the game manually and send the "Joined the game" message to new roms when they join. They can also play
+any domino they want on the first round of 4 and hold on to the 6/6 since they play manually.
 
 > **Solution:** These bots can't win more than 1/3 games and all have a win rate around 35%. The feature to Auto Kick players 
 > below a set win rate (recommended at 40%) will kick almost all the bots, plus a couple humans that only win 1/3 games.
