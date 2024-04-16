@@ -157,8 +157,11 @@ async function addCommand(event) {
     // const element = document.querySelector('#banned-form input')
     const cmdName = document.getElementById('cmd-name')
     const cmdResp = document.getElementById('cmd-resp')
-    const command = cmdName.value.toLowerCase().trim().replaceAll(' ', '')
-    const response = cmdResp.value.trim()
+    let command = cmdName.value.toLowerCase().trim().replaceAll(' ', '')
+    if (command.startsWith('!')) {
+        command = command.replace('!', '')
+    }
+    let response = cmdResp.value.trim()
     const { commands } = await chrome.storage.sync.get(['commands'])
     if (!command || !response) {
         return showToast('You must provide a command and response.', 'danger')
