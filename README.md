@@ -8,7 +8,8 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_playdrift-extension)
 # PlayDrift Extension
 
-Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss records on player profiles.
+Modern Chrome Web Extension and Firefox Browser Addon for PlayDrift to view Rankings and Win/Loss Records on Player Profiles plus much more!
+See the [Features](#features) list for a full list of included features.
 
 *   [Install](#install)
 *   [Features](#features)

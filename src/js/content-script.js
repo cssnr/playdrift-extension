@@ -99,6 +99,14 @@ async function processLoad() {
 
     await sse4()
 
+    // const menu = document.querySelector(
+    //     '.MuiPopover-paper.MuiMenu-paper.MuiMenu-paper ul'
+    // )
+    // const item = menu.children[0].cloneNode(true)
+    // item.textContent = 'PlayDrift Home'
+    // item.href = chrome.runtime.getURL('/html/home.html')
+    // menu.insertBefore(item, menu.children[1])
+
     const url = new URL(window.location.href)
     if (url.searchParams.has('profile')) {
         // TODO: Direct Loads do not trigger the MutationObserver
@@ -261,7 +269,10 @@ function closeEventSources() {
  * @param {String} room
  */
 async function processRoom(room) {
-    const { options } = await chrome.storage.sync.get(['options'])
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
     const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
     if (options.autoUpdateOptions) {
@@ -286,6 +297,12 @@ async function processRoom(room) {
 
     console.debug(`Process Room: ${room}`)
     await sse1(room)
+
+    if (roomState[currentRoom]) {
+        if (roomState[currentRoom].kicked?.includes(profile.id)) {
+            processYouKicked()
+        }
+    }
 
     // TODO: Add Option to Auto Select Team
     // await selectTeam(room, '1')
@@ -584,6 +601,7 @@ async function roomKickedChange(before, after) {
     for (const pid of kicked) {
         if (profile.id === pid) {
             console.info('1 - You were KICKED')
+            processYouKicked()
         }
     }
     if (pids) {
@@ -635,6 +653,16 @@ async function roomTeamsChanged(before, after) {
             )
         }
     }
+}
+
+/**
+ * Process You Being Kicked
+ * @function processYouKicked
+ */
+function processYouKicked() {
+    console.info('processYouKicked', roomState[currentRoom])
+    document.querySelector('aside .MuiPaper-root').style.backgroundColor =
+        '#600000'
 }
 
 /**
