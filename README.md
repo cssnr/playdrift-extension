@@ -15,6 +15,7 @@ See the [Features](#features) list for a full list of included features.
 
 *   [Install](#install)
 *   [Features](#features)
+*   [Problems Solved](#problems-solved)
 *   [Configuration](#configuration)
 *   [Browser Console](#browser-console)
 *   [Development](#development)
@@ -67,13 +68,42 @@ All **Chromium** Based Browsers can install the extension from the
 Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
 
-#### Planned Features and Ideas
+### Planned Features and Ideas
 
 *   Custom Audio Sounds and Volume
 *   Remember Recent Game and Room URLs
 *   Remember Recent Players who Kicked You
 *   End Game Player Stats (Total Points, Time Taken)
 *   More Detailed History Including Opponents, Scores, etc.
+
+# Problems Solved
+
+PlayDrift negligence has created a few major issues on the site that this extension aims to solve.
+
+1. No Way to Judge Opponents Skill
+
+The game changed to reward quantity over quality. Someone who plays 1,000 games and losses all 1,000 games 
+will appear 10x more skilled a player vs someone who only plays 100 games and wins all 100.
+
+> **Solution:** This extension exposes the total Wins and Losses in a players profile and calculates a Win Rate. 
+> It also provides the Rating; however, rating is worthless fot two reasons. 1, nobody can see it. 2, it starts at 0.
+
+2. Habitual Game Leavers for Points
+
+Since there is no downside to losing a game, only an upside, many people queue for 1 additional game when they 
+are done playing and leave as soon as it starts for the extra points.
+
+> **Solution:** This extension can provide both audible and visual notifications when a player leave the game and has
+> ability to ban these players to they are automatically kicked from all future games.
+
+3. Robot Players
+
+Not sure if done by PlayDrift or externally but many of the players on this site are not humans, but robots. What I have noticed is  
+these bots play the game manually (by posting directly to the /action endpoint), and also send the "Joined the game." message to
+new roms when they join. Not sure if they are using the client at that point, or trying to mimic the client. Either way...
+
+> **Solution:** These bots can't win more than 1/3 games and all have a win rate around 35%. The feature to Auto Kick players 
+> below a set win rate (recommended at 40%) will kick almost all the bots, plus a couple humans that only win 1/3 games.
 
 # Configuration
 
@@ -89,7 +119,7 @@ You may also access the Options and Home page from a Right Click if Enabled in O
 
 You can view user profiles manually in your browser console using the following methods.
 
-#### Console
+### Console
 
 Make sure you are at `https://dominoes.playdrift.com/` and logged in before proceeding.
 
@@ -102,7 +132,7 @@ Make sure you are at `https://dominoes.playdrift.com/` and logged in before proc
 *   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
 *   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
 
-#### Browser
+### Browser
 
 First, get the user ID by clicking on their profile and extracting it from the URL in the address bar.  
 Example: https://dominoes.playdrift.com/?profile=fdb82ace-7826-45b1-922b-416d4e9ded9d  
