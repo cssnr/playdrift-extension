@@ -11,10 +11,12 @@
 Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) 
 Web Extension and [Firefox](https://addons.mozilla.org/addon/playdrift-extension) 
 Browser Addon for PlayDrift to view Rankings and Win/Loss Records on Player Profiles plus much more!
-See the [Features](#features) list for a full list of included features.
+See the [Features](#features) list for a full list of features and [Problems Solved](#problems-solved)
+for some of the most useful features.
 
 *   [Install](#install)
 *   [Features](#features)
+    -   [Upcoming Features](#upcoming-features-and-ideas)
 *   [Problems Solved](#problems-solved)
 *   [Configuration](#configuration)
 *   [Browser Console](#browser-console)
@@ -41,9 +43,9 @@ All **Chromium** Based Browsers can install the extension from the
 
 # Features
 
-> [!NOTE]  
+> [!TIP]  
 > All features are **Optional** and disabled by default. Visit the options page to enable them.
-> You can access options through the extension icon, see [Configuration](#configuration).
+> You can access options through the extension icon, see [Configuration](#configuration) for more info.
 
 *   Show User Rating and Record (Win/Loss)
 *   Track Recent Game History, Wins/Losses, Rating and Date
@@ -69,7 +71,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Close Profiles by Clicking Anywhere Outside the Profile
 *   Add Custom Chat Commands that Anybody can Use
 
-### Planned Features and Ideas
+### Upcoming Features and Ideas
 
 *   Custom Audio Sounds and Volume
 *   Remember Recent Game and Room URLs
