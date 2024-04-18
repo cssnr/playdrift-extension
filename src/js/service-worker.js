@@ -23,6 +23,7 @@ const defaultOptions = {
     sendPlayerLeft: false,
     sendTeamsChanged: false,
     stickyTeams: false,
+    addCancelReadyBtn: false,
     autoUpdateOptions: false,
     autoContinueGameEnd: false,
     autoKickBanned: false,

@@ -301,13 +301,6 @@ async function processRoom(room) {
     ])
     const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
-    if (options.autoUpdateOptions) {
-        const root = parent?.querySelector(
-            '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
-        )
-        // console.debug('root:', root)
-        root?.querySelector('button')?.click()
-    }
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
     if (!aside) {
@@ -323,6 +316,15 @@ async function processRoom(room) {
 
     console.debug(`Process Room: ${room}`)
     await sse1(room)
+
+    if (options.autoUpdateOptions) {
+        // const root = parent?.querySelector(
+        //     '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
+        // )
+        // // console.debug('root:', root)
+        // root?.querySelector('button')?.click()
+        clickUpdateOptions()
+    }
 
     if (roomState[currentRoom]) {
         if (roomState[currentRoom].kicked?.includes(profile.id)) {
@@ -343,6 +345,40 @@ async function processRoom(room) {
     //
     // TODO: Use Mutation Events
     // app.querySelectorAll('div[data-id].MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded')
+}
+
+async function addCancelReadyBtn() {
+    const cancelBtn = document.getElementById('ready-cancel-button')
+    if (cancelBtn) {
+        return console.debug('Cancel Button Already Added')
+    }
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    if (roomState[currentRoom].pids[0] !== profile.id) {
+        return console.debug('Skipping Cancel Button, Not Room Owner')
+    }
+    const homeHeader = document.querySelector('div[data-testid="home-header"]')
+    const ready = homeHeader.querySelector('button')
+    console.log('ready', ready)
+    const btn = ready.cloneNode(true)
+    btn.id = 'ready-cancel-button'
+    console.log('btn', btn)
+    btn.textContent = 'Cancel'
+    // btn.classList.add('MuiButton-containedError')
+    btn.style.backgroundColor = '#e57373'
+    btn.addEventListener('click', clickUpdateOptions)
+    ready.parentElement.insertBefore(btn, ready.nextSibling)
+}
+
+/**
+ * Click Update Game Options Button
+ * @function clickUpdateOptions
+ */
+function clickUpdateOptions() {
+    const parent = document.querySelector('div[data-testid="room"]')
+    const root = parent?.querySelector(
+        '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
+    )
+    root?.querySelector('button')?.click()
 }
 
 /**
@@ -422,6 +458,9 @@ async function sse1(room) {
             setTimeout(sse2, 250, room)
             if (options.sendSelfOnJoin) {
                 setTimeout(sendPlayerStats, 250, profile.id)
+            }
+            if (options.addCancelReadyBtn) {
+                setTimeout(addCancelReadyBtn, 250)
             }
         }
     })

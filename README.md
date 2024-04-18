@@ -1,7 +1,7 @@
-[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/anlkpnbhiiojmedlkchcdmigkdccnmcn?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
 [![Manifest Version](https://img.shields.io/github/manifest-json/v/cssnr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/cssnr/playdrift-extension/blob/master/manifest.json)
 [![Build](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
@@ -19,6 +19,7 @@ for some of the most useful features.
     -   [Upcoming Features](#upcoming-features-and-ideas)
 *   [Problems Solved](#problems-solved)
 *   [Configuration](#configuration)
+*   [Known Issues](#known-issues)
 *   [Browser Console](#browser-console)
 *   [Development](#development)
     -   [Building](#building)
@@ -66,6 +67,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Auto Kick Users Below Set Total Games Played
 *   Ban User Feature that Automatically Kicks User in Future
 *   Send Customizable Message on Game Start and Stats at End
+*   Add Cancel Ready Button if you are the Room Owner
 *   Auto Update Game Options Dialog on Room Creation
 *   Auto Continue Through the Game Stats at End of Game
 *   Close Profiles by Clicking Anywhere Outside the Profile
@@ -120,6 +122,10 @@ You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension ico
 To open the options, click on the icon (from above) then click `Open Options`.
 
 You may also access the Options and Home page from a Right Click if Enabled in Options.
+
+# Known Issues
+
+*   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
 
 # Browser Console
 
