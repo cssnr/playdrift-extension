@@ -179,12 +179,12 @@ function startMutation() {
                     }
                     // document.querySelectorAll('button[data-testid="button-continue"]')
                     if (mutation.target.dataset.testid === 'button-continue') {
-                        console.info('button-continue:', mutation.target)
+                        // console.info('button-continue:', mutation.target)
                         setTimeout(buttonContinue, 150, mutation.target)
                         setTimeout(buttonContinue, 250, mutation.target)
                     }
                     if (typeof mutation.target.dataset.team !== 'undefined') {
-                        console.debug('Adding Team Click Listener')
+                        console.debug('Adding Listener teamChangeClick')
                         mutation.target.addEventListener(
                             'click',
                             teamChangeClick
@@ -656,9 +656,9 @@ async function roomKickedChange(before, after) {
  */
 async function roomTeamsChanged(before, after) {
     console.debug('roomTeamsChanged:', before, after)
-    if (after.game) {
-        return console.debug('not sending team change because game active')
-    }
+    // if (after.game) {
+    //     return console.debug('not sending team change because game active')
+    // }
     const { options, profile } = await chrome.storage.sync.get([
         'options',
         'profile',
@@ -681,16 +681,19 @@ async function roomTeamsChanged(before, after) {
         const from = before.teams[pid] ? `Team ${before.teams[pid]}` : 'No Team'
         const to = after.teams[pid] ? `Team ${after.teams[pid]}` : 'No Team'
         if (options.stickyTeams && player.id === profile.id) {
-            if (after.teams[pid] !== stickyTeams[currentRoom]) {
-                console.info('STICKY TEAM INTERCEPT')
+            if (
+                stickyTeams[currentRoom] &&
+                after.teams[pid] !== stickyTeams[currentRoom]
+            ) {
+                console.info('StickyTeams Intercept')
                 await selectTeam(currentRoom, stickyTeams[currentRoom])
             }
             return console.info('Stop Processing on Sticky Teams Event')
         }
-        if (options.playTeamsAudio) {
+        if (!after.game && options.playTeamsAudio) {
             await audio.team.play()
         }
-        if (options.sendTeamsChanged) {
+        if (!after.game && options.sendTeamsChanged) {
             await sendChatMessage(
                 `${player.username} Changed from ${from} to ${to}`
             )
@@ -755,6 +758,14 @@ async function gameEnd(state) {
         if (options.sendGameStart) {
             await sendChatMessage(result)
         }
+        // if (
+        //     options.stickyTeams &&
+        //     stickyTeams[currentRoom] &&
+        //     state.teams[profile.id] !== stickyTeams[currentRoom]
+        // ) {
+        //     console.info('StickyTeams End-of-Game Check')
+        //     await selectTeam(currentRoom, stickyTeams[currentRoom])
+        // }
     }
 }
 
