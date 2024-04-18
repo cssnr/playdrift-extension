@@ -25,7 +25,7 @@
       "description": "Play Dominoes"
     }
   },
-  "permissions": ["contextMenus", "scripting", "storage", "tabs"],
+  "permissions": ["contextMenus", "storage", "tabs"],
   "content_scripts": [
     {
       "matches": ["*://*.playdrift.com/*"],
