@@ -826,9 +826,11 @@ async function newChatMessage(msg) {
     const message = msg.json.message
     const pid = msg.json.cid
 
+    if (message.startsWith('Auto: ')) {
+        return console.debug('Ignoring Auto Message')
+    }
     if (message.startsWith('Joined the game.')) {
-        console.debug('Join Events Moved to SSE Handler!')
-        return
+        return console.debug('Join Events Moved to SSE Handler!')
     }
 
     const { options, profile } = await chrome.storage.sync.get([
@@ -904,7 +906,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
     if (owner) {
         if (options.autoKickBanned && banned.includes(pid)) {
             await kickPlayer(pid)
-            await sendChatMessage(`Auto Kicked Banned User: ${player.username}`)
+            await sendChatMessage(`Kicked Banned User: ${player.username}`)
             return
         }
         if (
@@ -914,7 +916,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
         ) {
             await kickPlayer(pid)
             const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
-            await sendChatMessage(`Auto Kicked Low Total Game Player: ${ss}`)
+            await sendChatMessage(`Kicked Low Total Game Player: ${ss}`)
             return
         }
         if (
@@ -923,7 +925,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
         ) {
             await kickPlayer(pid)
             const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
-            await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
+            await sendChatMessage(`Kicked Low Win Rate Player: ${ss}`)
             return
         }
     }
@@ -1253,7 +1255,7 @@ function calStats(profile) {
     const games_lost = parseInt(profile.games_lost)
     const wl_percent =
         parseInt((games_won / (games_won + games_lost)) * 100) || 0
-    const text = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
+    const text = `${profile.username} (${rating}) W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
     return {
         rating,
         games_won,
@@ -1584,6 +1586,7 @@ async function kickPlayer(pid) {
 async function sendChatMessage(message) {
     const tid = roomState[currentRoom]?.tid
     console.debug('sendChatMessage:', currentRoom, tid, message)
+    message = `Auto: ${message}`
     if (!tid) {
         return sendChatMessageLegacy(message)
     }
