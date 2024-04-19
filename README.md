@@ -150,7 +150,8 @@ The ID is the part after the ?profile=
 Example: `fdb82ace-7826-45b1-922b-416d4e9ded9d`
 
 Second, use the above ID with the following URL:  
-https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"fdb82ace-7826-45b1-922b-416d4e9ded9d","game":"dominoes"}
+https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"fdb82ace-7826-45b1-922b-416d4e9ded9d","game":"dominoes"}  
+_Note: You need to replace the ID in the above URL with the one from the First step._
 
 ### Console
 
