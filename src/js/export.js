@@ -54,10 +54,11 @@ export async function tabOpen(event) {
     console.debug('tabOpen', event)
     event?.preventDefault()
     const element = event.target.closest('a')
-    console.debug('element', element)
+    // console.debug('element', element)
     const url = element.href
-    console.debug('url', url)
+    // console.debug('url', url)
     const pattern = element.dataset.tabopen || url
+    console.debug('pattern', pattern)
     const queryInfo = {
         currentWindow: true,
         url: pattern,
