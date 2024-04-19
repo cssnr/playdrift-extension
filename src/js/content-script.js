@@ -299,7 +299,7 @@ async function processRoom(room) {
         'options',
         'profile',
     ])
-    const parent = document.querySelector('div[data-testid="room"]')
+    // const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)

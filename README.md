@@ -18,8 +18,9 @@ for some of the most useful features.
 *   [Features](#features)
     -   [Upcoming Features](#upcoming-features-and-ideas)
 *   [Problems Solved](#problems-solved)
-*   [Configuration](#configuration)
+*   [Frequently Asked Questions](#frequently-asked-questions)
 *   [Known Issues](#known-issues)
+*   [Configuration](#configuration)
 *   [Browser Console](#browser-console)
 *   [Development](#development)
     -   [Building](#building)
@@ -113,6 +114,21 @@ any domino they want on the first round of 4 and hold on to the 6/6 since they p
 > **Solution:** These bots can't win more than 1/3 games and all have a win rate around 35%. The feature to Auto Kick players 
 > below a set win rate (recommended at 40%) will kick almost all the bots, plus a couple humans that only win 1/3 games.
 
+# Frequently Asked Questions
+
+### Where do the stats come from?
+
+> The stats come from your PlayDrift profile. See [Browser Console](#browser-console) for more information.
+
+Don't see your question here? Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/new?category=q-a). 
+
+### Where do the stats come from?
+
+
+# Known Issues
+
+*   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
+
 # Configuration
 
 You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension icon, then;  
@@ -122,10 +138,6 @@ You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension ico
 To open the options, click on the icon (from above) then click `Open Options`.
 
 You may also access the Options and Home page from a Right Click if Enabled in Options.
-
-# Known Issues
-
-*   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
 
 # Browser Console
 
