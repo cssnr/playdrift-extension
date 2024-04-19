@@ -120,10 +120,9 @@ any domino they want on the first round of 4 and hold on to the 6/6 since they p
 
 > The stats come from your PlayDrift profile. See [Browser Console](#browser-console) for more information.
 
-Don't see your question here? Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/new?category=q-a). 
-
-### Where do the stats come from?
-
+> [!TIP]
+> **Don't see your question here?**
+> Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/new?category=q-a).
 
 # Known Issues
 

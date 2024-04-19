@@ -299,6 +299,7 @@ async function processRoom(room) {
         'options',
         'profile',
     ])
+    // TODO: Safe to re-run this because it checks for existence before creating
     // const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
     const aside = document.querySelector('aside')
@@ -461,6 +462,7 @@ async function sse1(room) {
             }
             if (options.addCancelReadyBtn) {
                 setTimeout(addCancelReadyBtn, 250)
+                // await addCancelReadyBtn()
             }
         }
     })
