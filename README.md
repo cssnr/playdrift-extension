@@ -1,7 +1,7 @@
-[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/anlkpnbhiiojmedlkchcdmigkdccnmcn?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
 [![Manifest Version](https://img.shields.io/github/manifest-json/v/cssnr/playdrift-extension?filename=manifest.json&logo=json&label=manifest)](https://github.com/cssnr/playdrift-extension/blob/master/manifest.json)
 [![Build](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
@@ -18,6 +18,8 @@ for some of the most useful features.
 *   [Features](#features)
     -   [Upcoming Features](#upcoming-features-and-ideas)
 *   [Problems Solved](#problems-solved)
+*   [Frequently Asked Questions](#frequently-asked-questions)
+*   [Known Issues](#known-issues)
 *   [Configuration](#configuration)
 *   [Browser Console](#browser-console)
 *   [Development](#development)
@@ -66,6 +68,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Auto Kick Users Below Set Total Games Played
 *   Ban User Feature that Automatically Kicks User in Future
 *   Send Customizable Message on Game Start and Stats at End
+*   Add Cancel Ready Button if you are the Room Owner
 *   Auto Update Game Options Dialog on Room Creation
 *   Auto Continue Through the Game Stats at End of Game
 *   Close Profiles by Clicking Anywhere Outside the Profile
@@ -111,6 +114,20 @@ any domino they want on the first round of 4 and hold on to the 6/6 since they p
 > **Solution:** These bots can't win more than 1/3 games and all have a win rate around 35%. The feature to Auto Kick players 
 > below a set win rate (recommended at 40%) will kick almost all the bots, plus a couple humans that only win 1/3 games.
 
+# Frequently Asked Questions
+
+### Where do the stats come from?
+
+The stats come from your PlayDrift profile. See [Browser Console](#browser-console) for more information.
+
+> [!TIP]
+> **Don't see your question here?**
+> Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/new?category=q-a).
+
+# Known Issues
+
+*   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
+
 # Configuration
 
 You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension icon, then;  
@@ -123,7 +140,18 @@ You may also access the Options and Home page from a Right Click if Enabled in O
 
 # Browser Console
 
-You can view user profiles manually in your browser console using the following methods.
+You can view user profiles manually in your browser or console using the following methods.
+
+### Browser
+
+First, get the user ID by clicking on their profile and extracting it from the URL in the address bar.  
+Example: https://dominoes.playdrift.com/?profile=fdb82ace-7826-45b1-922b-416d4e9ded9d  
+The ID is the part after the ?profile=  
+Example: `fdb82ace-7826-45b1-922b-416d4e9ded9d`
+
+Second, use the above ID with the following URL:  
+https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"fdb82ace-7826-45b1-922b-416d4e9ded9d","game":"dominoes"}  
+_Note: You need to replace the ID in the above URL with the one from the First step._
 
 ### Console
 
@@ -137,16 +165,6 @@ Make sure you are at `https://dominoes.playdrift.com/` and logged in before proc
 *   From these new tabs, select the `Response` tab. It should be the 4th tab in (Headers, Cookies, Request, Response, etc).
 *   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
 *   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
-
-### Browser
-
-First, get the user ID by clicking on their profile and extracting it from the URL in the address bar.  
-Example: https://dominoes.playdrift.com/?profile=fdb82ace-7826-45b1-922b-416d4e9ded9d  
-The ID is the part after the ?profile=  
-Example: `fdb82ace-7826-45b1-922b-416d4e9ded9d`  
-
-Second, use the above ID with the following URL:  
-https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"fdb82ace-7826-45b1-922b-416d4e9ded9d","game":"dominoes"}
 
 # Development
 

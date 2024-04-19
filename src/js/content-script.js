@@ -299,15 +299,13 @@ async function processRoom(room) {
         'options',
         'profile',
     ])
-    const parent = document.querySelector('div[data-testid="room"]')
-    // console.debug('parent:', parent)
-    if (options.autoUpdateOptions) {
-        const root = parent?.querySelector(
-            '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
-        )
-        // console.debug('root:', root)
-        root?.querySelector('button')?.click()
+    // TODO: Safe to re-run this because it checks for existence before creating
+
+    if (options.addCancelReadyBtn) {
+        await addCancelReadyBtn()
     }
+    // const parent = document.querySelector('div[data-testid="room"]')
+    // console.debug('parent:', parent)
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
     if (!aside) {
@@ -323,6 +321,15 @@ async function processRoom(room) {
 
     console.debug(`Process Room: ${room}`)
     await sse1(room)
+
+    if (options.autoUpdateOptions) {
+        // const root = parent?.querySelector(
+        //     '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
+        // )
+        // // console.debug('root:', root)
+        // root?.querySelector('button')?.click()
+        clickUpdateOptions()
+    }
 
     if (roomState[currentRoom]) {
         if (roomState[currentRoom].kicked?.includes(profile.id)) {
@@ -343,6 +350,51 @@ async function processRoom(room) {
     //
     // TODO: Use Mutation Events
     // app.querySelectorAll('div[data-id].MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded')
+}
+
+async function addCancelReadyBtn() {
+    console.debug('addCancelReadyBtn')
+    const cancelBtn = document.getElementById('ready-cancel-button')
+    if (cancelBtn) {
+        // console.debug('Cancel Button Already Added')
+        return
+    }
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    if (!roomState[currentRoom]) {
+        // console.debug('No Room State')
+        return
+    }
+    if (roomState[currentRoom].pids[0] !== profile.id) {
+        // console.debug('Skipping Cancel Button, Not Room Owner')
+        return
+    }
+    const homeHeader = document.querySelector('div[data-testid="home-header"]')
+    const ready = homeHeader?.querySelector('button')
+    if (!ready) {
+        // console.debug('return on no ready button')
+        return
+    }
+    console.log('ready', ready)
+    const btn = ready.cloneNode(true)
+    btn.id = 'ready-cancel-button'
+    console.log('btn', btn)
+    btn.textContent = 'Cancel'
+    // btn.classList.add('MuiButton-containedError')
+    btn.style.backgroundColor = '#e57373'
+    btn.addEventListener('click', clickUpdateOptions)
+    ready.parentElement.insertBefore(btn, ready.nextSibling)
+}
+
+/**
+ * Click Update Game Options Button
+ * @function clickUpdateOptions
+ */
+function clickUpdateOptions() {
+    const parent = document.querySelector('div[data-testid="room"]')
+    const root = parent?.querySelector(
+        '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
+    )
+    root?.querySelector('button')?.click()
 }
 
 /**
@@ -422,6 +474,10 @@ async function sse1(room) {
             setTimeout(sse2, 250, room)
             if (options.sendSelfOnJoin) {
                 setTimeout(sendPlayerStats, 250, profile.id)
+            }
+            if (options.addCancelReadyBtn) {
+                setTimeout(addCancelReadyBtn, 250)
+                // await addCancelReadyBtn()
             }
         }
     })
@@ -826,9 +882,11 @@ async function newChatMessage(msg) {
     const message = msg.json.message
     const pid = msg.json.cid
 
+    if (message.startsWith('Auto: ')) {
+        return console.debug('Ignoring Auto Message')
+    }
     if (message.startsWith('Joined the game.')) {
-        console.debug('Join Events Moved to SSE Handler!')
-        return
+        return console.debug('Join Events Moved to SSE Handler!')
     }
 
     const { options, profile } = await chrome.storage.sync.get([
@@ -904,7 +962,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
     if (owner) {
         if (options.autoKickBanned && banned.includes(pid)) {
             await kickPlayer(pid)
-            await sendChatMessage(`Auto Kicked Banned User: ${player.username}`)
+            await sendChatMessage(`Kicked Banned User: ${player.username}`)
             return
         }
         if (
@@ -914,7 +972,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
         ) {
             await kickPlayer(pid)
             const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
-            await sendChatMessage(`Auto Kicked Low Total Game Player: ${ss}`)
+            await sendChatMessage(`Kicked Low Total Game Player: ${ss}`)
             return
         }
         if (
@@ -923,7 +981,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
         ) {
             await kickPlayer(pid)
             const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
-            await sendChatMessage(`Auto Kicked Low Win Rate Player: ${ss}`)
+            await sendChatMessage(`Kicked Low Win Rate Player: ${ss}`)
             return
         }
     }
@@ -1253,7 +1311,7 @@ function calStats(profile) {
     const games_lost = parseInt(profile.games_lost)
     const wl_percent =
         parseInt((games_won / (games_won + games_lost)) * 100) || 0
-    const text = `${profile.username} Rating: ${rating} - W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
+    const text = `${profile.username} (${rating}) W/L: ${games_won.toLocaleString()} / ${games_lost.toLocaleString()} (${wl_percent}%)`
     return {
         rating,
         games_won,
@@ -1584,6 +1642,7 @@ async function kickPlayer(pid) {
 async function sendChatMessage(message) {
     const tid = roomState[currentRoom]?.tid
     console.debug('sendChatMessage:', currentRoom, tid, message)
+    message = `Auto: ${message}`
     if (!tid) {
         return sendChatMessageLegacy(message)
     }
