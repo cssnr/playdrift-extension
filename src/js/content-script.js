@@ -300,6 +300,10 @@ async function processRoom(room) {
         'profile',
     ])
     // TODO: Safe to re-run this because it checks for existence before creating
+
+    if (options.addCancelReadyBtn) {
+        await addCancelReadyBtn()
+    }
     // const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
     const aside = document.querySelector('aside')
@@ -349,16 +353,27 @@ async function processRoom(room) {
 }
 
 async function addCancelReadyBtn() {
+    console.debug('addCancelReadyBtn')
     const cancelBtn = document.getElementById('ready-cancel-button')
     if (cancelBtn) {
-        return console.debug('Cancel Button Already Added')
+        // console.debug('Cancel Button Already Added')
+        return
     }
     const { profile } = await chrome.storage.sync.get(['profile'])
+    if (!roomState[currentRoom]) {
+        // console.debug('No Room State')
+        return
+    }
     if (roomState[currentRoom].pids[0] !== profile.id) {
-        return console.debug('Skipping Cancel Button, Not Room Owner')
+        // console.debug('Skipping Cancel Button, Not Room Owner')
+        return
     }
     const homeHeader = document.querySelector('div[data-testid="home-header"]')
-    const ready = homeHeader.querySelector('button')
+    const ready = homeHeader?.querySelector('button')
+    if (!ready) {
+        // console.debug('return on no ready button')
+        return
+    }
     console.log('ready', ready)
     const btn = ready.cloneNode(true)
     btn.id = 'ready-cancel-button'

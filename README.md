@@ -118,7 +118,7 @@ any domino they want on the first round of 4 and hold on to the 6/6 since they p
 
 ### Where do the stats come from?
 
-> The stats come from your PlayDrift profile. See [Browser Console](#browser-console) for more information.
+The stats come from your PlayDrift profile. See [Browser Console](#browser-console) for more information.
 
 > [!TIP]
 > **Don't see your question here?**
@@ -140,7 +140,17 @@ You may also access the Options and Home page from a Right Click if Enabled in O
 
 # Browser Console
 
-You can view user profiles manually in your browser console using the following methods.
+You can view user profiles manually in your browser or console using the following methods.
+
+### Browser
+
+First, get the user ID by clicking on their profile and extracting it from the URL in the address bar.  
+Example: https://dominoes.playdrift.com/?profile=fdb82ace-7826-45b1-922b-416d4e9ded9d  
+The ID is the part after the ?profile=  
+Example: `fdb82ace-7826-45b1-922b-416d4e9ded9d`
+
+Second, use the above ID with the following URL:  
+https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"fdb82ace-7826-45b1-922b-416d4e9ded9d","game":"dominoes"}
 
 ### Console
 
@@ -154,16 +164,6 @@ Make sure you are at `https://dominoes.playdrift.com/` and logged in before proc
 *   From these new tabs, select the `Response` tab. It should be the 4th tab in (Headers, Cookies, Request, Response, etc).
 *   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
 *   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
-
-### Browser
-
-First, get the user ID by clicking on their profile and extracting it from the URL in the address bar.  
-Example: https://dominoes.playdrift.com/?profile=fdb82ace-7826-45b1-922b-416d4e9ded9d  
-The ID is the part after the ?profile=  
-Example: `fdb82ace-7826-45b1-922b-416d4e9ded9d`  
-
-Second, use the above ID with the following URL:  
-https://api-v2.playdrift.com/api/profile/trpc/profile.get?input={"id":"fdb82ace-7826-45b1-922b-416d4e9ded9d","game":"dominoes"}
 
 # Development
 
