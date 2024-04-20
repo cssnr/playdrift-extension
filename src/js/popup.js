@@ -78,7 +78,7 @@ async function popupLinks(event) {
             height: 480,
         })
         return window.close()
-    } else if (anchor.dataset.tabopen) {
+    } else if (typeof anchor.dataset.tabopen !== 'undefined') {
         await tabOpen(event)
         return window.close()
     } else if (

@@ -300,10 +300,10 @@ async function processRoom(room) {
         'profile',
     ])
     // TODO: Safe to re-run this because it checks for existence before creating
-
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
     }
+
     // const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
     const aside = document.querySelector('aside')
@@ -356,33 +356,43 @@ async function addCancelReadyBtn() {
     console.debug('addCancelReadyBtn')
     const cancelBtn = document.getElementById('ready-cancel-button')
     if (cancelBtn) {
-        // console.debug('Cancel Button Already Added')
+        console.debug('Cancel Button Already Added')
         return
     }
-    const { profile } = await chrome.storage.sync.get(['profile'])
-    if (!roomState[currentRoom]) {
-        // console.debug('No Room State')
-        return
-    }
-    if (roomState[currentRoom].pids[0] !== profile.id) {
-        // console.debug('Skipping Cancel Button, Not Room Owner')
-        return
-    }
+    // const { profile } = await chrome.storage.sync.get(['profile'])
+    // if (!roomState[currentRoom]) {
+    //     // console.debug('No Room State')
+    //     return
+    // }
+    // if (roomState[currentRoom].pids[0] !== profile.id) {
+    //     // console.debug('Skipping Cancel Button, Not Room Owner')
+    //     return
+    // }
     const homeHeader = document.querySelector('div[data-testid="home-header"]')
-    const ready = homeHeader?.querySelector('button')
-    if (!ready) {
+    // const source = homeHeader?.querySelector('button')
+    const source = homeHeader?.querySelector(
+        'button.MuiButton-outlinedSecondary'
+    )
+    if (!source) {
         // console.debug('return on no ready button')
         return
     }
-    console.log('ready', ready)
-    const btn = ready.cloneNode(true)
+    // console.log('source', source)
+    const btn = source.cloneNode(true)
+    const span = source.querySelector('.MuiTouchRipple-root')?.cloneNode(true)
+    // console.log('span', source)
+    if (!span) {
+        console.debug('no options button - not owner')
+        return
+    }
+    btn.appendChild(span)
     btn.id = 'ready-cancel-button'
     console.log('btn', btn)
     btn.textContent = 'Cancel'
     // btn.classList.add('MuiButton-containedError')
-    btn.style.backgroundColor = '#e57373'
+    // btn.style.backgroundColor = '#e57373'
     btn.addEventListener('click', clickUpdateOptions)
-    ready.parentElement.insertBefore(btn, ready.nextSibling)
+    source.parentElement.parentElement.insertBefore(btn, source.parentElement)
 }
 
 /**
@@ -475,10 +485,9 @@ async function sse1(room) {
             if (options.sendSelfOnJoin) {
                 setTimeout(sendPlayerStats, 250, profile.id)
             }
-            if (options.addCancelReadyBtn) {
-                setTimeout(addCancelReadyBtn, 250)
-                // await addCancelReadyBtn()
-            }
+            // if (options.addCancelReadyBtn) {
+            //     setTimeout(addCancelReadyBtn, 250)
+            // }
         }
     })
 }
@@ -499,7 +508,7 @@ async function sse2(room) {
     })
     // TODO: Checking date might not be necessary!
     const now = Date.now()
-    source2.addEventListener('msg', function (event) {
+    source2.addEventListener('msg', function source2Listener(event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse2:', msg)
         // console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
@@ -508,6 +517,15 @@ async function sse2(room) {
         }
     })
 }
+
+// function source2Listener(event) {
+//     const msg = JSON.parse(event.data)
+//     // console.debug('sse2:', msg)
+//     // console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
+//     if (msg.t === 'm' && msg.json?.ts > now) {
+//         newChatMessage(msg).then()
+//     }
+// }
 
 /**
  * Server-Sent Event Game Handler
