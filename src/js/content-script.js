@@ -508,7 +508,7 @@ async function sse2(room) {
     })
     // TODO: Checking date might not be necessary!
     const now = Date.now()
-    source2.addEventListener('msg', function (event) {
+    source2.addEventListener('msg', function source2Listener(event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse2:', msg)
         // console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
@@ -517,6 +517,15 @@ async function sse2(room) {
         }
     })
 }
+
+// function source2Listener(event) {
+//     const msg = JSON.parse(event.data)
+//     // console.debug('sse2:', msg)
+//     // console.debug(`${msg.json?.ts} > ${now}`, msg.json?.ts > now)
+//     if (msg.t === 'm' && msg.json?.ts > now) {
+//         newChatMessage(msg).then()
+//     }
+// }
 
 /**
  * Server-Sent Event Game Handler
