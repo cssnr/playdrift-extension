@@ -265,6 +265,7 @@ async function onMessage(message, sender, sendResponse) {
     } else {
         // TODO: This can be done at the sse function level
         closeEventSources()
+        document.getElementById('tracker-container')?.remove()
     }
 }
 
@@ -428,6 +429,10 @@ async function processGame(game) {
     aside.appendChild(div)
 
     console.debug(`Process Game: ${game}`)
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (options.showRemainingDominoes) {
+        addDominoes()
+    }
     await sse3(game)
 }
 
@@ -544,27 +549,90 @@ async function sse3(game) {
     source3 = new EventSource(url, {
         withCredentials: true,
     })
+    source3.addEventListener('msg', (event) => {
+        const msg = JSON.parse(event.data)
+        // console.debug('sse3:', msg)
+        if (msg.t === 's') {
+            processGameState(msg.s)
+        }
+        if (msg.t === 'a') {
+            processGameAction(msg.a)
+        }
+    })
+}
+
+async function processGameState(state) {
+    console.debug('processGameState:', state)
+    const { options } = await chrome.storage.sync.get(['options'])
+    if (options.showRemainingDominoes) {
+        if (state.first !== -1) {
+            console.debug('first:', state.first)
+            $(`#domino-${state.first}`).fadeTo('slow', 0.2)
+        }
+        for (const [key, value] of Object.entries(state.trees)) {
+            // console.log(`key: ${key} | value:`, value)
+            for (const bone of value.bones) {
+                console.log(`bone: ${bone}`)
+                $(`#domino-${bone}`).fadeTo('slow', 0.2)
+            }
+        }
+    }
+}
+
+async function processGameAction(action) {
+    // console.debug('processGameAction:', action)
     const { options, profile } = await chrome.storage.sync.get([
         'options',
         'profile',
     ])
-    source3.addEventListener('msg', (event) => {
-        const msg = JSON.parse(event.data)
-        // console.debug('sse3:', msg)
-        if (msg.a?.t === 'player') {
-            if (msg.a.pid === profile.id) {
-                if (options.playTurnAudio) {
-                    audio.turn.play().then()
-                }
+    if (action.t === 'isdrawing2') {
+        if (options.showRemainingDominoes) {
+            // $('.tracker-domino').show()
+            $('.tracker-domino').fadeTo('slow', 1.0)
+        }
+    }
+    if (action.t === 'move') {
+        // console.debug(
+        //     `bid ${action.bid} - ${bidMap[action.bid]} on tree ${msg.a.tree}: ${treeMap[msg.a.tree]}`
+        // )
+        if (options.showRemainingDominoes) {
+            // console.log('bid:', action.bid)
+            $(`#domino-${action.bid}`).fadeTo('slow', 0.2)
+        }
+    }
+    if (action.t === 'player') {
+        if (action.pid === profile.id) {
+            if (options.playTurnAudio) {
+                audio.turn.play().then()
             }
         }
-        // if (msg.a?.t === 'move') {
-        //     const bid = msg.a.bid
-        //     console.debug(
-        //         `bid ${bid} - ${bidMap[bid]} on tree ${msg.a.tree}: ${treeMap[msg.a.tree]}`
-        //     )
-        // }
-    })
+    }
+}
+
+function addDominoes() {
+    console.debug('addDominoes')
+    if (document.getElementById('tracker-container')) {
+        return console.warn('return on tracker-container already exist')
+    }
+    const app = document.getElementById('app')
+    const div = document.createElement('div')
+    div.id = 'tracker-container'
+    // div.classList.add('tracker-container')
+    app.insertBefore(div, app.children[0])
+    for (let i = 0; i < 27; i++) {
+        // console.log(`i: ${i}`)
+        const el = genDomino(i)
+        div.appendChild(el)
+    }
+}
+
+function genDomino(id) {
+    // console.debug(`genDomino: ${id}`)
+    const img = document.createElement('img')
+    img.id = `domino-${id}`
+    img.classList.add('tracker-domino')
+    img.src = chrome.runtime.getURL(`/images/bones/${id}.png`)
+    return img
 }
 
 /**

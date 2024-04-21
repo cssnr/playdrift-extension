@@ -39,6 +39,7 @@ const defaultOptions = {
     kickLowGames: 100,
     sendGameStart: false,
     gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
+    showRemainingDominoes: false,
     enableCommands: true,
     contextMenu: true,
     showUpdate: false,

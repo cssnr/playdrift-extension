@@ -13,3 +13,19 @@
 #tooltip[data-show] {
     display: block;
 }
+
+#tracker-container {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    pointer-events: none;
+}
+
+.tracker-domino {
+    display: block;
+    height: calc(100% / 27);
+    width: auto;
+    pointer-events: none;
+}
