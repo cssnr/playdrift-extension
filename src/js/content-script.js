@@ -23,6 +23,7 @@ const profilesCache = {}
 const roomState = {}
 let stickyTeams = {} // TODO: This should probably cleared on processRoom
 let currentRoom = ''
+let randID = (Math.random() + 1).toString(36).substring(2)
 
 // Audio
 const speech = new SpeechSynthesisUtterance()
@@ -130,6 +131,7 @@ async function processLoad() {
         const split = url.pathname.split('/')
         const room = split[2]
         const game = split[3]
+        console.debug('room, game:', room, game)
         currentRoom = room
         // console.debug('SET currentRoom:', currentRoom)
         if (room) {
@@ -173,10 +175,10 @@ function startMutation() {
                         // updateProfile(container).then()
                         updateProfile().then()
                     }
-                    // TODO: Detect aside for onMessage replacement
-                    if (mutation.target.tagName === 'ASIDE') {
-                        console.info('ASIDE')
-                    }
+                    // // TODO: Detect aside for onMessage replacement
+                    // if (mutation.target.tagName === 'ASIDE') {
+                    //     console.info('ASIDE')
+                    // }
                     // document.querySelectorAll('button[data-testid="button-continue"]')
                     if (mutation.target.dataset.testid === 'button-continue') {
                         // console.info('button-continue:', mutation.target)
@@ -200,7 +202,8 @@ async function teamChangeClick(event) {
     // console.debug('teamChangeClick', event)
     const { options } = await chrome.storage.sync.get(['options'])
     if (!options.stickyTeams) {
-        return console.debug('Sticky Teams Disabled')
+        // console.debug('Sticky Teams Disabled')
+        return
     }
     const li = event.target.closest('li')
     const team = li.dataset.team
@@ -275,17 +278,17 @@ async function onMessage(message, sender, sendResponse) {
  */
 function closeEventSources() {
     // TODO: This can be done at the sse function level
-    if (source1 && source1.readyState === 1) {
+    if (source1?.readyState === 1) {
         source1.close()
-        console.debug('close sse1 source1', source1)
+        console.debug('close source1', source1)
     }
-    if (source2 && source2.readyState === 1) {
+    if (source2?.readyState === 1) {
         source2.close()
-        console.debug('close sse2 source2', source2)
+        console.debug('close source2', source2)
     }
-    if (source3 && source3.readyState === 1) {
+    if (source3?.readyState === 1) {
         source3.close()
-        console.debug('close sse3 source3', source3)
+        console.debug('close source3', source3)
     }
 }
 
@@ -354,10 +357,10 @@ async function processRoom(room) {
 }
 
 async function addCancelReadyBtn() {
-    console.debug('addCancelReadyBtn')
+    // console.debug('addCancelReadyBtn')
     const cancelBtn = document.getElementById('ready-cancel-button')
     if (cancelBtn) {
-        console.debug('Cancel Button Already Added')
+        // console.debug('Cancel Button Already Added')
         return
     }
     // const { profile } = await chrome.storage.sync.get(['profile'])
@@ -383,12 +386,11 @@ async function addCancelReadyBtn() {
     const span = source.querySelector('.MuiTouchRipple-root')?.cloneNode(true)
     // console.log('span', source)
     if (!span) {
-        console.debug('no options button - not owner')
+        // console.debug('no options button - not owner')
         return
     }
     btn.appendChild(span)
     btn.id = 'ready-cancel-button'
-    console.log('btn', btn)
     btn.textContent = 'Cancel'
     // btn.classList.add('MuiButton-containedError')
     // btn.style.backgroundColor = '#e57373'
@@ -444,6 +446,9 @@ async function processGame(game) {
 async function sse1(room) {
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${room}/sse`
     console.debug('connecting to sse1 url:', url)
+    if (source1?.readyState === 1 && source1?.url === url) {
+        return console.info('source1 already connected at:', source1.url)
+    }
     source1 = new EventSource(url, {
         withCredentials: true,
     })
@@ -451,6 +456,7 @@ async function sse1(room) {
         'options',
         'profile',
     ])
+    console.debug('Adding Listener to: source1')
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse1:', msg)
@@ -458,7 +464,7 @@ async function sse1(room) {
         if (msg.t === 'rs' && state?.tid) {
             // roomStateUpdate(room, state)
             // TODO: This Fires Multiple Times as a Function
-            console.debug('Room state:', state)
+            // console.debug('Room state:', state)
             if (roomState[room]) {
                 if (!roomState[room].game && state.game) {
                     gameStart(state).then()
@@ -504,15 +510,19 @@ async function sse1(room) {
  */
 async function sse2(room) {
     if (!roomState[room]?.tid) {
-        return console.warn('room not found in room:', room, roomState)
+        return console.warn('room tid not in roomState:', room, roomState)
     }
     const url = `https://api-v2.playdrift.com/api/v1/chat/messages/${roomState[room].tid}/sse`
     console.debug('connecting to sse2 url:', url)
+    if (source2?.readyState === 1 && source2?.url === url) {
+        return console.info('source2 already connected at:', source2.url)
+    }
     source2 = new EventSource(url, {
         withCredentials: true,
     })
     // TODO: Checking date might not be necessary!
     const now = Date.now()
+    console.debug('Adding Listener to: source2')
     source2.addEventListener('msg', function source2Listener(event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse2:', msg)
@@ -543,12 +553,16 @@ async function sse3(game) {
     if (!game) {
         return console.warn('game not provided:', game)
     }
-    const rand = (Math.random() + 1).toString(36).substring(2)
-    const url = `https://api-v2.playdrift.com/api/v1/game/${game}/sse?sseid=${rand}`
+    // const rand = (Math.random() + 1).toString(36).substring(2)
+    const url = `https://api-v2.playdrift.com/api/v1/game/${game}/sse?sseid=${randID}`
     console.debug('connecting to sse3 url:', url)
+    if (source3?.readyState === 1 && source3?.url === url) {
+        return console.info('source3 already connected at:', source3.url)
+    }
     source3 = new EventSource(url, {
         withCredentials: true,
     })
+    console.debug('Adding Listener to: source3')
     source3.addEventListener('msg', (event) => {
         const msg = JSON.parse(event.data)
         // console.debug('sse3:', msg)
@@ -562,19 +576,34 @@ async function sse3(game) {
 }
 
 async function processGameState(state) {
-    console.debug('processGameState:', state)
-    const { options } = await chrome.storage.sync.get(['options'])
+    // console.debug('processGameState:', state)
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
     if (options.showRemainingDominoes) {
         if (state.first !== -1) {
-            console.debug('first:', state.first)
+            // console.debug('first:', state.first)
             $(`#domino-${state.first}`).fadeTo('slow', 0.2)
         }
         for (const [key, value] of Object.entries(state.trees)) {
             // console.log(`key: ${key} | value:`, value)
             for (const bone of value.bones) {
-                console.log(`bone: ${bone}`)
+                // console.debug(`bone: ${bone}`)
                 $(`#domino-${bone}`).fadeTo('slow', 0.2)
             }
+        }
+        if (options.hideOwnDominoes) {
+            // console.debug('hideOwnDominoes:', state.hands[profile.id])
+            if (state.hands[profile.id]) {
+                for (const own of state.hands[profile.id]) {
+                    // console.debug(`own: ${own}`)
+                    $(`#domino-${own}`).fadeTo('slow', 0.2)
+                }
+            }
+            // for (const hand of state.hands) {
+            //     // $(`#domino-${action.bid}`).fadeTo('slow', 0.2)
+            // }
         }
     }
 }
@@ -585,10 +614,19 @@ async function processGameAction(action) {
         'options',
         'profile',
     ])
-    if (action.t === 'isdrawing2') {
+    if (action.t === 'round') {
         if (options.showRemainingDominoes) {
+            // console.debug('round:', action)
             // $('.tracker-domino').show()
             $('.tracker-domino').fadeTo('slow', 1.0)
+        }
+    }
+    if (action.t === 'draw') {
+        if (action.pid === profile.id) {
+            if (options.showRemainingDominoes && options.hideOwnDominoes) {
+                // $('.tracker-domino').show()
+                $(`#domino-${action.bid}`).fadeTo('slow', 0.2)
+            }
         }
     }
     if (action.t === 'move') {
@@ -610,7 +648,7 @@ async function processGameAction(action) {
 }
 
 function addDominoes() {
-    console.debug('addDominoes')
+    // console.debug('addDominoes')
     if (document.getElementById('tracker-container')) {
         return console.warn('return on tracker-container already exist')
     }
@@ -619,8 +657,7 @@ function addDominoes() {
     div.id = 'tracker-container'
     // div.classList.add('tracker-container')
     app.insertBefore(div, app.children[0])
-    for (let i = 0; i < 27; i++) {
-        // console.log(`i: ${i}`)
+    for (let i = 0; i < 28; i++) {
         const el = genDomino(i)
         div.appendChild(el)
     }
@@ -642,6 +679,9 @@ function genDomino(id) {
 async function sse4() {
     const url = 'https://api-v2.playdrift.com/api/v1/chat/inbox/sse'
     console.debug('connecting to sse4 url:', url)
+    if (source4?.readyState === 1 && source4?.url === url) {
+        return console.info('source4 already connected at:', source4.url)
+    }
     source4 = new EventSource(url, {
         withCredentials: true,
     })
@@ -651,13 +691,14 @@ async function sse4() {
         'profile',
     ])
     const now = Date.now()
+    console.debug('Adding Listener to: source1', now)
     source4.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse4:', msg)
         if (msg.t === 'm' && msg.json?.ts > now) {
             if (options.playInboxAudio && msg.json.cid !== profile.id) {
                 // newInboxMessage(msg.json)
-                console.log('New Message:', msg)
+                console.debug('New Message:', msg)
                 audio.inbox.play().then()
             }
         }
@@ -707,7 +748,7 @@ async function playersLeaveRoom(state, players) {
     if (!players.length) {
         return
     }
-    console.debug('playersLeaveRoom:', state, players)
+    // console.debug('playersLeaveRoom:', state, players)
     const { options } = await chrome.storage.sync.get(['options'])
     if (options.playPlayersAudio) {
         await audio.leave.play()
@@ -735,7 +776,7 @@ async function playersJoinRoom(state, players) {
     if (!players.length) {
         return
     }
-    console.debug('playersJoinRoom:', state, players)
+    // console.debug('playersJoinRoom:', state, players)
     const { options } = await chrome.storage.sync.get(['options'])
     if (options.playPlayersAudio) {
         await audio.join.play()
@@ -768,7 +809,7 @@ async function roomKickedChange(before, after) {
 
     for (const pid of kicked) {
         if (profile.id === pid) {
-            console.info('1 - You were KICKED')
+            console.info('1 - You were KICKED in ROOM')
             processYouKicked()
         }
     }
@@ -779,7 +820,7 @@ async function roomKickedChange(before, after) {
                 const player = await getProfile(pid, true)
                 const message = `${player.username} was kicked from the game.`
                 if (profile.id === pid) {
-                    console.info('2 - You were KICKED')
+                    console.info('2 - You were KICKED in GAME')
                 }
                 if (options.sendPlayerLeft) {
                     await sendChatMessage(message)
@@ -827,10 +868,10 @@ async function roomTeamsChanged(before, after) {
                 stickyTeams[currentRoom] &&
                 after.teams[pid] !== stickyTeams[currentRoom]
             ) {
-                console.info('StickyTeams Intercept')
+                console.log('StickyTeams Intercept')
                 await selectTeam(currentRoom, stickyTeams[currentRoom])
             }
-            return console.info('Stop Processing on Sticky Teams Event')
+            return console.debug('Stop Processing on Sticky Teams Event')
         }
         if (!after.game && options.playTeamsAudio) {
             await audio.team.play()
@@ -864,7 +905,7 @@ async function gameStart(state) {
         'options',
         'profile',
     ])
-    console.debug('options, profile:', options, profile)
+    // console.debug('options, profile:', options, profile)
     if (state.game.gameOptions.teams) {
         // TODO: Requires Processing of state.game.teams
         console.info('Teams:', state.game.gameOptions.teams)
@@ -885,10 +926,12 @@ async function gameStart(state) {
  * @param {Object} state
  */
 async function gameEnd(state) {
-    console.info('Game End:', state)
+    console.debug('Game End:', state)
+    // Hide Domino Tracker
+    document.getElementById('tracker-container')?.remove()
     // Game Results
     const result = await getGameResults(state)
-    console.debug('result:', result)
+    console.log('result:', result)
     // Process Own Game Results
     const { options, profile } = await chrome.storage.sync.get([
         'options',
@@ -932,7 +975,7 @@ async function processPlayerGame(state) {
  * @return {String}
  */
 async function getGameResults(state) {
-    console.debug('gameResults:', state.gameResult)
+    // console.debug('gameResults:', state.gameResult)
     const players = state.gameResult.players
     const winners = state.gameResult.playersWin
     const ratings = state.gameResult.ratings
@@ -979,7 +1022,7 @@ async function newChatMessage(msg) {
         'options',
         'profile',
     ])
-    console.debug('options, profile:', options, profile)
+    // console.debug('options, profile:', options, profile)
 
     // const room = roomState[currentRoom]
     // const owner = room?.players.length && room.players[0] === profile.id
@@ -990,7 +1033,7 @@ async function newChatMessage(msg) {
     if (options.enableCommands && message.startsWith('!')) {
         let cmd = message.split(' ')[0]
         cmd = cmd.substring(1).toLocaleLowerCase()
-        console.debug('chat command:', cmd)
+        console.log('chat command:', cmd)
         const { commands } = await chrome.storage.sync.get(['commands'])
         let msg
         if (['me', 'profile', 'stats'].includes(cmd)) {
@@ -1029,13 +1072,14 @@ async function newChatMessage(msg) {
 async function userJoinRoom(pid, rid = currentRoom) {
     const player = await getProfile(pid)
     const room = roomState[rid]
+    console.debug(`userJoinRoom: ${pid}/${rid}`, player, room)
     const { banned, options, profile } = await chrome.storage.sync.get([
         'banned',
         'options',
         'profile',
     ])
+    // console.debug(banned, options, profile)
     const owner = room?.players.length && room.players[0] === profile.id
-    console.debug(`${pid}/${rid}`, player, room, banned, options, profile)
     if (profile.id === pid) {
         // console.debug('ignoring self user join events')
         return
@@ -1322,11 +1366,11 @@ function profileCloseClick(event) {
  * @function setUserProfile
  */
 async function setUserProfile() {
-    console.debug('setUserProfile')
+    // console.debug('setUserProfile interval')
     const { profile } = await chrome.storage.sync.get(['profile'])
     if (profile && Object.keys(profile).length) {
         clearInterval(userIntervalID)
-        console.debug('User Profile Exist. clearInterval:', userIntervalID)
+        console.debug('User Profile Exist: clearInterval:', userIntervalID)
         return
     }
 
@@ -1334,7 +1378,7 @@ async function setUserProfile() {
     const pid = document.querySelector('div[data-id][aria-haspopup="true"]')
         ?.dataset.id
     if (!pid) {
-        console.warn('User pid Not Found:', pid)
+        console.log('User pid Not Found:', pid)
         return
     }
     console.info('User Profile Set to pid:', pid)
@@ -1457,9 +1501,9 @@ async function updateUserProfile(profile) {
  */
 async function buttonContinue(el) {
     const { options } = await chrome.storage.sync.get(['options'])
-    console.debug('buttonContinue:', el, options)
+    // console.debug('buttonContinue:', el, options)
     if (el && options.autoContinueGameEnd) {
-        console.debug('clicking:', el)
+        // console.debug('clicking:', el)
         el.click()
     }
 }
@@ -1561,10 +1605,10 @@ async function updateProfile() {
     kickButton.textContent = 'Kick'
     divBtns.appendChild(kickButton)
 
-    const sendKickButton = button.cloneNode(true)
-    sendKickButton.addEventListener('click', sendKickClick)
-    sendKickButton.textContent = 'Kick/Send'
-    divBtns.appendChild(sendKickButton)
+    // const sendKickButton = button.cloneNode(true)
+    // sendKickButton.addEventListener('click', sendKickClick)
+    // sendKickButton.textContent = 'Kick/Send'
+    // divBtns.appendChild(sendKickButton)
 
     const sendButton = button.cloneNode(true)
     sendButton.addEventListener('click', sendClick)
@@ -1619,18 +1663,18 @@ function sendClick(event) {
     }
 }
 
-/**
- * Send Chat and Kick Click Callback
- * @function sendKickClick
- * @param {MouseEvent} event
- */
-async function sendKickClick(event) {
-    const pid = document.getElementById('profile-id').value
-    console.debug('sendKickClick:', pid, event)
-    await kickPlayer(pid)
-    const player = await getProfile(pid)
-    await sendChatMessage(`Kicked Player: ${player.username}`)
-}
+// /**
+//  * Send Chat and Kick Click Callback
+//  * @function sendKickClick
+//  * @param {MouseEvent} event
+//  */
+// async function sendKickClick(event) {
+//     const pid = document.getElementById('profile-id').value
+//     console.debug('sendKickClick:', pid, event)
+//     await kickPlayer(pid)
+//     const player = await getProfile(pid)
+//     await sendChatMessage(`Kicked Player: ${player.username}`)
+// }
 
 /**
  * Kick Click Callback
@@ -1728,6 +1772,9 @@ async function kickPlayer(pid) {
 async function sendChatMessage(message) {
     const tid = roomState[currentRoom]?.tid
     console.debug('sendChatMessage:', currentRoom, tid, message)
+    if (!message) {
+        return console.debug('no message provided')
+    }
     message = `Auto: ${message}`
     if (!tid) {
         return sendChatMessageLegacy(message)

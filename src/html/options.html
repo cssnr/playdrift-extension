@@ -292,10 +292,19 @@
             <div class="form-text visually-hidden" id="gameStartMessageHelp">Game Start Message.</div>
         </div>
         <div class="form-check form-switch">
-            <input class="form-check-input" id="showRemainingDominoes" type="checkbox" role="switch">
+            <input class="form-check-input" id="showRemainingDominoes" type="checkbox" role="switch" data-related="hideOwnDominoesDiv">
             <label class="form-check-label text-success-emphasis" for="showRemainingDominoes" aria-describedby="showRemainingDominoesHelp">
                 Show Remaining Dominoes on Left
                 <span data-bs-toggle="tooltip" data-bs-title="Show Remaining Dominoes on Left.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
+        <div class="form-check form-switch ms-5" id="hideOwnDominoesDiv" style="display: none">
+            <input class="form-check-input" id="hideOwnDominoes" type="checkbox" role="switch">
+            <label class="form-check-label text-success-emphasis" for="hideOwnDominoes" aria-describedby="hideOwnDominoesHelp">
+                Hide Own Dominoes from Remaining
+                <span data-bs-toggle="tooltip" data-bs-title="Hide Own Dominoes from Remaining.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>

@@ -40,6 +40,7 @@ const defaultOptions = {
     sendGameStart: false,
     gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
     showRemainingDominoes: false,
+    hideOwnDominoes: false,
     enableCommands: true,
     contextMenu: true,
     showUpdate: false,
