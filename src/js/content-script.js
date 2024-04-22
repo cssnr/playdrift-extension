@@ -650,7 +650,8 @@ async function processGameAction(action) {
 function addDominoes() {
     // console.debug('addDominoes')
     if (document.getElementById('tracker-container')) {
-        return console.warn('return on tracker-container already exist')
+        // console.debug('return on tracker-container already exist')
+        return
     }
     const app = document.getElementById('app')
     const div = document.createElement('div')
