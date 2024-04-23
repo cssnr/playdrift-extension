@@ -132,7 +132,7 @@
             </label>
         </div>
         <div class="form-check form-switch">
-            <input class="form-check-input" id="sendPlayerKicked" type="checkbox" role="switch" data-related="noSendSelfKickedDiv">
+            <input class="form-check-input" id="sendPlayerKicked" type="checkbox" role="switch" data-related="sendSelfKickedDiv">
             <label class="form-check-label text-success-emphasis" for="sendPlayerKicked" aria-describedby="sendPlayerKickedHelp">
                 Send Player Kicked Alert
                 <span data-bs-toggle="tooltip" data-bs-title="Send Player Kicked Alert.">
@@ -140,11 +140,11 @@
                 </span>
             </label>
         </div>
-        <div class="form-check form-switch ms-5" id="noSendSelfKickedDiv" style="display: none">
-            <input class="form-check-input" id="noSendSelfKicked" type="checkbox" role="switch">
-            <label class="form-check-label text-success-emphasis" for="noSendSelfKicked" aria-describedby="noSendSelfKickedHelp">
-                Don't Send Self Kicked Alert
-                <span data-bs-toggle="tooltip" data-bs-title="Don't Send Self Kicked Alert.">
+        <div class="form-check form-switch ms-5" id="sendSelfKickedDiv" style="display: none">
+            <input class="form-check-input" id="sendSelfKicked" type="checkbox" role="switch">
+            <label class="form-check-label text-success-emphasis" for="sendSelfKicked" aria-describedby="sendSelfKickedHelp">
+                Include Self Kicked Alert
+                <span data-bs-toggle="tooltip" data-bs-title="Include Self Kicked Alert.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>

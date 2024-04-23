@@ -810,7 +810,7 @@ async function roomKickedChange(before, after) {
     const owner = after?.players.length && after.players[0] === profile.id
     for (const pid of kicked) {
         if (!owner && options.sendPlayerKicked) {
-            if (!(profile.id === pid && options.noSendSelfKicked)) {
+            if (!(profile.id === pid && !options.sendSelfKicked)) {
                 const player = await getProfile(pid, true)
                 await sendChatMessage(`${player.username} was kicked.`)
             }
