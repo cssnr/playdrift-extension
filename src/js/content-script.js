@@ -869,7 +869,7 @@ async function roomKickedChange(before, after) {
         }
     }
     if (pids) {
-        console.debug(`${players.length} players kicked during game`)
+        console.debug(`${kicked.length} players kicked during game`)
         for (const pid of kicked) {
             if (pids.includes(pid)) {
                 const player = await getProfile(pid, true)
