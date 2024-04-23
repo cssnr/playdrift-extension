@@ -18,6 +18,7 @@ const defaultOptions = {
     showTooltipMouseover: true,
     radioTopTip: 'tipTopRating',
     showMouseover: false,
+    // autoUpdatePlayers: false,
     sendOnJoin: false,
     sendSelfOnJoin: false,
     sendPlayerLeft: false,
@@ -197,9 +198,7 @@ async function onUpdate(tabId, changeInfo, tab) {
                 url: changeInfo.url,
             })
             console.debug('response:', response)
-        } catch (e) {
-            console.debug(e)
-        }
+        } catch (e) {}
     }
 }
 
@@ -299,13 +298,13 @@ async function setDefaultOptions() {
             'options',
             'profile',
         ])
-    if (!commands) {
-        commands = defaultCommands
-        await chrome.storage.sync.set({ commands })
-    }
     if (!banned) {
         banned = []
         await chrome.storage.sync.set({ banned })
+    }
+    if (!commands) {
+        commands = defaultCommands
+        await chrome.storage.sync.set({ commands })
     }
     if (!history) {
         history = []

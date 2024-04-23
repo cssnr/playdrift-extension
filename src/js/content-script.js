@@ -161,45 +161,43 @@ function startMutation() {
         // console.info('mutationCallback, mutationList:', mutationList, observer)
         for (const mutation of mutationList) {
             if (mutation.type === 'childList' && mutation.addedNodes) {
-                mutation.addedNodes.forEach((el) => {
-                    // console.info('mutation:', mutation)
-                    if (
-                        mutation.target.children.length > 5 &&
-                        mutation.target.children[2].nodeName === 'H5'
-                    ) {
-                        // let parent = mutation.target.children[4]
-                        // updateProfile(parent).then()
-                        // const container =
-                        //     mutation.target.parentElement.parentElement
-                        //         .parentElement
-                        // updateProfile(container).then()
-                        updateProfile().then()
-                    }
-                    // // TODO: Detect aside for onMessage replacement
-                    // if (mutation.target.tagName === 'ASIDE') {
-                    //     console.info('ASIDE')
-                    // }
-                    // document.querySelectorAll('button[data-testid="button-continue"]')
-                    if (mutation.target.dataset.testid === 'button-continue') {
-                        // console.info('button-continue:', mutation.target)
-                        setTimeout(buttonContinue, 150, mutation.target)
-                        setTimeout(buttonContinue, 250, mutation.target)
-                    }
-                    if (typeof mutation.target.dataset.team !== 'undefined') {
-                        console.debug('Adding Listener teamChangeClick')
-                        mutation.target.addEventListener(
-                            'click',
-                            teamChangeClick
-                        )
-                    }
-                    if (
-                        mutation.target.tagName === 'LI' &&
-                        mutation.target.textContent === 'Kick' &&
-                        mutation.target.dataset.pid
-                    ) {
-                        processKickButton(mutation.target)
-                    }
-                })
+                // console.debug('mutation:', mutation)
+                if (
+                    mutation.target.children.length > 5 &&
+                    mutation.target.children[2].nodeName === 'H5'
+                ) {
+                    updateProfile().then()
+                } else if (
+                    mutation.target.dataset.testid === 'button-continue'
+                ) {
+                    // console.info('button-continue:', mutation.target)
+                    setTimeout(buttonContinue, 150, mutation.target)
+                    setTimeout(buttonContinue, 250, mutation.target)
+                } else if (
+                    typeof mutation.target.dataset.team !== 'undefined'
+                ) {
+                    console.debug('Adding Listener teamChangeClick')
+                    mutation.target.addEventListener('click', teamChangeClick)
+                } else if (
+                    mutation.target.tagName === 'LI' &&
+                    mutation.target.textContent === 'Kick' &&
+                    mutation.target.dataset.pid
+                ) {
+                    processKickButton(mutation.target)
+                } else {
+                    mutation.addedNodes.forEach((el) => {
+                        // console.debug('el:', el)
+                        // if (
+                        //     el.dataset?.id &&
+                        //     el.tagName === 'DIV' &&
+                        //     el.parentElement?.parentElement?.dataset?.testid ===
+                        //         'room'
+                        // ) {
+                        //     console.info('PLAYER JOINED')
+                        //     processRoomPlayers([el])
+                        // }
+                    })
+                }
             }
         }
     }
@@ -394,7 +392,14 @@ async function processRoom(room) {
 
     // TODO: Query Selectors for Player Box in Room
     // const parent = document.querySelector('div[data-testid="room"]')
-    // const user = parent.querySelector(`div[data-id="${profile}"].MuiPaper-root`)
+    // const users = parent.querySelectorAll(`div[data-id].MuiPaper-root`)
+    // processRoomPlayers(users)
+    // if (options.autoUpdatePlayers) {
+    //     const users = document.querySelectorAll(
+    //         '.MuiAvatar-root.MuiAvatar-rounded img'
+    //     )
+    //     processRoomPlayers(users)
+    // }
 
     // TODO: Query Selectors for Players header to add kicked players
     // parent.querySelector('div[data-testid="home-header"]')
@@ -403,6 +408,14 @@ async function processRoom(room) {
     // TODO: Use Mutation Events
     // app.querySelectorAll('div[data-id].MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded')
 }
+
+// function processRoomPlayers(elements) {
+//     console.debug('processRoomPlayers', elements)
+//     for (const el of elements) {
+//         console.log('el', el)
+//         processPlayerIcon(el).then()
+//     }
+// }
 
 async function addCancelReadyBtn() {
     // console.debug('addCancelReadyBtn')
@@ -1292,16 +1305,26 @@ async function showMouseover(event) {
     // ) {
     //     return
     // }
-    const element = event.target.parentNode
+    const element = event.target
     if (element.dataset.processed) {
         // console.debug('already processed element:', element)
         return
     }
+    await processPlayerIcon(element)
+}
+
+async function processPlayerIcon(parent) {
+    const element = parent.parentNode
+    console.debug('processPlayerIcon: parentNode:', element, parent)
+    const { options } = await chrome.storage.sync.get(['options'])
     element.dataset.processed = 'yes'
     element.parentNode.style.position = 'relative'
 
     const pid = element.dataset.id
     // console.debug('pid', pid)
+    if (!pid) {
+        return console.debug('pid not found for element:', element)
+    }
     const profile = await getProfile(pid)
     // const stats = calStats(profile)
     const div = document.createElement('div')
@@ -1314,7 +1337,6 @@ async function showMouseover(event) {
     div.classList.add('mouseover-stats')
 
     const spanRating = document.createElement('span')
-    const { options } = await chrome.storage.sync.get(['options'])
     if (options.radioTopTip === 'tipTopLevel') {
         spanRating.textContent = profile.level
     } else {

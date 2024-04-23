@@ -199,7 +199,7 @@ export function updateOptions(options, text = false) {
 
 function hideShowElement(selector, show, speed = 'fast') {
     const element = $(`${selector}`)
-    console.debug('hideShowElement:', show, element)
+    // console.debug('hideShowElement:', show, element)
     if (show) {
         element.show(speed)
     } else {
