@@ -85,10 +85,10 @@ async function popupLinks(event) {
         anchor.href.startsWith('http') ||
         anchor.href.startsWith('chrome-extension')
     ) {
-        console.debug(`http or chrome-extension`)
+        // console.debug(`http or chrome-extension`)
         url = anchor.href
     } else {
-        console.debug(`else chrome.runtime.getURL`)
+        // console.debug(`else chrome.runtime.getURL`)
         url = chrome.runtime.getURL(anchor.href)
     }
     console.debug('url:', url)

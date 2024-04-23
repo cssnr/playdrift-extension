@@ -55,7 +55,8 @@ All **Chromium** Based Browsers can install the extension from the
 *   Show Stats on Icon on Mouse Over
 *   Send Stats to Chat on User Join
 *   Send Your Own Stats to Chat When You Join
-*   Send Team Change Notifications to Chat
+*   Send Team Change Alerts to Chat
+*   Send Player Kicked Alerts to Chat
 *   Keep Team Set After Selecting One
 *   Play Audio on Your Turn to Make a Move
 *   Play Audio When Users Join or Leave a Room
@@ -63,9 +64,10 @@ All **Chromium** Based Browsers can install the extension from the
 *   Play Audio on New Inbox Message
 *   Play Audio on New Chat Message
 *   Play Chat Message as Audio (TTS)
-*   Chat Notifications on Player Leaving an Active Game
+*   Chat Alerts on Player Leaving an Active Game
 *   Auto Kick Users Below Set Win Rate Percentage
 *   Auto Kick Users Below Set Total Games Played
+*   Extended Kick Menu with Kick Reasons Sent to Chat
 *   Ban User Feature that Automatically Kicks User in Future
 *   Send Customizable Message on Game Start and Stats at End
 *   Add Cancel Ready Button if you are the Room Owner
@@ -73,6 +75,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Auto Continue Through the Game Stats at End of Game
 *   Close Profiles by Clicking Anywhere Outside the Profile
 *   Add Custom Chat Commands that Anybody can Use
+*   Show Remaining Dominoes and Optionally Exclude Your Own
 
 ### Upcoming Features and Ideas
 
