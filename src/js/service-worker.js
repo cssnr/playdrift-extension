@@ -23,22 +23,22 @@ const defaultOptions = {
     sendPlayerLeft: false,
     sendTeamsChanged: false,
     stickyTeams: false,
-    addCancelReadyBtn: false,
+    addCancelReadyBtn: true,
     autoUpdateOptions: false,
     autoContinueGameEnd: false,
-    autoKickBanned: false,
+    autoKickBanned: true,
     playTurnAudio: false,
     playPlayersAudio: false,
     playTeamsAudio: false,
-    playInboxAudio: true,
+    playInboxAudio: false,
     playMessageAudio: false,
     playChatSpeech: false,
     autoKickLowRate: false,
     kickLowRate: 40,
     autoKickLowGames: false,
-    kickLowGames: 100,
+    kickLowGames: 10,
     sendGameStart: false,
-    gameStartMessage: 'Game Start. Good Luck Everyone and Have Fun!',
+    gameStartMessage: 'Good Luck Everyone and Have Fun!',
     showRemainingDominoes: false,
     hideOwnDominoes: false,
     enableCommands: true,
@@ -47,8 +47,10 @@ const defaultOptions = {
 }
 
 const defaultCommands = {
-    info: `Stats and Rating are hidden in your profile. I wrote a web extension to display stats, store game history, auto kick low win rate players, ban users, and much more. Info on GitHub: ${githubURL}`,
-    hack: 'Things only enforced by the client and can be bypassed are: 1. First round you can play any domino you want; 2. You can exceed the turn time limit.',
+    info: `Stats and Rating are hidden in your profile. The web extension lets you to display stats, store game history, auto kick low win rate players, ban users, and much more. Info on GitHub: ${githubURL}`,
+    addon: 'info',
+    leave: 'When many players are done playing, they join another game, ready up, then leave as soon as it starts for extra points. The !addon provides notifications when players leave and lets you ban them.',
+    bot: 'Many of the players on the site are actually robots. Luckily, most of them have a low win rate (sub 40%) and the !addon lets you auto kick players below set win rate to remove most of them.',
 }
 
 // const audio = {
