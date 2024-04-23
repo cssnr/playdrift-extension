@@ -1,10 +1,12 @@
 // JS for oninstall.html
 
-import { checkPerms } from './export.js'
+import { checkPerms, tabOpen } from './export.js'
 
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
-document.getElementById('open-options').addEventListener('click', openOptions)
+document
+    .querySelectorAll('[data-tabopen]')
+    .forEach((el) => el.addEventListener('click', tabOpen))
 
 /**
  * DOMContentLoaded
@@ -30,16 +32,4 @@ async function grantPerms(event) {
         chrome.runtime.openOptionsPage()
         window.close()
     }
-}
-
-/**
- * Open Options Click Callback
- * @function openOptions
- * @param {MouseEvent} event
- */
-function openOptions(event) {
-    console.debug('openOptions:', event)
-    event.preventDefault()
-    chrome.runtime.openOptionsPage()
-    window.close()
 }

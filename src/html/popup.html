@@ -40,152 +40,89 @@
     </div>
 
     <div class="d-none grant-perms">
-        <a id="grant-perms" class="btn btn-sm btn-success w-100 mb-1" role="button">
+        <a id="grant-perms" class="btn btn-sm btn-success w-100 mb-0" role="button">
             <i class="fa-solid fa-check-double me-1"></i> Grant Host Permissions</a>
-<!--        <p class="text-center mb-1"><a role="button" href="../html/oninstall.html" class="">More Information on Permissions</a></p>-->
+        <p class="text-center mb-1"><a role="button" href="../html/oninstall.html" class="" data-tabopen>More Information on Permissions</a></p>
     </div>
 
     <form id="options-form" class="mb-3">
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="showTooltipMouseover" type="checkbox" role="switch">
             <label class="form-check-label" for="showTooltipMouseover" aria-describedby="showTooltipMouseoverHelp">
                 Show Tooltip on Mouse Over
-                <span data-bs-toggle="tooltip" data-bs-title="Show Tooltip on Mouse Over.">
+                <span data-bs-toggle="tooltip" data-bs-title="When Moving the Mouse Over a Player's Icon.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" id="showMouseover" type="checkbox" role="switch">
-            <label class="form-check-label" for="showMouseover" aria-describedby="showMouseoverHelp">
-                Show Icon Stats on Mouse Over
-                <span data-bs-toggle="tooltip" data-bs-title="Show Icon Stats on Mouse Over.">
-                    <i class="fa-solid fa-circle-info ms-1"></i>
-                </span>
-            </label>
-        </div>
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="sendOnJoin" type="checkbox" role="switch">
             <label class="form-check-label" for="sendOnJoin" aria-describedby="sendOnJoinHelp">
                 Send Stats on Chat Join
-                <span data-bs-toggle="tooltip" data-bs-title="Send Stats on Chat Join.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Other Players Stats to Chat when they Join.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="sendSelfOnJoin" type="checkbox" role="switch">
             <label class="form-check-label" for="sendSelfOnJoin" aria-describedby="sendSelfOnJoinHelp">
                 Send Self Stats on Room Join
-                <span data-bs-toggle="tooltip" data-bs-title="Send Self Stats on Room Join.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Your Stats to Chat when You Join.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="sendPlayerLeft" type="checkbox" role="switch">
             <label class="form-check-label" for="sendPlayerLeft" aria-describedby="sendPlayerLeftHelp">
                 Send Player Left Game Alert
-                <span data-bs-toggle="tooltip" data-bs-title="Send Player Left Game Alert.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Chat Alert if Player Leaves an Active Game.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" id="stickyTeams" type="checkbox" role="switch">
-            <label class="form-check-label" for="stickyTeams" aria-describedby="stickyTeamsHelp">
-                Keep Team Set After Selecting
-                <span data-bs-toggle="tooltip" data-bs-title="Keep Team Set After Selecting.">
-                    <i class="fa-solid fa-circle-info ms-1"></i>
-                </span>
-            </label>
-        </div>
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="sendTeamsChanged" type="checkbox" role="switch">
             <label class="form-check-label" for="sendTeamsChanged" aria-describedby="sendTeamsChangedHelp">
                 Send Teams Changed Alert
-                <span data-bs-toggle="tooltip" data-bs-title="Send Teams Changed Alert.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Chat Alert when a Player Changes their Team.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="autoUpdateOptions" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="autoUpdateOptions" aria-describedby="autoUpdateOptionsHelp">-->
-<!--                Auto Update Options on Room-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Auto Update Options on Room.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="autoKickBanned" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="autoKickBanned" aria-describedby="autoKickBannedHelp">-->
-<!--                Auto Kick Banned Players-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Banned Players.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
+            <input class="form-check-input" id="stickyTeams" type="checkbox" role="switch">
+            <label class="form-check-label" for="stickyTeams" aria-describedby="stickyTeamsHelp">
+                Keep Team Set After Selecting
+                <span data-bs-toggle="tooltip" data-bs-title="Prevent Selected Team from Resetting.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="playTurnAudio" type="checkbox" role="switch">
             <label class="form-check-label" for="playTurnAudio" aria-describedby="playTurnAudioHelp">
                 Play Audio on Your Turn
-                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Your Turn.">
+                <span data-bs-toggle="tooltip" data-bs-title="Play an Audio Alert on Your Turn to Play.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="playPlayersAudio" type="checkbox" role="switch">
             <label class="form-check-label" for="playPlayersAudio" aria-describedby="playPlayersAudioHelp">
                 Play Audio on Player Join/Leave
-                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Player Join/Leave.">
+                <span data-bs-toggle="tooltip" data-bs-title="Play an Audio Alert when a Player Joins/Leaves a Room.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="playTeamsAudio" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="playTeamsAudio" aria-describedby="playTeamsAudioHelp">-->
-<!--                Play Audio on Teams Change-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Teams Change.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="playInboxAudio" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="playInboxAudio" aria-describedby="playInboxAudioHelp">-->
-<!--                Play Audio on Inbox Message-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Inbox Message.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="playMessageAudio" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="playMessageAudio" aria-describedby="playMessageAudioHelp">-->
-<!--                Play Audio on New Chat Message-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on New Chat Message.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="playChatSpeech" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="playChatSpeech" aria-describedby="playChatSpeechHelp">-->
-<!--                Play Text to Speech in Chat-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Play Text to Speech in Chat.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="autoKickLowRate" type="checkbox" role="switch" data-related="kickLowRate">
             <label class="form-check-label" for="autoKickLowRate" aria-describedby="autoKickLowRateHelp">
                 Auto Kick Low Win Rate Users
-                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Low Win Rate Users.">
+                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Players Below (less than) Set Win Rate.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -196,11 +133,11 @@
 <!--            <div class="form-text" id="kickLowRateHelp">Popup Recent Files. <span class="d-inline-block">0 to Disable.</span></div>-->
         </div>
 
-        <div class="form-check form-switch">
+        <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="autoKickLowGames" type="checkbox" role="switch" data-related="kickLowGames">
             <label class="form-check-label" for="autoKickLowGames" aria-describedby="autoKickLowGamesHelp">
                 Auto Kick Low Total Game Users
-                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Low Total Game Users.">
+                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Players Below (less than) Set Total Games.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -210,40 +147,6 @@
             <input id="kickLowGames" aria-describedby="kickLowGamesHelp" type="number" class="form-control form-control-sm mb-2" autocomplete="off" style="display: none">
 <!--            <div class="form-text" id="kickLowGamesHelp">Popup Recent Files. <span class="d-inline-block">0 to Disable.</span></div>-->
         </div>
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="sendGameStart" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="sendGameStart" aria-describedby="sendGameStartHelp">-->
-<!--                Send Message on Game Start/End-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Send Message on Game Start/End.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-<!--        <div class="ms-5">-->
-<!--            <label for="gameStartMessage" class="form-label visually-hidden">Game Start Message</label>-->
-<!--            <input id="gameStartMessage" aria-describedby="gameStartMessageHelp" type="text" class="form-control form-control-sm mb-2" autocomplete="off" style="display: none">-->
-<!--            <div class="form-text visually-hidden" id="gameStartMessageHelp">Game Start Message.</div>-->
-<!--        </div>-->
-
-<!--        <hr>-->
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="contextMenu" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="contextMenu" aria-describedby="contextMenuHelp">-->
-<!--                Enable Right Click Menu-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Show Context Menu on Right Click.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" id="showUpdate" type="checkbox" role="switch">-->
-<!--            <label class="form-check-label" for="showUpdate" aria-describedby="showUpdateHelp">-->
-<!--                Show Release Notes on Update-->
-<!--                <span data-bs-toggle="tooltip" data-bs-title="Show Release Notes on Version Update.">-->
-<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
-<!--                </span>-->
-<!--            </label>-->
-<!--        </div>-->
     </form>
     <a class="btn btn-outline-info btn-sm w-100" role="button" href="../html/options.html" data-tabopen>
         <i class="fa-solid fa-sliders me-1"></i> More Options</a>

@@ -22,9 +22,6 @@ document
     .getElementById('options-form')
     .addEventListener('submit', (e) => e.preventDefault())
 document
-    .querySelectorAll('.open-oninstall')
-    .forEach((el) => el.addEventListener('click', openOnInstall))
-document
     .querySelectorAll('[data-tabopen]')
     .forEach((el) => el.addEventListener('click', tabOpen))
 document
@@ -82,17 +79,13 @@ async function initOptions() {
 //     console.debug('onEmojiSelect:', emojiData, event)
 // }
 
-/**
- * Open OnInstall Page Click Callback
- * @function openOnInstall
- * @param {MouseEvent} event
- */
-async function openOnInstall(event) {
-    console.debug('openOnInstall:', event)
-    const url = chrome.runtime.getURL('/html/oninstall.html')
-    await chrome.tabs.create({ active: true, url })
-    window.close()
-}
+// document
+//     .querySelector('emoji-picker')
+//     .addEventListener('emoji-click', emojiCallback)
+//
+// function emojiCallback(event) {
+//     console.debug('emojiCallback:', event)
+// }
 
 /**
  * Set Keyboard Shortcuts
@@ -113,14 +106,6 @@ async function setShortcuts(mapping) {
         }
     }
 }
-
-// document
-//     .querySelector('emoji-picker')
-//     .addEventListener('emoji-click', emojiCallback)
-//
-// function emojiCallback(event) {
-//     console.debug('emojiCallback:', event)
-// }
 
 /**
  * Update Filters Table

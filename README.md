@@ -123,6 +123,12 @@ any domino they want on the first round of 4 and hold on to the 6/6 since they p
 
 The stats come from your PlayDrift profile. See [Browser Console](#browser-console) for more information.
 
+### What is the purpose of robot players?
+
+The main theory is that the bots are from PlayDrift to maintain activity on the site during low activity hours.
+Also, since the site rewards total play over quality play, the bots could be leveling accounts for future uses.
+However, with no gains from leveled up accounts, it is most likely the bots are from PlayDrift.
+
 > [!TIP]
 > **Don't see your question here?**
 > Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/new?category=q-a).

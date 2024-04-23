@@ -55,7 +55,7 @@
     <div class="d-none grant-perms my-3">
         <a id="grant-perms" class="btn btn-lg btn-success w-100 mb-2" role="button">
             <i class="fa-solid fa-check-double me-1"></i> Grant Host Permissions</a>
-        <p class="text-center"><a role="button" class="open-oninstall" href="../html/oninstall.html">More Information on Permissions</a></p>
+        <p class="text-center"><a role="button" href="../html/oninstall.html" data-tabopen>More Information on Permissions</a></p>
         <hr>
     </div>
     <p class="fst-italic mt-3">
@@ -68,21 +68,21 @@
             <input class="form-check-input" id="showTooltipMouseover" type="checkbox" role="switch">
             <label class="form-check-label" for="showTooltipMouseover" aria-describedby="showTooltipMouseoverHelp">
                 Show Tooltip on Mouse Over
-                <span data-bs-toggle="tooltip" data-bs-title="Show Tooltip on Mouse Over.">
+                <span data-bs-toggle="tooltip" data-bs-title="When Moving the Mouse Over a Player's Icon.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
         <div class="form-check form-switch">
             <input class="form-check-input" id="showMouseover" type="checkbox" role="switch" data-related="tipOptions">
-            <label class="form-check-label" for="showMouseover" aria-describedby="showMouseoverHelp">
+            <label class="form-check-label text-success-emphasis" for="showMouseover" aria-describedby="showMouseoverHelp">
                 Show Icon Stats on Mouse Over
-                <span data-bs-toggle="tooltip" data-bs-title="Show Icon Stats on Mouse Over.">
+                <span data-bs-toggle="tooltip" data-bs-title="When Moving the Mouse Over a Player's Icon.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
         </div>
-        <div id="tipOptions" class="ms-5" style="display: none;">
+        <div id="tipOptions" class="ms-5 text-success-emphasis" style="display: none;">
             Top:
             <div class="form-check form-check-inline ms-2">
                 <input class="form-check-input" type="radio" name="radioTopTip" id="tipTopRating" value="tipTopRating">
@@ -93,13 +93,22 @@
                 <label class="form-check-label" for="tipTopLevel">Level</label>
             </div>
         </div>
+<!--        <div class="form-check form-switch">-->
+<!--            <input class="form-check-input" id="autoUpdatePlayers" type="checkbox" role="switch">-->
+<!--            <label class="form-check-label text-success-emphasis" for="autoUpdatePlayers" aria-describedby="autoUpdatePlayersHelp">-->
+<!--                Auto Update Users Icon in Room-->
+<!--                <span data-bs-toggle="tooltip" data-bs-title="Auto Update Users Icon in Room.">-->
+<!--                    <i class="fa-solid fa-circle-info ms-1"></i>-->
+<!--                </span>-->
+<!--            </label>-->
+<!--        </div>-->
 
         <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-solid fa-comments me-2"></i> Chat Options</h6>
         <div class="form-check form-switch">
             <input class="form-check-input" id="sendOnJoin" type="checkbox" role="switch">
             <label class="form-check-label" for="sendOnJoin" aria-describedby="sendOnJoinHelp">
                 Send Stats on Chat Join
-                <span data-bs-toggle="tooltip" data-bs-title="Send Stats on Chat Join.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Other Players Stats to Chat when they Join.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -108,7 +117,7 @@
             <input class="form-check-input" id="sendSelfOnJoin" type="checkbox" role="switch">
             <label class="form-check-label" for="sendSelfOnJoin" aria-describedby="sendSelfOnJoinHelp">
                 Send Self Stats on Room Join
-                <span data-bs-toggle="tooltip" data-bs-title="Send Self Stats on Room Join.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Your Stats to Chat when You Join.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -117,7 +126,7 @@
             <input class="form-check-input" id="sendPlayerLeft" type="checkbox" role="switch">
             <label class="form-check-label" for="sendPlayerLeft" aria-describedby="sendPlayerLeftHelp">
                 Send Player Left Game Alert
-                <span data-bs-toggle="tooltip" data-bs-title="Send Player Left Game Alert.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Chat Alert if Player Leaves an Active Game.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -126,7 +135,7 @@
             <input class="form-check-input" id="sendTeamsChanged" type="checkbox" role="switch">
             <label class="form-check-label" for="sendTeamsChanged" aria-describedby="sendTeamsChangedHelp">
                 Send Teams Changed Alert
-                <span data-bs-toggle="tooltip" data-bs-title="Send Teams Changed Alert.">
+                <span data-bs-toggle="tooltip" data-bs-title="Send Chat Alert when a Player Changes their Team.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -155,7 +164,7 @@
             <input class="form-check-input" id="stickyTeams" type="checkbox" role="switch">
             <label class="form-check-label" for="stickyTeams" aria-describedby="stickyTeamsHelp">
                 Keep Team Set After Selecting
-                <span data-bs-toggle="tooltip" data-bs-title="Keep Team Set After Selecting.">
+                <span data-bs-toggle="tooltip" data-bs-title="Prevent Selected Team from Resetting.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -202,7 +211,7 @@
             <input class="form-check-input" id="playTurnAudio" type="checkbox" role="switch">
             <label class="form-check-label" for="playTurnAudio" aria-describedby="playTurnAudioHelp">
                 Play Audio on Your Turn
-                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Your Turn.">
+                <span data-bs-toggle="tooltip" data-bs-title="Play an Audio Alert on Your Turn to Play.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -224,7 +233,7 @@
             <input class="form-check-input" id="playPlayersAudio" type="checkbox" role="switch">
             <label class="form-check-label" for="playPlayersAudio" aria-describedby="playPlayersAudioHelp">
                 Play Audio on Player Join/Leave
-                <span data-bs-toggle="tooltip" data-bs-title="Play Audio on Player Join/Leave.">
+                <span data-bs-toggle="tooltip" data-bs-title="Play an Audio Alert when a Player Joins/Leaves a Room.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -270,8 +279,8 @@
         <div class="form-check form-switch">
             <input class="form-check-input" id="autoKickLowRate" type="checkbox" role="switch" data-related="kickLowRate">
             <label class="form-check-label" for="autoKickLowRate" aria-describedby="autoKickLowRateHelp">
-                Auto Kick Low Win Rate Users
-                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Low Win Rate Users.">
+                Auto Kick Low Win Rate Players
+                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Players Below (less than) Set Win Rate.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -285,7 +294,7 @@
             <input class="form-check-input" id="autoKickLowGames" type="checkbox" role="switch" data-related="kickLowGames">
             <label class="form-check-label" for="autoKickLowGames" aria-describedby="autoKickLowGamesHelp">
                 Auto Kick Low Total Game Users
-                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Low Total Game Users.">
+                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Players Below (less than) Set Total Games.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -453,6 +462,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" id="bi-dot" viewBox="0 0 16 16">
         <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
     </svg>
+
 <!--    <div class="d-flex align-items-start ms-5" id="audio-options">-->
 <!--        <div class="" style="width: 120px;">-->
 <!--            <select class="form-select form-select-sm" aria-label="Volume" >-->
