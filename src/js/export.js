@@ -3,6 +3,7 @@
 /**
  * Open Game Tab
  * TODO: To be replaced with: tabOpen
+ *       Only used in SW onClicked and onCommand
  * @function playGame
  * @param {MouseEvent} event
  */
@@ -24,6 +25,7 @@ export async function playGame(event = null) {
 /**
  * Open Game Tab
  * TODO: To be replaced with: tabOpen
+ *       Only used in SW onClicked and onCommand
  * @function playGame
  * @param {MouseEvent} event
  */
@@ -34,7 +36,7 @@ export async function openHome(event = null) {
         currentWindow: true,
         url: url,
     })
-    console.log('tabs:', tabs)
+    // console.debug('tabs:', tabs)
     if (tabs.length) {
         await chrome.tabs.update(tabs[0].id, { active: true })
     } else {
@@ -45,26 +47,29 @@ export async function openHome(event = null) {
 /**
  * Tab Open Callback
  * TODO: This Replaces playGame and openHome in all places but
- *      1. The context menu clicks
- *      2. Keyboard shortcut commands
+ *      1. The context menu clicks: onClicked
+ *      2. Keyboard shortcut commands: onCommand
  * @function focusOpen
  * @param {MouseEvent} event
  */
 export async function tabOpen(event) {
     console.debug('tabOpen', event)
     event?.preventDefault()
-    const element = event.target.closest('a')
+    const element = event?.target?.closest('a')
     // console.debug('element', element)
-    const url = element.href
+    const url = element?.href
     // console.debug('url', url)
-    const pattern = element.dataset.tabopen || url
+    const pattern = element?.dataset?.tabopen || url
     console.debug('pattern', pattern)
+    if (!pattern) {
+        return console.warn('no pattern for tabOpen event:', event)
+    }
     const queryInfo = {
         currentWindow: true,
         url: pattern,
     }
     const tabs = await chrome.tabs.query(queryInfo)
-    console.log('tabs:', tabs)
+    // console.debug('tabs:', tabs)
     if (tabs.length) {
         await chrome.tabs.update(tabs[0].id, { active: true })
     } else {
@@ -147,7 +152,7 @@ export async function saveOptions(event) {
         console.info(`Set: ${key}:`, value)
         await chrome.storage.sync.set({ options })
     } else {
-        console.warn(`No Value for key: ${key}`)
+        console.warn('No Value for key:', key)
     }
 }
 
@@ -174,7 +179,7 @@ export function updateOptions(options, text = false) {
         } else if (typeof value === 'boolean') {
             el.checked = value
         } else if (typeof value === 'object') {
-            console.info(`Options Object for: ${key}`, value)
+            console.debug(`Options Object for: ${key}`, value)
         } else {
             el.value = value
         }
@@ -233,15 +238,14 @@ export function showToast(message, type = 'success') {
     console.debug(`showToast: ${type}: ${message}`)
     const clone = document.querySelector('.d-none .toast')
     const container = document.getElementById('toast-container')
-    if (clone && container) {
-        const element = clone.cloneNode(true)
-        element.querySelector('.toast-body').innerHTML = message
-        element.classList.add(`text-bg-${type}`)
-        container.appendChild(element)
-        const toast = new bootstrap.Toast(element)
-        element.addEventListener('mousemove', () => toast.hide())
-        toast.show()
-    } else {
-        console.info('Missing clone or container:', clone, container)
+    if (!clone || !container) {
+        return console.warn('Missing clone or container:', clone, container)
     }
+    const element = clone.cloneNode(true)
+    element.querySelector('.toast-body').innerHTML = message
+    element.classList.add(`text-bg-${type}`)
+    container.appendChild(element)
+    const toast = new bootstrap.Toast(element)
+    element.addEventListener('mousemove', () => toast.hide())
+    toast.show()
 }
