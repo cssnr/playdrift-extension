@@ -158,6 +158,7 @@ export async function saveOptions(event) {
  * @param {boolean} text
  */
 export function updateOptions(options, text = false) {
+    console.debug('updateOptions:', options)
     for (let [key, value] of Object.entries(options)) {
         if (key.startsWith('radio')) {
             key = value

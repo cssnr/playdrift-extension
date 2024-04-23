@@ -65,7 +65,7 @@ async function initOptions() {
         'commands',
         'options',
     ])
-    console.debug('options:', options)
+    // console.debug('commands, options:', commands, options)
     updateOptions(options)
     updateCommands(commands)
     await checkPerms()
@@ -105,7 +105,7 @@ async function setShortcuts(mapping) {
         // console.debug(`${elementID}: ${name}`)
         const command = commands.find((x) => x.name === name)
         if (command?.shortcut) {
-            console.debug(`${elementID}: ${command.shortcut}`)
+            // console.debug(`${elementID}: ${command.shortcut}`)
             const el = document.getElementById(elementID)
             if (el) {
                 el.textContent = command.shortcut
@@ -133,7 +133,7 @@ function updateCommands(commands) {
     tbody.innerHTML = ''
     // commands.forEach((value, i) => {
     for (const [key, value] of Object.entries(commands)) {
-        console.debug(`commands:`, key, value)
+        // console.debug(`commands:`, key, value)
         const row = commandsTable.querySelector('tfoot tr').cloneNode(true)
         tbody.appendChild(row)
         const button = row.cells[0].querySelector('a')
@@ -274,9 +274,8 @@ export function onChanged(changes, namespace) {
     // console.debug('onChanged:', changes, namespace)
     for (const [key, { newValue }] of Object.entries(changes)) {
         if (namespace === 'sync') {
-            console.debug('key:', key, newValue)
+            // console.debug('key:', key, newValue)
             if (key === 'options') {
-                console.debug('newValue:', newValue)
                 updateOptions(newValue)
             } else if (key === 'commands') {
                 updateCommands(newValue)

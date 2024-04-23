@@ -149,19 +149,26 @@ async function addBannedUser(event) {
     // const element = document.querySelector('#banned-form input')
     const input = document.getElementById('add-banned')
     const user = input.value.trim()
-    if (user.length !== 36) {
+    console.log(`user: ${user}`)
+    const regex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    // if (user.length !== 36) {
+    if (!regex.test(user)) {
         showToast('You must provide a valid User ID.', 'danger')
-    } else {
-        console.log(`user: ${user}`)
-        const { banned } = await chrome.storage.sync.get(['banned'])
-        if (!banned.includes(user)) {
-            banned.push(user)
-            console.debug('banned:', banned)
-            await chrome.storage.sync.set({ banned })
-            updateBanned(banned)
-        }
-        input.value = ''
+        input.focus()
+        return
     }
+    const { banned } = await chrome.storage.sync.get(['banned'])
+    if (!banned.includes(user)) {
+        banned.push(user)
+        console.debug('banned:', banned)
+        await chrome.storage.sync.set({ banned })
+        updateBanned(banned)
+        showToast(`Added Banned User.`, 'success')
+    } else {
+        showToast(`User Already Banned.`, 'warning')
+    }
+    input.value = ''
     input.focus()
 }
 
@@ -240,9 +247,9 @@ async function deleteBanned(event) {
     if (index !== undefined) {
         banned.splice(index, 1)
         await chrome.storage.sync.set({ banned })
-        // console.debug('banned:', banned)
-        // updateBanned(banned)
-        // document.getElementById('add-filter').focus()
+        showToast(`Removed Banned User.`, 'success')
+    } else {
+        showToast(`User Not Found.`, 'warning')
     }
 }
 
@@ -256,13 +263,11 @@ export function onChanged(changes, namespace) {
     // console.debug('onChanged:', changes, namespace)
     for (const [key, { newValue }] of Object.entries(changes)) {
         if (namespace === 'sync') {
-            console.debug('key:', key, newValue)
+            // console.debug('key:', key, newValue)
             if (key === 'profile') {
                 // TODO: This should reload if profile changed from empty to set
                 const noProfile = document.getElementById('no-profile')
                 if (!noProfile.classList.contains('d-none')) {
-                    // showProfile(newValue)
-                    // updateOptions(newValue, true)
                     window.location.reload()
                 }
             } else if (key === 'history') {
