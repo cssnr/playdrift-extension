@@ -192,10 +192,58 @@ function startMutation() {
                             teamChangeClick
                         )
                     }
+                    if (
+                        mutation.target.tagName === 'LI' &&
+                        mutation.target.textContent === 'Kick' &&
+                        mutation.target.dataset.pid
+                    ) {
+                        processKickButton(mutation.target)
+                    }
                 })
             }
         }
     }
+}
+
+/**
+ * @function processKickButton
+ * @param  {HTMLElement} element
+ */
+function processKickButton(element) {
+    const parent = element.parentElement
+    const pid = element.dataset.pid
+    console.log(`processKickButton: ${pid}:`, element, parent)
+    const options = [
+        { txt: 'Low Total Games', msg: 'low total games.' },
+        { txt: 'Low Win Rate', msg: 'low win rate.' },
+        { txt: 'Bad Player', msg: 'poor performance.' },
+        { txt: 'Possible Bot', msg: 'possible robot player.' },
+    ]
+    for (const option of options) {
+        genKickItem(option.txt, option.msg, pid, element)
+    }
+}
+
+function genKickItem(text, message, pid, element) {
+    const li = element.cloneNode(true)
+    li.dataset.message = message
+    li.dataset.pid = pid
+    li.addEventListener('click', kickDropDownCallback)
+    li.textContent = text
+    element.parentElement.appendChild(li)
+}
+
+async function kickDropDownCallback(event) {
+    console.log('kickDropDownCallback', event)
+    event.preventDefault()
+    // console.log('event.target.parentElement', event.target.parentElement)
+    event.target.parentElement.children[0].click()
+    const pid = event.target.dataset.pid
+    const message = event.target.dataset.message
+    console.log('pid', pid)
+    const player = await getProfile(pid, true)
+    const msg = `Kicked: ${player.username} due to: ${message}`
+    await sendChatMessage(msg)
 }
 
 async function teamChangeClick(event) {

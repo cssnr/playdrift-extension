@@ -67,6 +67,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Chat Alerts on Player Leaving an Active Game
 *   Auto Kick Users Below Set Win Rate Percentage
 *   Auto Kick Users Below Set Total Games Played
+*   Extended Kick Menu with Kick Reasons Sent to Chat
 *   Ban User Feature that Automatically Kicks User in Future
 *   Send Customizable Message on Game Start and Stats at End
 *   Add Cancel Ready Button if you are the Room Owner
