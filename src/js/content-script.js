@@ -143,6 +143,10 @@ async function processLoad() {
     }
 }
 
+/**
+ * Start MutationObserver
+ * @function startMutation
+ */
 function startMutation() {
     // const app = document.getElementById('app')
     const element = document.body
@@ -156,94 +160,133 @@ function startMutation() {
         // attributeOldValue: true,
         // characterDataOldValue: true,
     })
+}
 
-    function mutationCallback(mutationList, observer) {
-        // console.info('mutationCallback, mutationList:', mutationList, observer)
-        for (const mutation of mutationList) {
-            if (mutation.type === 'childList' && mutation.addedNodes) {
-                // console.debug('mutation:', mutation)
-                if (
-                    mutation.target.children.length > 5 &&
-                    mutation.target.children[2].nodeName === 'H5'
-                ) {
-                    updateProfile().then()
-                } else if (
-                    mutation.target.dataset.testid === 'button-continue'
-                ) {
-                    // console.info('button-continue:', mutation.target)
-                    setTimeout(buttonContinue, 150, mutation.target)
-                    setTimeout(buttonContinue, 250, mutation.target)
-                } else if (
-                    typeof mutation.target.dataset.team !== 'undefined'
-                ) {
-                    console.debug('Adding Listener teamChangeClick')
-                    mutation.target.addEventListener('click', teamChangeClick)
-                } else if (
-                    mutation.target.tagName === 'LI' &&
-                    mutation.target.textContent === 'Kick' &&
-                    mutation.target.dataset.pid
-                ) {
-                    processKickButton(mutation.target)
-                } else {
-                    mutation.addedNodes.forEach((el) => {
-                        // console.debug('el:', el)
-                        // if (
-                        //     el.dataset?.id &&
-                        //     el.tagName === 'DIV' &&
-                        //     el.parentElement?.parentElement?.dataset?.testid ===
-                        //         'room'
-                        // ) {
-                        //     console.info('PLAYER JOINED')
-                        //     processRoomPlayers([el])
-                        // }
-                    })
-                }
+/**
+ * MutationObserver Callback
+ * @function mutationCallback
+ * @param {Array[MutationRecord]} mutationList
+ * @param {MutationObserver} observer
+ */
+function mutationCallback(mutationList, observer) {
+    // console.info('mutationCallback, mutationList:', mutationList, observer)
+    for (const mutation of mutationList) {
+        if (mutation.type === 'childList' && mutation.addedNodes) {
+            // console.debug('mutation:', mutation)
+            if (
+                mutation.target.children.length > 5 &&
+                mutation.target.children[2].nodeName === 'H5'
+            ) {
+                updateProfile().then()
+            } else if (mutation.target.dataset.testid === 'button-continue') {
+                // console.info('button-continue:', mutation.target)
+                setTimeout(buttonContinue, 150, mutation.target)
+                setTimeout(buttonContinue, 250, mutation.target)
+            } else if (typeof mutation.target.dataset.team !== 'undefined') {
+                console.debug('Adding Listener teamChangeClick')
+                mutation.target.addEventListener('click', teamChangeClick)
+            } else if (
+                mutation.target.tagName === 'LI' &&
+                mutation.target.textContent === 'Kick' &&
+                mutation.target.dataset.pid
+            ) {
+                processKickButton(mutation.target).then()
+            } else {
+                mutation.addedNodes.forEach((el) => {
+                    // console.debug('el:', el)
+                    // if (
+                    //     el.dataset?.id &&
+                    //     el.tagName === 'DIV' &&
+                    //     el.parentElement?.parentElement?.dataset?.testid ===
+                    //         'room'
+                    // ) {
+                    //     console.info('PLAYER JOINED')
+                    //     processRoomPlayers([el])
+                    // }
+                })
             }
         }
     }
 }
 
 /**
+ * Update Kick Dropdown Menu on Mutation
  * @function processKickButton
- * @param  {HTMLElement} element
+ * @param {HTMLElement} element
  */
-function processKickButton(element) {
+async function processKickButton(element) {
+    const { profile } = await chrome.storage.sync.get(['profile'])
     const parent = element.parentElement
     const pid = element.dataset.pid
+    if (pid === profile.id) {
+        return console.debug('skipping self kick button')
+    }
     console.log(`processKickButton: ${pid}:`, element, parent)
+    // TODO: Make These Options
     const options = [
-        { txt: 'Low Total Games', msg: 'low total games.' },
         { txt: 'Low Win Rate', msg: 'low win rate.' },
-        { txt: 'Bad Player', msg: 'poor performance.' },
+        { txt: 'Low Games/Level', msg: 'low total games or level.' },
+        { txt: 'Slow Player', msg: 'playing too slow or abusing timer.' },
+        { txt: 'Bad Player', msg: 'poor in-game performance.' },
         { txt: 'Possible Bot', msg: 'possible robot player.' },
+        { txt: 'Ban Player', msg: 'player banned.' },
     ]
     for (const option of options) {
-        genKickItem(option.txt, option.msg, pid, element)
+        genKickItem(element, pid, option.txt, option.msg)
     }
 }
 
-function genKickItem(text, message, pid, element) {
+/**
+ * Generate Kick Menu Item
+ * @function genKickItem
+ * @param {HTMLElement} element List Item to Clone
+ * @param {String} pid Player ID
+ * @param {String} text Display Text
+ * @param {String} message Chat Message
+ */
+function genKickItem(element, pid, text, message) {
     const li = element.cloneNode(true)
     li.dataset.message = message
     li.dataset.pid = pid
     li.addEventListener('click', kickDropDownCallback)
-    li.textContent = text
+    // li.textContent = text
+    li.querySelector('span').textContent = text
+    li.title = message
+    if (message === 'player banned.') {
+        li.style.color = '#f88379'
+    }
     element.parentElement.appendChild(li)
 }
 
+/**
+ * Kick Menu Click Callback
+ * @function kickDropDownCallback
+ * @param {MouseEvent} event
+ */
 async function kickDropDownCallback(event) {
     console.log('kickDropDownCallback', event)
     event.preventDefault()
-    // console.log('event.target.parentElement', event.target.parentElement)
-    event.target.parentElement.children[0].click()
-    const pid = event.target.dataset.pid
-    const message = event.target.dataset.message
+    const target = event.target.closest('li')
+    target.parentElement?.children[0]?.click()
+    const pid = target.dataset?.pid
+    const message = target.dataset?.message
     console.log('pid', pid)
+    if (!pid) {
+        return console.warn('No PID for event:', event)
+    }
     const player = await getProfile(pid, true)
     const msg = `Kicked: ${player.username} due to: ${message}`
     await sendChatMessage(msg)
+    if (message === 'player banned.') {
+        await banPlayer(pid)
+    }
 }
 
+/**
+ * Team Change Click Callback
+ * @function teamChangeClick
+ * @param {MouseEvent} event
+ */
 async function teamChangeClick(event) {
     // console.debug('teamChangeClick', event)
     const { options } = await chrome.storage.sync.get(['options'])
@@ -414,6 +457,10 @@ async function processRoom(room) {
 //     }
 // }
 
+/**
+ * Add Kicked Players Element
+ * @function addKickedPlayers
+ */
 function addKickedPlayers() {
     // console.debug('addKickedPlayers')
     const hasKicked = document.getElementById('kicked-players')
@@ -427,6 +474,7 @@ function addKickedPlayers() {
     const h5 = root.querySelector('.MuiTypography-h5').cloneNode(true)
     h5.textContent = 'Kicked'
     h5.style.marginTop = '10px'
+    h5.style.color = '#f88379'
     const kicked = document.createElement('div')
     kicked.id = 'kicked-players'
     root.insertBefore(h5, root.children[5])
@@ -441,6 +489,10 @@ function addKickedPlayers() {
     }
 }
 
+/**
+ * Add Cancel Ready Button if Owner
+ * @function addCancelReadyBtn
+ */
 async function addCancelReadyBtn() {
     // console.debug('addCancelReadyBtn')
     const cancelBtn = document.getElementById('ready-cancel-button')
@@ -537,10 +589,7 @@ async function sse1(room) {
     source1 = new EventSource(url, {
         withCredentials: true,
     })
-    // const { options, profile } = await chrome.storage.sync.get([
-    //     'options',
-    //     'profile',
-    // ])
+    // const { profile } = await chrome.storage.sync.get(['profile'])
     console.debug('Adding Listener to: source1')
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
@@ -548,7 +597,7 @@ async function sse1(room) {
         const state = msg.state
         if (msg.t === 'rs' && state?.tid) {
             // TODO: This Fires Multiple Times as a Function
-            // console.debug('Room state:', state)
+            console.debug('Room state:', state)
 
             // if (state?.tid && state?.tid !== roomState[room]?.tid) {
             //     console.info('Initial Room State! TID:', state.tid)
@@ -593,6 +642,11 @@ async function sse1(room) {
     })
 }
 
+/**
+ * Process Initial Room State
+ * @function processInitialRoomState
+ * @param {String} room
+ */
 async function processInitialRoomState(room) {
     const state = roomState[room]
     console.debug('processInitialRoomState:', room, state)
@@ -612,21 +666,27 @@ async function processInitialRoomState(room) {
     }
 }
 
+/**
+ * Update Kicked Players Element
+ * @function updateKickedPlayers
+ * @param {Object} state
+ */
 async function updateKickedPlayers(state) {
     console.debug('updateKickedPlayers')
     const kicked = document.getElementById('kicked-players')
     if (!kicked) {
         return console.warn('kicked-players element not found')
     }
-    const players = await pidsToNames(state.kicked)
-    console.debug('players', players)
-    if (!players.length) {
+    // const players = await pidsToNames(state.kicked)
+    // console.debug('players', players)
+    if (!state?.kicked?.length) {
         kicked.textContent = 'No Kicked Players.'
         return console.debug('no kicked players, yet...')
     }
     let msg = ''
-    for (const name of players) {
-        msg += `${name}, `
+    for (const pid of state.kicked) {
+        const player = await getProfile(pid, true)
+        msg += `${player.username} (${player.stats.wl_percent}%), `
     }
     kicked.textContent = msg.replace(/,\s*$/, '')
 }
@@ -703,6 +763,11 @@ async function sse3(game) {
     })
 }
 
+/**
+ * Process Game State Updates
+ * @function processGameState
+ * @param {Object} state
+ */
 async function processGameState(state) {
     // console.debug('processGameState:', state)
     const { options, profile } = await chrome.storage.sync.get([
@@ -736,6 +801,11 @@ async function processGameState(state) {
     }
 }
 
+/**
+ * Process Game Action Updates
+ * @function processGameAction
+ * @param {Object} action
+ */
 async function processGameAction(action) {
     // console.debug('processGameAction:', action)
     const { options, profile } = await chrome.storage.sync.get([
@@ -775,6 +845,10 @@ async function processGameAction(action) {
     }
 }
 
+/**
+ * Add Dominoes to Domino Tracker
+ * @function addDominoes
+ */
 function addDominoes() {
     // console.debug('addDominoes')
     if (document.getElementById('tracker-container')) {
@@ -792,6 +866,12 @@ function addDominoes() {
     }
 }
 
+/**
+ * Generate Domino IMG for ID
+ * @function processGameAction
+ * @param {Number} id
+ * @return {HTMLImageElement}
+ */
 function genDomino(id) {
     // console.debug(`genDomino: ${id}`)
     const img = document.createElement('img')
@@ -865,6 +945,15 @@ async function roomPlayerChange(before, after) {
         }
     }
     await playersJoinRoom(after, joined)
+
+    if (before.players[0] !== after.players[0]) {
+        console.debug('room owner change')
+        const { profile } = await chrome.storage.sync.get(['profile'])
+        if (after.players[0] === profile.id) {
+            console.debug('you are now the room owner')
+            await addCancelReadyBtn()
+        }
+    }
 }
 
 /**
@@ -1259,6 +1348,10 @@ async function userJoinRoom(pid, rid = currentRoom) {
     }
 }
 
+/**
+ * Send Kicked Players to Chat
+ * @function sendKickedPlayers
+ */
 async function sendKickedPlayers() {
     console.log('sendKickedPlayers')
     const room = roomState[currentRoom]
@@ -1378,6 +1471,11 @@ async function showMouseover(event) {
     await processPlayerIcon(element)
 }
 
+/**
+ * Process Player Icon
+ * @function processPlayerIcon
+ * @param {HTMLElement} parent
+ */
 async function processPlayerIcon(parent) {
     const element = parent.parentNode
     console.debug('processPlayerIcon: parentNode:', element, parent)
@@ -1837,20 +1935,15 @@ async function kickClick(event) {
  */
 async function banClick(event) {
     const pid = document.getElementById('profile-id').value
-    const { banned, options } = await chrome.storage.sync.get([
-        'banned',
-        'options',
-    ])
-    console.debug('banClick:', pid, banned, event)
-    if (!banned.includes(pid)) {
-        banned.push(pid)
-        await chrome.storage.sync.set({ banned })
-    }
+    const { options } = await chrome.storage.sync.get(['options'])
+    console.debug('banClick:', pid, event)
+    await banPlayer(pid)
     const player = await getProfile(pid)
     await sendChatMessage(`Banned User: ${player.username}`)
-    if (options.autoKickBanned) {
-        await kickPlayer(pid)
-    }
+    // TODO: Make this an option
+    // if (options.autoKickBanned) {
+    //     await kickPlayer(pid)
+    // }
     history.back()
 }
 
@@ -1876,6 +1969,22 @@ function backOrClose() {
         history.back()
     } else {
         window.close()
+    }
+}
+
+/**
+ * Add Player to Banned List
+ * @function banPlayer
+ * @param {String} pid
+ */
+async function banPlayer(pid) {
+    console.debug('banPlayer:', pid)
+    const { banned } = await chrome.storage.sync.get(['banned'])
+    if (!banned.includes(pid)) {
+        banned.push(pid)
+        await chrome.storage.sync.set({ banned })
+    } else {
+        console.debug('player already banned:', pid)
     }
 }
 
@@ -1982,6 +2091,12 @@ async function selectTeam(rid, team) {
     console.debug('response:', response)
 }
 
+/**
+ * Turn PIDs Array into Names Array
+ * @function pidsToNames
+ * @param {Array} pids
+ * @return {Array}
+ */
 async function pidsToNames(pids) {
     const players = []
     for (const pid of pids) {
