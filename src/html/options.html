@@ -107,7 +107,7 @@
         <div class="form-check form-switch">
             <input class="form-check-input" id="sendOnJoin" type="checkbox" role="switch">
             <label class="form-check-label" for="sendOnJoin" aria-describedby="sendOnJoinHelp">
-                Send Stats on Chat Join
+                Send Player Stats on Chat Join
                 <span data-bs-toggle="tooltip" data-bs-title="Send Other Players Stats to Chat when they Join.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
@@ -188,19 +188,10 @@
             </label>
         </div>
         <div class="form-check form-switch">
-            <input class="form-check-input" id="autoContinueGameEnd" type="checkbox" role="switch">
-            <label class="form-check-label text-success-emphasis" for="autoContinueGameEnd" aria-describedby="autoContinueGameEndHelp">
-                Auto Continue at End of Game
-                <span data-bs-toggle="tooltip" data-bs-title="Auto Continue at End of Game.">
-                    <i class="fa-solid fa-circle-info ms-1"></i>
-                </span>
-            </label>
-        </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" id="autoKickBanned" type="checkbox" role="switch">
-            <label class="form-check-label text-success-emphasis" for="autoKickBanned" aria-describedby="autoKickBannedHelp">
-                Auto Kick Banned Players
-                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Banned Players.">
+            <input class="form-check-input" id="roomMinDisplay" type="checkbox" role="switch">
+            <label class="form-check-label text-success-emphasis" for="roomMinDisplay" aria-describedby="roomMinDisplayHelp">
+                Minimize the Room Display
+                <span data-bs-toggle="tooltip" data-bs-title="Reduce Padding and Remove Unused Elements.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
             </label>
@@ -275,7 +266,16 @@
             </label>
         </div>
 
-        <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-solid fa-gamepad me-2"></i> Game Options</h6>
+        <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-solid fa-user-check me-2"></i> Player Options</h6>
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="autoKickBanned" type="checkbox" role="switch">
+            <label class="form-check-label" for="autoKickBanned" aria-describedby="autoKickBannedHelp">
+                Auto Kick Banned Players
+                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Banned Players When They Join.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
         <div class="form-check form-switch">
             <input class="form-check-input" id="autoKickLowRate" type="checkbox" role="switch" data-related="kickLowRate">
             <label class="form-check-label" for="autoKickLowRate" aria-describedby="autoKickLowRateHelp">
@@ -293,7 +293,7 @@
         <div class="form-check form-switch">
             <input class="form-check-input" id="autoKickLowGames" type="checkbox" role="switch" data-related="kickLowGames">
             <label class="form-check-label" for="autoKickLowGames" aria-describedby="autoKickLowGamesHelp">
-                Auto Kick Low Total Game Users
+                Auto Kick Low Total Game Players
                 <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Players Below (less than) Set Total Games.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
@@ -303,6 +303,17 @@
             <label for="kickLowGames" class="form-label visually-hidden"><i class="fa-solid fa-list-ol me-2"></i> Kick Low Games</label>
             <input id="kickLowGames" aria-describedby="kickLowGamesHelp" type="number" class="form-control form-control-sm mb-2" autocomplete="off" style="display: none">
 <!--            <div class="form-text" id="kickLowGamesHelp">Popup Recent Files. <span class="d-inline-block">0 to Disable.</span></div>-->
+        </div>
+
+        <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-solid fa-gamepad me-2"></i> Game Options</h6>
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="autoContinueGameEnd" type="checkbox" role="switch">
+            <label class="form-check-label text-success-emphasis" for="autoContinueGameEnd" aria-describedby="autoContinueGameEndHelp">
+                Auto Continue at End of Game
+                <span data-bs-toggle="tooltip" data-bs-title="Auto Continue at End of Game.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
         </div>
         <div class="form-check form-switch">
             <input class="form-check-input" id="sendGameStart" type="checkbox" role="switch" data-related="gameStartMessage">
@@ -337,26 +348,6 @@
             </label>
         </div>
 
-        <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-brands fa-chrome me-2"></i> Extension Options</h6>
-        <div class="form-check form-switch">
-            <input class="form-check-input" id="contextMenu" type="checkbox" role="switch">
-            <label class="form-check-label text-success-emphasis" for="contextMenu" aria-describedby="contextMenuHelp">
-                Enable Right Click Menu
-                <span data-bs-toggle="tooltip" data-bs-title="Show Context Menu on Right Click.">
-                    <i class="fa-solid fa-circle-info ms-1"></i>
-                </span>
-            </label>
-        </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" id="showUpdate" type="checkbox" role="switch">
-            <label class="form-check-label text-success-emphasis" for="showUpdate" aria-describedby="showUpdateHelp">
-                Show Release Notes on Update
-                <span data-bs-toggle="tooltip" data-bs-title="Show Release Notes on Version Update.">
-                    <i class="fa-solid fa-circle-info ms-1"></i>
-                </span>
-            </label>
-        </div>
-
         <hr>
 
         <div class="form-check form-switch">
@@ -371,7 +362,7 @@
     </form>
     <div id="customCommandsDiv" style="display: none;">
         <form id="cmd-form">
-            <label class="form-label" for="cmd-name"><i class="fa-solid fa-square-plus me-2"></i> Add Custom Command</label>
+            <label class="form-label" for="cmd-name"><i class="fa-solid fa-exclamation me-1"></i> Add Custom Command</label>
             <div class="input-group input-group-sm mb-1">
                 <input type="text" class="form-control" placeholder="Command" aria-label="Filter" id="cmd-name" aria-describedby="add-banned-btn" style="max-width: 100px;">
                 <input type="text" class="form-control" placeholder="Response" aria-label="Filter" id="cmd-resp" aria-describedby="add-banned-btn">
@@ -415,6 +406,28 @@
             </tfoot>
         </table>
     </div>
+
+    <hr>
+    <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-brands fa-chrome me-2"></i> Extension Options</h6>
+    <div class="form-check form-switch">
+        <input class="form-check-input" id="contextMenu" type="checkbox" role="switch">
+        <label class="form-check-label text-success-emphasis" for="contextMenu" aria-describedby="contextMenuHelp">
+            Enable Right Click Menu
+            <span data-bs-toggle="tooltip" data-bs-title="Show Context Menu on Right Click.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+        </label>
+    </div>
+    <div class="form-check form-switch">
+        <input class="form-check-input" id="showUpdate" type="checkbox" role="switch">
+        <label class="form-check-label text-success-emphasis" for="showUpdate" aria-describedby="showUpdateHelp">
+            Show Release Notes on Update
+            <span data-bs-toggle="tooltip" data-bs-title="Show Release Notes on Version Update.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+        </label>
+    </div>
+
     <p class="fst-italic mt-3">
         Note: You can modify Banned Users from the <a rel="noopener" href="../html/home.html" data-tabopen>Home Page</a>.
     </p>

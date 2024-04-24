@@ -58,7 +58,7 @@
         <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="sendOnJoin" type="checkbox" role="switch">
             <label class="form-check-label" for="sendOnJoin" aria-describedby="sendOnJoinHelp">
-                Send Stats on Chat Join
+                Send Player Stats on Chat Join
                 <span data-bs-toggle="tooltip" data-bs-title="Send Other Players Stats to Chat when they Join.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>
@@ -118,6 +118,15 @@
                 </span>
             </label>
         </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="autoKickBanned" type="checkbox" role="switch">
+            <label class="form-check-label" for="autoKickBanned" aria-describedby="autoKickBannedHelp">
+                Auto Kick Banned Players
+                <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Banned Players When They Join.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
         <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="autoKickLowRate" type="checkbox" role="switch" data-related="kickLowRate">
             <label class="form-check-label" for="autoKickLowRate" aria-describedby="autoKickLowRateHelp">
@@ -136,7 +145,7 @@
         <div class="form-check form-switch mb-0">
             <input class="form-check-input" id="autoKickLowGames" type="checkbox" role="switch" data-related="kickLowGames">
             <label class="form-check-label" for="autoKickLowGames" aria-describedby="autoKickLowGamesHelp">
-                Auto Kick Low Total Game Users
+                Auto Kick Low Total Game Players
                 <span data-bs-toggle="tooltip" data-bs-title="Auto Kick Players Below (less than) Set Total Games.">
                     <i class="fa-solid fa-circle-info ms-1"></i>
                 </span>

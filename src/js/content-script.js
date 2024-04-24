@@ -94,6 +94,13 @@ async function processLoad() {
     const app = document.getElementById('app')
     console.info('processLoad:', app)
 
+    // const main = document.querySelector('[data-testid="app-layout-main"]')
+    // console.info('main:', main)
+    // setTimeout(function () {
+    //     console.log('setting max width to 100%')
+    //     main.style.maxWidth = '100%'
+    // }, 500)
+
     // TODO:    Not sure why this does not reliably load...
     //          Will most likely move back to Tabs onMessage
     // setTimeout(startMutation, 3000)
@@ -389,14 +396,18 @@ function closeEventSources() {
  */
 async function processRoom(room) {
     const { options } = await chrome.storage.sync.get(['options'])
+    const parent = document.querySelector('div[data-testid="room"]')
+    // console.debug('parent:', parent)
+
     // TODO: Safe to re-run this because it checks for existence before creating
+    if (options.roomMinDisplay) {
+        updateRoom(parent)
+    }
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
     }
-    addKickedPlayers()
+    addKickedPlayers(parent)
 
-    // const parent = document.querySelector('div[data-testid="room"]')
-    // console.debug('parent:', parent)
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
     if (!aside) {
@@ -415,11 +426,6 @@ async function processRoom(room) {
     await sse1(room)
 
     if (options.autoUpdateOptions) {
-        // const root = parent?.querySelector(
-        //     '.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded'
-        // )
-        // // console.debug('root:', root)
-        // root?.querySelector('button')?.click()
         clickUpdateOptions()
     }
 
@@ -459,26 +465,56 @@ async function processRoom(room) {
 
 /**
  * Add Kicked Players Element
- * @function addKickedPlayers
+ * @function updateRoom
+ * @param {HTMLElement} parent
  */
-function addKickedPlayers() {
+function updateRoom(parent) {
+    if (!parent) {
+        return console.debug('room parent not found:', parent)
+    }
+
+    // Set Padding on Players Heading
+    const h5players = parent.querySelector('.MuiTypography-h5')
+    h5players.parentElement.parentElement.parentElement.style.paddingTop =
+        '10px'
+    h5players.parentElement.parentElement.parentElement.style.paddingBottom =
+        '6px'
+
+    // Remove Invites Sections
+    const headings = parent.querySelectorAll('.MuiTypography-h5')
+    for (const h5 of headings) {
+        if (h5.textContent === 'Invite') {
+            const root = h5.parentElement.parentElement.parentElement
+            const next = root.nextElementSibling
+            next.remove()
+            root.remove()
+        }
+    }
+}
+
+/**
+ * Add Kicked Players Element
+ * @function addKickedPlayers
+ * @param {HTMLElement} parent
+ */
+function addKickedPlayers(parent) {
     // console.debug('addKickedPlayers')
     const hasKicked = document.getElementById('kicked-players')
     if (hasKicked) {
         return console.debug('already added kicked-players')
     }
-    const root = document.querySelector('div[data-testid="room"]')
-    if (!root) {
-        return console.debug('room root not found:', root)
+    if (!parent) {
+        return console.debug('room parent not found:', parent)
     }
-    const h5 = root.querySelector('.MuiTypography-h5').cloneNode(true)
+    const h5players = parent.querySelector('.MuiTypography-h5')
+    const h5 = h5players.cloneNode(true)
     h5.textContent = 'Kicked'
     h5.style.marginTop = '10px'
-    h5.style.color = '#f88379'
+    // h5.style.color = '#f88379'
     const kicked = document.createElement('div')
     kicked.id = 'kicked-players'
-    root.insertBefore(h5, root.children[5])
-    root.insertBefore(kicked, root.children[6])
+    parent.insertBefore(h5, parent.children[5])
+    parent.insertBefore(kicked, parent.children[6])
     // console.debug('currentRoom', currentRoom)
     // console.debug('roomState', roomState[currentRoom])
     // console.debug('kicked', roomState[currentRoom]?.kicked)
