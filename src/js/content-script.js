@@ -345,14 +345,12 @@ function closeEventSources() {
  * @param {String} room
  */
 async function processRoom(room) {
-    const { options, profile } = await chrome.storage.sync.get([
-        'options',
-        'profile',
-    ])
+    const { options } = await chrome.storage.sync.get(['options'])
     // TODO: Safe to re-run this because it checks for existence before creating
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
     }
+    addKickedPlayers()
 
     // const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
@@ -370,6 +368,7 @@ async function processRoom(room) {
     aside.appendChild(div)
 
     console.debug(`Process Room: ${room}`)
+
     await sse1(room)
 
     if (options.autoUpdateOptions) {
@@ -381,11 +380,13 @@ async function processRoom(room) {
         clickUpdateOptions()
     }
 
-    if (roomState[currentRoom]) {
-        if (roomState[currentRoom].kicked?.includes(profile.id)) {
-            processYouKicked()
-        }
-    }
+    // if (roomState[currentRoom]) {
+    //     if (roomState[currentRoom].kicked?.includes(profile.id)) {
+    //         processYouKicked()
+    //     }
+    // }
+
+    // addKickedPlayers()
 
     // TODO: Add Option to Auto Select Team
     // await selectTeam(room, '1')
@@ -401,10 +402,6 @@ async function processRoom(room) {
     //     processRoomPlayers(users)
     // }
 
-    // TODO: Query Selectors for Players header to add kicked players
-    // parent.querySelector('div[data-testid="home-header"]')
-    // parent.querySelector('.MuiTypography-h5')
-    //
     // TODO: Use Mutation Events
     // app.querySelectorAll('div[data-id].MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded')
 }
@@ -416,6 +413,33 @@ async function processRoom(room) {
 //         processPlayerIcon(el).then()
 //     }
 // }
+
+function addKickedPlayers() {
+    // console.debug('addKickedPlayers')
+    const hasKicked = document.getElementById('kicked-players')
+    if (hasKicked) {
+        return console.debug('already added kicked-players')
+    }
+    const root = document.querySelector('div[data-testid="room"]')
+    if (!root) {
+        return console.debug('room root not found:', root)
+    }
+    const h5 = root.querySelector('.MuiTypography-h5').cloneNode(true)
+    h5.textContent = 'Kicked'
+    h5.style.marginTop = '10px'
+    const kicked = document.createElement('div')
+    kicked.id = 'kicked-players'
+    root.insertBefore(h5, root.children[5])
+    root.insertBefore(kicked, root.children[6])
+    // console.debug('currentRoom', currentRoom)
+    // console.debug('roomState', roomState[currentRoom])
+    // console.debug('kicked', roomState[currentRoom]?.kicked)
+    if (roomState[currentRoom]?.kicked) {
+        updateKickedPlayers(roomState[currentRoom]).then()
+    } else {
+        kicked.textContent = 'No Kicked Players.'
+    }
+}
 
 async function addCancelReadyBtn() {
     // console.debug('addCancelReadyBtn')
@@ -513,19 +537,29 @@ async function sse1(room) {
     source1 = new EventSource(url, {
         withCredentials: true,
     })
-    const { options, profile } = await chrome.storage.sync.get([
-        'options',
-        'profile',
-    ])
+    // const { options, profile } = await chrome.storage.sync.get([
+    //     'options',
+    //     'profile',
+    // ])
     console.debug('Adding Listener to: source1')
     source1.addEventListener('msg', function (event) {
         const msg = JSON.parse(event.data)
         // console.debug('sse1:', msg)
         const state = msg.state
         if (msg.t === 'rs' && state?.tid) {
-            // roomStateUpdate(room, state)
             // TODO: This Fires Multiple Times as a Function
             // console.debug('Room state:', state)
+
+            // if (state?.tid && state?.tid !== roomState[room]?.tid) {
+            //     console.info('Initial Room State! TID:', state.tid)
+            //     roomState[room] = state
+            //     sse2(room).then()
+            //     if (options.sendSelfOnJoin) {
+            //         sendPlayerStats(profile.id).then()
+            //     }
+            //     return console.debug('return on initial room state.')
+            // }
+
             if (roomState[room]) {
                 if (!roomState[room].game && state.game) {
                     gameStart(state).then()
@@ -552,16 +586,49 @@ async function sse1(room) {
             roomState[room] = state
         }
         if (msg.t === 'helo') {
-            // TODO: This Needs to be Stateful
-            setTimeout(sse2, 250, room)
-            if (options.sendSelfOnJoin) {
-                setTimeout(sendPlayerStats, 250, profile.id)
-            }
-            // if (options.addCancelReadyBtn) {
-            //     setTimeout(addCancelReadyBtn, 250)
-            // }
+            // TODO: This Needs to be Stateful as this fires on SSE re-connect
+            //       Need a way to reliably determine when you first enter a room
+            setTimeout(processInitialRoomState, 250, room)
         }
     })
+}
+
+async function processInitialRoomState(room) {
+    const state = roomState[room]
+    console.debug('processInitialRoomState:', room, state)
+    const { options, profile } = await chrome.storage.sync.get([
+        'options',
+        'profile',
+    ])
+    await sse2(room)
+    if (options.sendSelfOnJoin) {
+        await sendPlayerStats(profile.id)
+    }
+    if (state?.kicked) {
+        await updateKickedPlayers(state)
+    }
+    if (state?.kicked?.includes(profile.id)) {
+        processYouKicked()
+    }
+}
+
+async function updateKickedPlayers(state) {
+    console.debug('updateKickedPlayers')
+    const kicked = document.getElementById('kicked-players')
+    if (!kicked) {
+        return console.warn('kicked-players element not found')
+    }
+    const players = await pidsToNames(state.kicked)
+    console.debug('players', players)
+    if (!players.length) {
+        kicked.textContent = 'No Kicked Players.'
+        return console.debug('no kicked players, yet...')
+    }
+    let msg = ''
+    for (const name of players) {
+        msg += `${name}, `
+    }
+    kicked.textContent = msg.replace(/,\s*$/, '')
 }
 
 /**
@@ -856,6 +923,7 @@ async function playersJoinRoom(state, players) {
  */
 async function roomKickedChange(before, after) {
     console.debug('roomKickedChange:', before, after)
+    await updateKickedPlayers(after)
     const kicked = []
     for (const pid of after.kicked) {
         if (!before.kicked.includes(pid)) {
@@ -1192,15 +1260,12 @@ async function userJoinRoom(pid, rid = currentRoom) {
 }
 
 async function sendKickedPlayers() {
+    console.log('sendKickedPlayers')
     const room = roomState[currentRoom]
     if (!room.kicked.length) {
         return await sendChatMessage('No Kicked Players.')
     }
-    const players = []
-    for (const pid of room.kicked) {
-        const player = await getProfile(pid, true)
-        players.push(player.username)
-    }
+    const players = await pidsToNames(room.kicked)
     let msg = 'Kicked Players: '
     for (const name of players) {
         msg += `${name}, `
@@ -1915,6 +1980,15 @@ async function selectTeam(rid, team) {
     }
     const response = await fetch('https://api-v2.playdrift.com/graphql', init)
     console.debug('response:', response)
+}
+
+async function pidsToNames(pids) {
+    const players = []
+    for (const pid of pids) {
+        const player = await getProfile(pid, true)
+        players.push(player.username)
+    }
+    return players
 }
 
 /**
