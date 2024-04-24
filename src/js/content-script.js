@@ -345,10 +345,7 @@ function closeEventSources() {
  * @param {String} room
  */
 async function processRoom(room) {
-    const { options, profile } = await chrome.storage.sync.get([
-        'options',
-        'profile',
-    ])
+    const { options } = await chrome.storage.sync.get(['options'])
     // TODO: Safe to re-run this because it checks for existence before creating
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
