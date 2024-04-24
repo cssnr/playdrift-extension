@@ -198,7 +198,7 @@ async function onUpdate(tabId, changeInfo, tab) {
             const response = await chrome.tabs.sendMessage(tabId, {
                 url: changeInfo.url,
             })
-            console.debug('response:', response)
+            // console.debug('response:', response)
         } catch (e) {}
     }
 }
