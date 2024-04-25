@@ -1589,26 +1589,32 @@ async function showTooltipMouseover(event) {
     tooltip.style.display = 'block'
     instance.update()
     const pid = event.target.parentNode.dataset.id
-    const profile = await getProfile(pid)
+    const player = await getProfile(pid)
     // const stats = calStats(profile)
     tooltip.innerHTML = ''
+    const { banned } = await chrome.storage.sync.get(['banned'])
+    if (banned.includes(pid)) {
+        tooltip.style.border = '2px solid #ff0000'
+    } else {
+        tooltip.style.borderWidth = '0'
+    }
     const span = document.createElement('span')
     span.style.width = '100%'
     span.style.display = 'inline-block'
     const span1 = span.cloneNode(true)
-    span1.textContent = `(${profile.level}) ${profile.username}`
+    span1.textContent = `(${player.level}) ${player.username}`
     tooltip.appendChild(span1)
     const span2 = span.cloneNode(true)
-    span2.textContent = `Rating: ${profile.stats.rating} - ${profile.stats.wl_percent}%`
-    if (profile.rating < 200) {
+    span2.textContent = `Rating: ${player.stats.rating} - ${player.stats.wl_percent}%`
+    if (player.rating < 200) {
         span2.style.color = '#EE4B2B'
     } else {
         span2.style.color = '#50C878'
     }
     tooltip.appendChild(span2)
     const span3 = span.cloneNode(true)
-    span3.textContent = `W/L: ${profile.stats.won} / ${profile.stats.lost}`
-    if (profile.stats.wl_percent < 45) {
+    span3.textContent = `W/L: ${player.stats.won} / ${player.stats.lost}`
+    if (player.stats.wl_percent < 45) {
         span3.style.color = '#EE4B2B'
     } else {
         span3.style.color = '#50C878'
