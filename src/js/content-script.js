@@ -1973,11 +1973,13 @@ async function banClick(event) {
     console.debug('banClick:', pid, event)
     await banPlayer(pid)
     const player = await getProfile(pid)
-    await sendChatMessage(`Banned User: ${player.username}`)
-    // TODO: Make this an option
-    // if (options.autoKickBanned) {
-    //     await kickPlayer(pid)
-    // }
+    if (window.location.pathname.includes('room')) {
+        // TODO: Make this an Option
+        await sendChatMessage(`Banned User: ${player.username}`)
+    }
+    if (options.autoKickBanned) {
+        await kickPlayer(pid)
+    }
     history.back()
 }
 
