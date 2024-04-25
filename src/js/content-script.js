@@ -2,7 +2,7 @@
 
 console.info('RUNNING content-script.js')
 
-// chrome.storage.onChanged.addListener(onChanged)
+chrome.storage.onChanged.addListener(onChanged)
 chrome.runtime.onMessage.addListener(onMessage)
 
 document.addEventListener('mouseover', documentMouseover)
@@ -312,20 +312,21 @@ async function teamChangeClick(event) {
     }
 }
 
-// /**
-//  * On Changed Callback
-//  * @function onChanged
-//  * @param {Object} changes
-//  * @param {String} namespace
-//  */
-// function onChanged(changes, namespace) {
-//     console.debug('onChanged:', changes, namespace)
-//     // for (const [key, { newValue }] of Object.entries(changes)) {
-//     //     if (namespace === 'sync' && key === 'options') {
-//     //         console.debug('newValue:', newValue)
-//     //     }
-//     // }
-// }
+/**
+ * On Changed Callback
+ * @function onChanged
+ * @param {Object} changes
+ * @param {String} namespace
+ */
+function onChanged(changes, namespace) {
+    console.debug('onChanged:', changes, namespace)
+    for (const [key, { newValue }] of Object.entries(changes)) {
+        if (namespace === 'sync' && key === 'options') {
+            console.debug('newValue:', newValue)
+            updateRoomOptions(newValue)
+        }
+    }
+}
 
 /**
  * On Message Callback
@@ -400,12 +401,13 @@ async function processRoom(room) {
 
     // TODO: Safe to re-run this because it checks for existence before creating
     if (options.roomMinDisplay) {
-        updateRoom(parent)
+        updateRoomMin(parent)
     }
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
     }
     addKickedPlayers(parent)
+    updateRoomOptions(options)
 
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
@@ -467,7 +469,7 @@ async function processRoom(room) {
  * @function updateRoom
  * @param {HTMLElement} parent
  */
-function updateRoom(parent) {
+function updateRoomMin(parent) {
     if (!parent) {
         return console.debug('room parent not found:', parent)
     }
@@ -489,6 +491,56 @@ function updateRoom(parent) {
             root.remove()
         }
     }
+}
+
+/**
+ * Update Options in Room
+ * @function updateRoomOptions
+ * @param {Object} options
+ */
+function updateRoomOptions(options) {
+    console.debug('updateRoomOptions', options)
+    const parent = document.querySelector('div[data-testid="room"]')
+    if (!parent) {
+        return console.debug('room parent not found:', parent)
+    }
+    let div = document.getElementById('room-options')
+    if (!div) {
+        div = document.createElement('div')
+        div.id = 'room-options'
+        div.style.margin = '5px'
+    }
+    div.textContent = ''
+    const span = document.createElement('span')
+    span.textContent = 'Auto Kick For:'
+    span.style.marginRight = '10px'
+    div.appendChild(span)
+    // const switchSource = parent.querySelector(
+    //     '.MuiButtonBase-root.MuiSwitch-switchBase.MuiSwitch-colorSecondary.MuiSwitch-switchBase'
+    // ).parentElement.parentElement
+    // console.debug('switchSource', switchSource)
+    const sep = document.createElement('span')
+    sep.textContent = '|'
+    sep.style.margin = '0 5px'
+    const opts = {
+        autoKickBanned: 'Banned',
+        autoKickLowRate: 'Win Rate',
+        autoKickLowGames: 'Total Games',
+    }
+    for (const [key, value] of Object.entries(opts)) {
+        const span = document.createElement('span')
+        span.textContent = value
+        // span.style.marginLeft = '6px'
+        if (options[key]) {
+            span.style.color = '#50C878'
+        } else {
+            span.style.color = '#EE4B2B'
+        }
+        div.appendChild(span)
+        div.appendChild(sep.cloneNode(true))
+    }
+    div.removeChild(div.lastChild)
+    parent.insertBefore(div, parent.children[2])
 }
 
 /**
