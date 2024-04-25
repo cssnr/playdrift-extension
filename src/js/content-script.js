@@ -422,6 +422,11 @@ async function processRoom(room) {
     const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
 
+    // const optionsButton = parent.querySelector(
+    //     'button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge'
+    // )
+    // const owner = !!optionsButton
+
     // TODO: Safe to re-run this because it checks for existence before creating
     if (options.roomMinDisplay) {
         updateRoomMin(parent)
@@ -431,6 +436,11 @@ async function processRoom(room) {
     }
     addKickedPlayers(parent)
     updateRoomOptions(options)
+    // if (owner) {
+    //     // TODO: This needs to be a function, duplicated
+    //     const roomOptions = document.getElementById('room-options')
+    //     roomOptions.style.display = 'block'
+    // }
 
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
@@ -527,17 +537,18 @@ function updateRoomOptions(options) {
     if (!parent) {
         return console.debug('room parent not found:', parent)
     }
-    let div = document.getElementById('room-options')
-    if (!div) {
-        div = document.createElement('div')
-        div.id = 'room-options'
-        div.style.margin = '5px'
+    let roomOptions = document.getElementById('room-options')
+    // roomOptions.style.display = 'none'
+    if (!roomOptions) {
+        roomOptions = document.createElement('div')
+        roomOptions.id = 'room-options'
+        roomOptions.style.paddingTop = '10px'
     }
-    div.textContent = ''
+    roomOptions.textContent = ''
     const span = document.createElement('span')
     span.textContent = 'Auto Kick For:'
     span.style.marginRight = '10px'
-    div.appendChild(span)
+    roomOptions.appendChild(span)
     // const switchSource = parent.querySelector(
     //     '.MuiButtonBase-root.MuiSwitch-switchBase.MuiSwitch-colorSecondary.MuiSwitch-switchBase'
     // ).parentElement.parentElement
@@ -551,19 +562,37 @@ function updateRoomOptions(options) {
         autoKickLowGames: 'Total Games',
     }
     for (const [key, value] of Object.entries(opts)) {
-        const span = document.createElement('span')
-        span.textContent = value
-        // span.style.marginLeft = '6px'
+        const link = document.createElement('a')
+        link.textContent = value
+        link.dataset.key = key
+        link.href = '#'
+        link.setAttribute('role', 'button')
+        link.addEventListener('click', optionsClickCallback)
+        // link.style.marginLeft = '6px'
         if (options[key]) {
-            span.style.color = '#50C878'
+            link.style.color = '#50C878'
         } else {
-            span.style.color = '#EE4B2B'
+            link.style.color = '#EE4B2B'
         }
-        div.appendChild(span)
-        div.appendChild(sep.cloneNode(true))
+        roomOptions.appendChild(link)
+        roomOptions.appendChild(sep.cloneNode(true))
     }
-    div.removeChild(div.lastChild)
-    parent.insertBefore(div, parent.children[2])
+    roomOptions.removeChild(roomOptions.lastChild)
+    parent.insertBefore(roomOptions, parent.children[2])
+}
+
+async function optionsClickCallback(event) {
+    console.debug('optionsClickCallback', event)
+    event.preventDefault()
+    const key = event.target.dataset.key
+    console.debug('key', key)
+    if (!key) {
+        return console.warn('options key not found for target', event.target)
+    }
+    const { options } = await chrome.storage.sync.get(['options'])
+    options[key] = !options[key]
+    await chrome.storage.sync.set({ options })
+    // updateRoomOptions(options)
 }
 
 /**
@@ -1084,7 +1113,10 @@ async function roomPlayerChange(before, after) {
         const { profile } = await chrome.storage.sync.get(['profile'])
         if (after.players[0] === profile.id) {
             console.debug('you are now the room owner')
+            // TODO: This needs to be a function, duplicated
             await addCancelReadyBtn()
+            const roomOptions = document.getElementById('room-options')
+            roomOptions.style.display = 'block'
         }
     }
 }
