@@ -195,7 +195,7 @@ async function onUpdate(tabId, changeInfo, tab) {
     // console.debug('onUpdate: tabId, changeInfo, tab:', tabId, changeInfo, tab)
     if (changeInfo.url?.includes('playdrift.com')) {
         try {
-            const response = await chrome.tabs.sendMessage(tabId, {
+            await chrome.tabs.sendMessage(tabId, {
                 url: changeInfo.url,
             })
             // console.debug('response:', response)
