@@ -97,7 +97,7 @@ async function processLoad() {
     // const main = document.querySelector('[data-testid="app-layout-main"]')
     // console.info('main:', main)
     // setTimeout(function () {
-    //     console.log('setting max width to 100%')
+    //     console.debug('setting max width to 100%')
     //     main.style.maxWidth = '100%'
     // }, 500)
 
@@ -228,7 +228,6 @@ async function processKickButton(element) {
     if (pid === profile.id) {
         return console.debug('skipping self kick button')
     }
-    console.log(`processKickButton: ${pid}:`, element, parent)
     // TODO: Make These Options
     const options = [
         { txt: 'Low Win Rate', msg: 'low win rate.' },
@@ -238,6 +237,7 @@ async function processKickButton(element) {
         { txt: 'Possible Bot', msg: 'possible robot player.' },
         { txt: 'Ban Player', msg: 'player banned.' },
     ]
+    console.debug(`processKickButton: ${pid}:`, element, parent, options)
     for (const option of options) {
         genKickItem(element, pid, option.txt, option.msg)
     }
@@ -271,13 +271,13 @@ function genKickItem(element, pid, text, message) {
  * @param {MouseEvent} event
  */
 async function kickDropDownCallback(event) {
-    console.log('kickDropDownCallback', event)
+    console.debug('kickDropDownCallback', event)
     event.preventDefault()
     const target = event.target.closest('li')
     target.parentElement?.children[0]?.click()
     const pid = target.dataset?.pid
     const message = target.dataset?.message
-    console.log('pid', pid)
+    console.debug('pid', pid)
     if (!pid) {
         return console.warn('No PID for event:', event)
     }
@@ -298,7 +298,6 @@ async function teamChangeClick(event) {
     // console.debug('teamChangeClick', event)
     const { options } = await chrome.storage.sync.get(['options'])
     if (!options.stickyTeams) {
-        // console.debug('Sticky Teams Disabled')
         return
     }
     const li = event.target.closest('li')
@@ -458,7 +457,7 @@ async function processRoom(room) {
 // function processRoomPlayers(elements) {
 //     console.debug('processRoomPlayers', elements)
 //     for (const el of elements) {
-//         console.log('el', el)
+//         console.debug('el', el)
 //         processPlayerIcon(el).then()
 //     }
 // }
@@ -533,7 +532,6 @@ async function addCancelReadyBtn() {
     // console.debug('addCancelReadyBtn')
     const cancelBtn = document.getElementById('ready-cancel-button')
     if (cancelBtn) {
-        // console.debug('Cancel Button Already Added')
         return
     }
     // const { profile } = await chrome.storage.sync.get(['profile'])
@@ -551,13 +549,12 @@ async function addCancelReadyBtn() {
         'button.MuiButton-outlinedSecondary'
     )
     if (!source) {
-        // console.debug('return on no ready button')
-        return
+        return console.debug('return on no ready button')
     }
-    // console.log('source', source)
+    // console.debug('source', source)
     const btn = source.cloneNode(true)
     const span = source.querySelector('.MuiTouchRipple-root')?.cloneNode(true)
-    // console.log('span', source)
+    // console.debug('span', source)
     if (!span) {
         // console.debug('no options button - not owner')
         return
@@ -708,16 +705,17 @@ async function processInitialRoomState(room) {
  * @param {Object} state
  */
 async function updateKickedPlayers(state) {
-    console.debug('updateKickedPlayers')
+    // console.debug('updateKickedPlayers')
     const kicked = document.getElementById('kicked-players')
     if (!kicked) {
-        return console.warn('kicked-players element not found')
+        return console.debug('kicked-players element not found')
     }
     // const players = await pidsToNames(state.kicked)
     // console.debug('players', players)
     if (!state?.kicked?.length) {
         kicked.textContent = 'No Kicked Players.'
-        return console.debug('no kicked players, yet...')
+        // console.debug('no kicked players, yet...')
+        return
     }
     let msg = ''
     for (const pid of state.kicked) {
@@ -816,7 +814,7 @@ async function processGameState(state) {
             $(`#domino-${state.first}`).fadeTo('slow', 0.2)
         }
         for (const [key, value] of Object.entries(state.trees)) {
-            // console.log(`key: ${key} | value:`, value)
+            // console.debug(`key: ${key} | value:`, value)
             for (const bone of value.bones) {
                 // console.debug(`bone: ${bone}`)
                 $(`#domino-${bone}`).fadeTo('slow', 0.2)
@@ -868,7 +866,7 @@ async function processGameAction(action) {
         //     `bid ${action.bid} - ${bidMap[action.bid]} on tree ${msg.a.tree}: ${treeMap[msg.a.tree]}`
         // )
         if (options.showRemainingDominoes) {
-            // console.log('bid:', action.bid)
+            // console.debug('bid:', action.bid)
             $(`#domino-${action.bid}`).fadeTo('slow', 0.2)
         }
     }
@@ -956,7 +954,7 @@ async function sse4() {
 //  * @param {Object} msg
 //  */
 // function newInboxMessage(msg) {
-//     console.log('newInboxMessage:', msg)
+//     console.debug('newInboxMessage:', msg)
 // }
 
 /**
@@ -1389,7 +1387,7 @@ async function userJoinRoom(pid, rid = currentRoom) {
  * @function sendKickedPlayers
  */
 async function sendKickedPlayers() {
-    console.log('sendKickedPlayers')
+    console.debug('sendKickedPlayers')
     const room = roomState[currentRoom]
     if (!room.kicked.length) {
         return await sendChatMessage('No Kicked Players.')
@@ -1514,7 +1512,7 @@ async function showMouseover(event) {
  */
 async function processPlayerIcon(parent) {
     const element = parent.parentNode
-    console.debug('processPlayerIcon: parentNode:', element, parent)
+    // console.debug('processPlayerIcon: parentNode:', element, parent)
     const { options } = await chrome.storage.sync.get(['options'])
     element.dataset.processed = 'yes'
     element.parentNode.style.position = 'relative'

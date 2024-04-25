@@ -49,33 +49,35 @@ All **Chromium** Based Browsers can install the extension from the
 > All features are **Optional** and disabled by default. Visit the options page to enable them.
 > You can access options through the extension icon, see [Configuration](#configuration) for more info.
 
-*   Show User Rating and Record (Win/Loss)
 *   Track Recent Game History, Wins/Losses, Rating and Date
-*   Show Stats Tooltip on Mouse Over
-*   Show Stats on Icon on Mouse Over
-*   Send Stats to Chat on User Join
+*   Show Players Rating and Record (Win/Loss)
+*   Show Stats Tooltip on Mouse Over Icon
+*   Show Stats on Icon on Mouse Over Icon
+*   Send Player Stats to Chat on User Join
 *   Send Your Own Stats to Chat When You Join
+*   Send Player Leaving Active Game Alerts to Chat
 *   Send Team Change Alerts to Chat
 *   Send Player Kicked Alerts to Chat
 *   Keep Team Set After Selecting One
+*   Add Cancel Ready Button if you are the Room Owner
+*   Auto Update Game Options Dialog on Room Creation
+*   Minimize Room Display by Reducing Paddings
 *   Play Audio on Your Turn to Make a Move
 *   Play Audio When Users Join or Leave a Room
 *   Play Audio When Users Changes Teams
 *   Play Audio on New Inbox Message
 *   Play Audio on New Chat Message
 *   Play Chat Message as Audio (TTS)
-*   Chat Alerts on Player Leaving an Active Game
+*   Ban User Feature w/ Auto Kick Banned Option
 *   Auto Kick Users Below Set Win Rate Percentage
 *   Auto Kick Users Below Set Total Games Played
-*   Extended Kick Menu with Kick Reasons Sent to Chat
-*   Ban User Feature that Automatically Kicks User in Future
-*   Send Customizable Message on Game Start and Stats at End
-*   Add Cancel Ready Button if you are the Room Owner
-*   Auto Update Game Options Dialog on Room Creation
 *   Auto Continue Through the Game Stats at End of Game
-*   Close Profiles by Clicking Anywhere Outside the Profile
-*   Add Custom Chat Commands that Anybody can Use
+*   Send Customizable Message on Game Start and Stats at End
 *   Show Remaining Dominoes and Optionally Exclude Your Own
+*   Add Custom Chat Commands that Anybody can Use
+*   Close Profiles by Clicking Anywhere Outside the Profile
+*   Show List of Kicked Players in Room below Players
+*   Extended Kick Menu with Kick Reasons Sent to Chat
 
 ### Upcoming Features and Ideas
 
@@ -84,6 +86,9 @@ All **Chromium** Based Browsers can install the extension from the
 *   Remember Recent Players who Kicked You
 *   End Game Player Stats (Total Points, Time Taken)
 *   More Detailed History Including Opponents, Scores, etc.
+*   Display Important Room Options in the Room as Colored Text
+*   Friends/Favorites List w/ notifications when they join game
+*   Remember how many times you played with a player and display in tooltip
 
 Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
@@ -136,6 +141,7 @@ However, with no gains from leveled up accounts, it is most likely the bots are 
 # Known Issues
 
 *   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
+*   Cancel Ready Button will also reset teams for anyone not using the Keep Teams Set Option
 
 # Configuration
 
