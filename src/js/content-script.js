@@ -11,6 +11,7 @@ document.addEventListener('mouseover', documentMouseover)
 setTimeout(processLoad, 3000)
 setInterval(updateUserInterval, 2 * 60000)
 let userIntervalID = setInterval(setUserProfile, 1000)
+// let roomIntervalID
 
 // SSE
 let source1
@@ -342,12 +343,15 @@ async function onMessage(message, sender, sendResponse) {
     }
     const url = new URL(message.url)
     if (url.searchParams.get('profile')) {
+        console.debug('PROFILE')
         console.debug('this handler has been moved to a MutationObserver')
         // const profileID = url.searchParams.get('profile')
         // // console.debug('profileID', profileID)
         // const profile = await getProfile(profileID)
         // const { banned } = await chrome.storage.sync.get(['banned'])
         // setTimeout(updateProfile, 250, profile, banned)
+    } else if (url.searchParams.get('chat')) {
+        console.debug('CHAT')
     } else if (url.pathname.includes('/room/')) {
         // TODO: Look into moving this to a MutationObserver
         const split = url.pathname.split('/')
@@ -355,18 +359,37 @@ async function onMessage(message, sender, sendResponse) {
         const game = split[3]
         currentRoom = room
         // console.debug('SET currentRoom:', currentRoom)
-        if (room) {
-            setTimeout(processRoom, 250, room)
-        }
         if (game) {
+            console.debug('GAME')
             await processGame(game)
+            // processRoomInterval()
+        } else if (room) {
+            console.debug('ROOM')
+            setTimeout(processRoom, 250, room)
+            // processRoomInterval(room)
         }
     } else {
         // TODO: This can be done at the sse function level
+        console.debug('OTHER')
         closeEventSources()
+        // processRoomInterval()
         document.getElementById('tracker-container')?.remove()
     }
 }
+
+// function processRoomInterval(room = null) {
+//     console.info('processRoomInterval:', room)
+//     if (roomIntervalID) {
+//         clearInterval(roomIntervalID)
+//     }
+//     if (room) {
+//         roomIntervalID = setInterval(checkRoom, 5000, room)
+//     }
+// }
+//
+// function checkRoom(room) {
+//     console.info('checkRoom:', room)
+// }
 
 /**
  * Close All Event Sources
@@ -658,6 +681,8 @@ async function processGame(game) {
         addDominoes()
     }
     await sse3(game)
+
+    // setTimeout(addPlayerTrackers, 500)
 }
 
 /**
@@ -682,7 +707,7 @@ async function sse1(room) {
         const state = msg.state
         if (msg.t === 'rs' && state?.tid) {
             // TODO: This Fires Multiple Times as a Function
-            console.debug('Room state:', state)
+            // console.debug('Room state:', state)
 
             // if (state?.tid && state?.tid !== roomState[room]?.tid) {
             //     console.info('Initial Room State! TID:', state.tid)
@@ -928,6 +953,28 @@ async function processGameAction(action) {
                 audio.turn.play().then()
             }
         }
+    }
+}
+
+/**
+ * Add Player Domino Trackers
+ * TODO: Need  a way to determine which player is in which position
+ * @function addPlayerTrackers
+ */
+function addPlayerTrackers() {
+    const players = document.querySelectorAll('.player')
+    console.debug('addPlayerTrackers', players)
+
+    for (let i = 0; i < players.length; i++) {
+        const player = players[i]
+        console.debug(`player: ${i}`, player)
+        console.debug(`room.players: ${i}`, roomState[currentRoom].players[i])
+        // player.style.position = 'relative'
+        const div = document.createElement('div')
+        div.id = `player-${i}`
+        div.textContent = `PLAYER ${i}`
+        div.style.position = 'absolute'
+        player.appendChild(div)
     }
 }
 
@@ -2090,7 +2137,7 @@ async function kickPlayer(pid) {
         return console.debug('not owner or user already kicked')
     }
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${currentRoom}/action/kick`
-    const response = await fetch(url, {
+    const opts = {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -2098,7 +2145,8 @@ async function kickPlayer(pid) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ player: pid }),
-    })
+    }
+    const response = await fetch(url, opts)
     const data = await response.json()
     console.debug('data:', data)
 }
@@ -2120,7 +2168,7 @@ async function sendChatMessage(message) {
     }
     const url = `https://api-v2.playdrift.com/api/v1/chat/${tid}/send`
     console.debug('url:', url)
-    const response = await fetch(url, {
+    const opts = {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -2128,7 +2176,8 @@ async function sendChatMessage(message) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: message }),
-    })
+    }
+    const response = await fetch(url, opts)
     const data = await response.json()
     console.debug('data:', data)
 }
@@ -2164,7 +2213,7 @@ async function selectTeam(rid, team) {
         variables: { id: rid, gtype: 'dominoes#v3', team: team.toString() },
         query: 'mutation RoomTeamSelect($id: ID!, $gtype: String!, $team: String!) {\n  roomTeamSelect(id: $id, gtype: $gtype, team: $team)\n}',
     }
-    const init = {
+    const opts = {
         credentials: 'include',
         headers: {
             Accept: '*/*',
@@ -2175,8 +2224,36 @@ async function selectTeam(rid, team) {
         method: 'POST',
         mode: 'cors',
     }
-    const response = await fetch('https://api-v2.playdrift.com/graphql', init)
+    const url = 'https://api-v2.playdrift.com/graphql'
+    const response = await fetch(url, opts)
     console.debug('response:', response)
+}
+
+/**
+ * Get Listed Games
+ * @function getGames
+ * @param {Object} goptFilters
+ * @return {Object}
+ */
+async function getGames(goptFilters = { gtype: ['dominoes#v3'] }) {
+    const body = {
+        goptFilters: goptFilters,
+    }
+    const opts = {
+        credentials: 'include',
+        headers: {
+            Accept: '*/*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        method: 'POST',
+        mode: 'cors',
+    }
+    const url = 'https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/search'
+    const response = await fetch(url, opts)
+    console.debug('response:', response)
+    return await response.json()
 }
 
 /**
