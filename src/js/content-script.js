@@ -324,7 +324,10 @@ function onChanged(changes, namespace) {
     for (const [key, { newValue }] of Object.entries(changes)) {
         if (namespace === 'sync' && key === 'options') {
             console.debug('newValue:', newValue)
-            updateRoomOptions(newValue)
+            // updateRoomOptions(newValue)
+            if (newValue.showRoomOptions) {
+                updateRoomOptions(newValue)
+            }
         }
     }
 }
@@ -434,8 +437,10 @@ async function processRoom(room) {
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
     }
+    if (options.showRoomOptions) {
+        updateRoomOptions(options)
+    }
     addKickedPlayers(parent)
-    updateRoomOptions(options)
     // if (owner) {
     //     // TODO: This needs to be a function, duplicated
     //     const roomOptions = document.getElementById('room-options')
@@ -489,6 +494,13 @@ async function processRoom(room) {
     // app.querySelectorAll('div[data-id].MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded')
 }
 
+function isRoomOwner() {
+    const optionsButton = document.querySelector(
+        'button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge'
+    )
+    return !!optionsButton
+}
+
 // function processRoomPlayers(elements) {
 //     console.debug('processRoomPlayers', elements)
 //     for (const el of elements) {
@@ -533,6 +545,13 @@ function updateRoomMin(parent) {
  */
 function updateRoomOptions(options) {
     console.debug('updateRoomOptions', options)
+    const owner = isRoomOwner()
+    if (!owner) {
+        return console.debug('NOT room owner')
+    }
+    // if (options.showRoomOptions) {
+    //     return console.debug('showRoomOptions disabled')
+    // }
     const parent = document.querySelector('div[data-testid="room"]')
     if (!parent) {
         return console.debug('room parent not found:', parent)
@@ -1110,13 +1129,19 @@ async function roomPlayerChange(before, after) {
 
     if (before.players[0] !== after.players[0]) {
         console.debug('room owner change')
-        const { profile } = await chrome.storage.sync.get(['profile'])
+        const { options, profile } = await chrome.storage.sync.get([
+            'options',
+            'profile',
+        ])
         if (after.players[0] === profile.id) {
             console.debug('you are now the room owner')
             // TODO: This needs to be a function, duplicated
             await addCancelReadyBtn()
-            const roomOptions = document.getElementById('room-options')
-            roomOptions.style.display = 'block'
+            if (options.showRoomOptions) {
+                updateRoomOptions(options)
+            }
+            // const roomOptions = document.getElementById('room-options')
+            // roomOptions.style.display = 'block'
         }
     }
 }

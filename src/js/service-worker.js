@@ -29,6 +29,7 @@ const defaultOptions = {
     sendSelfKicked: true,
     stickyTeams: true,
     addCancelReadyBtn: true,
+    showRoomOptions: true,
     autoUpdateOptions: false,
     roomMinDisplay: false,
     playTurnAudio: false,
