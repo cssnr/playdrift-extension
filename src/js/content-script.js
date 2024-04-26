@@ -324,7 +324,6 @@ function onChanged(changes, namespace) {
     for (const [key, { newValue }] of Object.entries(changes)) {
         if (namespace === 'sync' && key === 'options') {
             console.debug('newValue:', newValue)
-            // updateRoomOptions(newValue)
             if (newValue.showRoomOptions) {
                 updateRoomOptions(newValue)
             }
@@ -425,11 +424,6 @@ async function processRoom(room) {
     const parent = document.querySelector('div[data-testid="room"]')
     // console.debug('parent:', parent)
 
-    // const optionsButton = parent.querySelector(
-    //     'button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge'
-    // )
-    // const owner = !!optionsButton
-
     // TODO: Safe to re-run this because it checks for existence before creating
     if (options.roomMinDisplay) {
         updateRoomMin(parent)
@@ -441,11 +435,6 @@ async function processRoom(room) {
         updateRoomOptions(options)
     }
     addKickedPlayers(parent)
-    // if (owner) {
-    //     // TODO: This needs to be a function, duplicated
-    //     const roomOptions = document.getElementById('room-options')
-    //     roomOptions.style.display = 'block'
-    // }
 
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
@@ -463,7 +452,6 @@ async function processRoom(room) {
     console.debug(`Process Room: ${room}`)
 
     await sse1(room)
-
     if (options.autoUpdateOptions) {
         clickUpdateOptions()
     }
@@ -549,15 +537,11 @@ function updateRoomOptions(options) {
     if (!owner) {
         return console.debug('NOT room owner')
     }
-    // if (options.showRoomOptions) {
-    //     return console.debug('showRoomOptions disabled')
-    // }
     const parent = document.querySelector('div[data-testid="room"]')
     if (!parent) {
         return console.debug('room parent not found:', parent)
     }
     let roomOptions = document.getElementById('room-options')
-    // roomOptions.style.display = 'none'
     if (!roomOptions) {
         roomOptions = document.createElement('div')
         roomOptions.id = 'room-options'
@@ -587,7 +571,6 @@ function updateRoomOptions(options) {
         link.href = '#'
         link.setAttribute('role', 'button')
         link.addEventListener('click', optionsClickCallback)
-        // link.style.marginLeft = '6px'
         if (options[key]) {
             link.style.color = '#50C878'
         } else {
@@ -1135,13 +1118,10 @@ async function roomPlayerChange(before, after) {
         ])
         if (after.players[0] === profile.id) {
             console.debug('you are now the room owner')
-            // TODO: This needs to be a function, duplicated
             await addCancelReadyBtn()
             if (options.showRoomOptions) {
                 updateRoomOptions(options)
             }
-            // const roomOptions = document.getElementById('room-options')
-            // roomOptions.style.display = 'block'
         }
     }
 }
