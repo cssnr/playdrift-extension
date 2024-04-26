@@ -12,6 +12,8 @@ chrome.tabs.onUpdated.addListener(onUpdate)
 chrome.storage.onChanged.addListener(onChanged)
 
 const githubURL = 'https://github.com/cssnr/playdrift-extension'
+// const installURL = 'https://playdrift-extension.cssnr.com/docs/'
+const uninstallURL = 'https://playdrift-extension.cssnr.com/uninstall/'
 
 const defaultOptions = {
     // audio: audio,
@@ -27,6 +29,7 @@ const defaultOptions = {
     sendSelfKicked: true,
     stickyTeams: true,
     addCancelReadyBtn: true,
+    showRoomOptions: true,
     autoUpdateOptions: false,
     roomMinDisplay: false,
     playTurnAudio: false,
@@ -107,6 +110,7 @@ async function onInstalled(details) {
             const url = chrome.runtime.getURL('/html/oninstall.html')
             await chrome.tabs.create({ active: true, url })
         }
+        // await chrome.tabs.create({ active: false, url: installURL })
     } else if (details.reason === chrome.runtime.OnInstalledReason.UPDATE) {
         if (options.showUpdate) {
             const manifest = chrome.runtime.getManifest()
@@ -116,7 +120,7 @@ async function onInstalled(details) {
             }
         }
     }
-    await chrome.runtime.setUninstallURL(`${githubURL}/issues`)
+    await chrome.runtime.setUninstallURL(uninstallURL)
 }
 
 /**

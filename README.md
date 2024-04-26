@@ -25,7 +25,9 @@ for some of the most useful features.
 *   [Development](#development)
     -   [Building](#building)
 
-[![GitHub Image](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](#features)
+[![Screen Shots](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://playdrift-extension.cssnr.com/screenshots/)
+
+[Visit Website](https://playdrift-extension.cssnr.com/) | [View Screen Shots](https://playdrift-extension.cssnr.com/screenshots/)
 
 # Install
 

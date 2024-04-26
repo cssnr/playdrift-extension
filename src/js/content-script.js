@@ -11,6 +11,7 @@ document.addEventListener('mouseover', documentMouseover)
 setTimeout(processLoad, 3000)
 setInterval(updateUserInterval, 2 * 60000)
 let userIntervalID = setInterval(setUserProfile, 1000)
+// let roomIntervalID
 
 // SSE
 let source1
@@ -323,7 +324,9 @@ function onChanged(changes, namespace) {
     for (const [key, { newValue }] of Object.entries(changes)) {
         if (namespace === 'sync' && key === 'options') {
             console.debug('newValue:', newValue)
-            updateRoomOptions(newValue)
+            if (newValue.showRoomOptions) {
+                updateRoomOptions(newValue)
+            }
         }
     }
 }
@@ -342,12 +345,15 @@ async function onMessage(message, sender, sendResponse) {
     }
     const url = new URL(message.url)
     if (url.searchParams.get('profile')) {
+        console.debug('PROFILE')
         console.debug('this handler has been moved to a MutationObserver')
         // const profileID = url.searchParams.get('profile')
         // // console.debug('profileID', profileID)
         // const profile = await getProfile(profileID)
         // const { banned } = await chrome.storage.sync.get(['banned'])
         // setTimeout(updateProfile, 250, profile, banned)
+    } else if (url.searchParams.get('chat')) {
+        console.debug('CHAT')
     } else if (url.pathname.includes('/room/')) {
         // TODO: Look into moving this to a MutationObserver
         const split = url.pathname.split('/')
@@ -355,18 +361,37 @@ async function onMessage(message, sender, sendResponse) {
         const game = split[3]
         currentRoom = room
         // console.debug('SET currentRoom:', currentRoom)
-        if (room) {
-            setTimeout(processRoom, 250, room)
-        }
         if (game) {
+            console.debug('GAME')
             await processGame(game)
+            // processRoomInterval()
+        } else if (room) {
+            console.debug('ROOM')
+            setTimeout(processRoom, 250, room)
+            // processRoomInterval(room)
         }
     } else {
         // TODO: This can be done at the sse function level
+        console.debug('OTHER')
         closeEventSources()
+        // processRoomInterval()
         document.getElementById('tracker-container')?.remove()
     }
 }
+
+// function processRoomInterval(room = null) {
+//     console.info('processRoomInterval:', room)
+//     if (roomIntervalID) {
+//         clearInterval(roomIntervalID)
+//     }
+//     if (room) {
+//         roomIntervalID = setInterval(checkRoom, 5000, room)
+//     }
+// }
+//
+// function checkRoom(room) {
+//     console.info('checkRoom:', room)
+// }
 
 /**
  * Close All Event Sources
@@ -406,8 +431,10 @@ async function processRoom(room) {
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
     }
+    if (options.showRoomOptions) {
+        updateRoomOptions(options)
+    }
     addKickedPlayers(parent)
-    updateRoomOptions(options)
 
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
@@ -425,7 +452,6 @@ async function processRoom(room) {
     console.debug(`Process Room: ${room}`)
 
     await sse1(room)
-
     if (options.autoUpdateOptions) {
         clickUpdateOptions()
     }
@@ -454,6 +480,13 @@ async function processRoom(room) {
 
     // TODO: Use Mutation Events
     // app.querySelectorAll('div[data-id].MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded')
+}
+
+function isRoomOwner() {
+    const optionsButton = document.querySelector(
+        'button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge.MuiButton-root.MuiButton-outlined.MuiButton-outlinedSecondary.MuiButton-sizeLarge.MuiButton-outlinedSizeLarge'
+    )
+    return !!optionsButton
 }
 
 // function processRoomPlayers(elements) {
@@ -500,21 +533,25 @@ function updateRoomMin(parent) {
  */
 function updateRoomOptions(options) {
     console.debug('updateRoomOptions', options)
+    const owner = isRoomOwner()
+    if (!owner) {
+        return console.debug('NOT room owner')
+    }
     const parent = document.querySelector('div[data-testid="room"]')
     if (!parent) {
         return console.debug('room parent not found:', parent)
     }
-    let div = document.getElementById('room-options')
-    if (!div) {
-        div = document.createElement('div')
-        div.id = 'room-options'
-        div.style.margin = '5px'
+    let roomOptions = document.getElementById('room-options')
+    if (!roomOptions) {
+        roomOptions = document.createElement('div')
+        roomOptions.id = 'room-options'
+        roomOptions.style.paddingTop = '10px'
     }
-    div.textContent = ''
+    roomOptions.textContent = ''
     const span = document.createElement('span')
     span.textContent = 'Auto Kick For:'
     span.style.marginRight = '10px'
-    div.appendChild(span)
+    roomOptions.appendChild(span)
     // const switchSource = parent.querySelector(
     //     '.MuiButtonBase-root.MuiSwitch-switchBase.MuiSwitch-colorSecondary.MuiSwitch-switchBase'
     // ).parentElement.parentElement
@@ -528,19 +565,36 @@ function updateRoomOptions(options) {
         autoKickLowGames: 'Total Games',
     }
     for (const [key, value] of Object.entries(opts)) {
-        const span = document.createElement('span')
-        span.textContent = value
-        // span.style.marginLeft = '6px'
+        const link = document.createElement('a')
+        link.textContent = value
+        link.dataset.key = key
+        link.href = '#'
+        link.setAttribute('role', 'button')
+        link.addEventListener('click', optionsClickCallback)
         if (options[key]) {
-            span.style.color = '#50C878'
+            link.style.color = '#50C878'
         } else {
-            span.style.color = '#EE4B2B'
+            link.style.color = '#EE4B2B'
         }
-        div.appendChild(span)
-        div.appendChild(sep.cloneNode(true))
+        roomOptions.appendChild(link)
+        roomOptions.appendChild(sep.cloneNode(true))
     }
-    div.removeChild(div.lastChild)
-    parent.insertBefore(div, parent.children[2])
+    roomOptions.removeChild(roomOptions.lastChild)
+    parent.insertBefore(roomOptions, parent.children[2])
+}
+
+async function optionsClickCallback(event) {
+    console.debug('optionsClickCallback', event)
+    event.preventDefault()
+    const key = event.target.dataset.key
+    console.debug('key', key)
+    if (!key) {
+        return console.warn('options key not found for target', event.target)
+    }
+    const { options } = await chrome.storage.sync.get(['options'])
+    options[key] = !options[key]
+    await chrome.storage.sync.set({ options })
+    // updateRoomOptions(options)
 }
 
 /**
@@ -658,6 +712,8 @@ async function processGame(game) {
         addDominoes()
     }
     await sse3(game)
+
+    // setTimeout(addPlayerTrackers, 500)
 }
 
 /**
@@ -682,7 +738,7 @@ async function sse1(room) {
         const state = msg.state
         if (msg.t === 'rs' && state?.tid) {
             // TODO: This Fires Multiple Times as a Function
-            console.debug('Room state:', state)
+            // console.debug('Room state:', state)
 
             // if (state?.tid && state?.tid !== roomState[room]?.tid) {
             //     console.info('Initial Room State! TID:', state.tid)
@@ -932,6 +988,28 @@ async function processGameAction(action) {
 }
 
 /**
+ * Add Player Domino Trackers
+ * TODO: Need  a way to determine which player is in which position
+ * @function addPlayerTrackers
+ */
+function addPlayerTrackers() {
+    const players = document.querySelectorAll('.player')
+    console.debug('addPlayerTrackers', players)
+
+    for (let i = 0; i < players.length; i++) {
+        const player = players[i]
+        console.debug(`player: ${i}`, player)
+        console.debug(`room.players: ${i}`, roomState[currentRoom].players[i])
+        // player.style.position = 'relative'
+        const div = document.createElement('div')
+        div.id = `player-${i}`
+        div.textContent = `PLAYER ${i}`
+        div.style.position = 'absolute'
+        player.appendChild(div)
+    }
+}
+
+/**
  * Add Dominoes to Domino Tracker
  * @function addDominoes
  */
@@ -1034,10 +1112,16 @@ async function roomPlayerChange(before, after) {
 
     if (before.players[0] !== after.players[0]) {
         console.debug('room owner change')
-        const { profile } = await chrome.storage.sync.get(['profile'])
+        const { options, profile } = await chrome.storage.sync.get([
+            'options',
+            'profile',
+        ])
         if (after.players[0] === profile.id) {
             console.debug('you are now the room owner')
             await addCancelReadyBtn()
+            if (options.showRoomOptions) {
+                updateRoomOptions(options)
+            }
         }
     }
 }
@@ -1510,26 +1594,32 @@ async function showTooltipMouseover(event) {
     tooltip.style.display = 'block'
     instance.update()
     const pid = event.target.parentNode.dataset.id
-    const profile = await getProfile(pid)
+    const player = await getProfile(pid)
     // const stats = calStats(profile)
     tooltip.innerHTML = ''
+    const { banned } = await chrome.storage.sync.get(['banned'])
+    if (banned.includes(pid)) {
+        tooltip.style.border = '2px solid #ff0000'
+    } else {
+        tooltip.style.borderWidth = '0'
+    }
     const span = document.createElement('span')
     span.style.width = '100%'
     span.style.display = 'inline-block'
     const span1 = span.cloneNode(true)
-    span1.textContent = `(${profile.level}) ${profile.username}`
+    span1.textContent = `(${player.level}) ${player.username}`
     tooltip.appendChild(span1)
     const span2 = span.cloneNode(true)
-    span2.textContent = `Rating: ${profile.stats.rating} - ${profile.stats.wl_percent}%`
-    if (profile.rating < 200) {
+    span2.textContent = `Rating: ${player.stats.rating} - ${player.stats.wl_percent}%`
+    if (player.rating < 200) {
         span2.style.color = '#EE4B2B'
     } else {
         span2.style.color = '#50C878'
     }
     tooltip.appendChild(span2)
     const span3 = span.cloneNode(true)
-    span3.textContent = `W/L: ${profile.stats.won} / ${profile.stats.lost}`
-    if (profile.stats.wl_percent < 45) {
+    span3.textContent = `W/L: ${player.stats.won} / ${player.stats.lost}`
+    if (player.stats.wl_percent < 45) {
         span3.style.color = '#EE4B2B'
     } else {
         span3.style.color = '#50C878'
@@ -2090,7 +2180,7 @@ async function kickPlayer(pid) {
         return console.debug('not owner or user already kicked')
     }
     const url = `https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/${currentRoom}/action/kick`
-    const response = await fetch(url, {
+    const opts = {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -2098,7 +2188,8 @@ async function kickPlayer(pid) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ player: pid }),
-    })
+    }
+    const response = await fetch(url, opts)
     const data = await response.json()
     console.debug('data:', data)
 }
@@ -2120,7 +2211,7 @@ async function sendChatMessage(message) {
     }
     const url = `https://api-v2.playdrift.com/api/v1/chat/${tid}/send`
     console.debug('url:', url)
-    const response = await fetch(url, {
+    const opts = {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -2128,7 +2219,8 @@ async function sendChatMessage(message) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: message }),
-    })
+    }
+    const response = await fetch(url, opts)
     const data = await response.json()
     console.debug('data:', data)
 }
@@ -2164,7 +2256,7 @@ async function selectTeam(rid, team) {
         variables: { id: rid, gtype: 'dominoes#v3', team: team.toString() },
         query: 'mutation RoomTeamSelect($id: ID!, $gtype: String!, $team: String!) {\n  roomTeamSelect(id: $id, gtype: $gtype, team: $team)\n}',
     }
-    const init = {
+    const opts = {
         credentials: 'include',
         headers: {
             Accept: '*/*',
@@ -2175,8 +2267,36 @@ async function selectTeam(rid, team) {
         method: 'POST',
         mode: 'cors',
     }
-    const response = await fetch('https://api-v2.playdrift.com/graphql', init)
+    const url = 'https://api-v2.playdrift.com/graphql'
+    const response = await fetch(url, opts)
     console.debug('response:', response)
+}
+
+/**
+ * Get Listed Games
+ * @function getGames
+ * @param {Object} goptFilters
+ * @return {Object}
+ */
+async function getGames(goptFilters = { gtype: ['dominoes#v3'] }) {
+    const body = {
+        goptFilters: goptFilters,
+    }
+    const opts = {
+        credentials: 'include',
+        headers: {
+            Accept: '*/*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        method: 'POST',
+        mode: 'cors',
+    }
+    const url = 'https://api-v2.playdrift.com/api/v1/room/dominoes%23v3/search'
+    const response = await fetch(url, opts)
+    console.debug('response:', response)
+    return await response.json()
 }
 
 /**
