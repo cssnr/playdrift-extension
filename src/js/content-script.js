@@ -431,10 +431,11 @@ async function processRoom(room) {
     if (options.addCancelReadyBtn) {
         await addCancelReadyBtn()
     }
-    if (options.showRoomOptions) {
-        updateRoomOptions(options)
-    }
     addKickedPlayers(parent)
+    if (options.showRoomOptions) {
+        // updateRoomOptions(options)
+        setTimeout(updateRoomOptions, 250, options)
+    }
 
     const aside = document.querySelector('aside')
     console.debug('aside:', aside)
