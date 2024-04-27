@@ -189,7 +189,7 @@ async function onMessage(message, sender, sendResponse) {
 }
 
 async function onMessageExternal(message, sender, sendResponse) {
-    console.debug('onMessage: message, sender:', message, sender)
+    console.debug('onMessageExternal: message, sender:', message, sender)
     const { profile } = await chrome.storage.sync.get(['profile'])
     sendResponse(profile)
 }
