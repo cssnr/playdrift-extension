@@ -7,6 +7,7 @@ chrome.runtime.onInstalled.addListener(onInstalled)
 chrome.contextMenus.onClicked.addListener(onClicked)
 chrome.commands.onCommand.addListener(onCommand)
 chrome.runtime.onMessage.addListener(onMessage)
+chrome.runtime.onMessageExternal.addListener(onMessageExternal)
 chrome.tabs.onUpdated.addListener(onUpdate)
 // chrome.alarms.onAlarm.addListener(onAlarm)
 chrome.storage.onChanged.addListener(onChanged)
@@ -185,6 +186,12 @@ async function onMessage(message, sender, sendResponse) {
     //         sendResponse(false)
     //     }
     // }
+}
+
+async function onMessageExternal(message, sender, sendResponse) {
+    console.debug('onMessage: message, sender:', message, sender)
+    const { profile } = await chrome.storage.sync.get(['profile'])
+    sendResponse(profile)
 }
 
 /**
