@@ -6,8 +6,6 @@
   "optional_host_permissions": ["*://*.playdrift.com/*"],
   "minimum_chrome_version": "88",
   "externally_connectable": {
-    "matches": [
-      "*://playdrift-extension.cssnr.com/*"
-    ]
+    "matches": ["*://playdrift-extension.cssnr.com/*"]
   }
 }
