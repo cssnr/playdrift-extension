@@ -3,7 +3,6 @@
     "service_worker": "js/service-worker.js",
     "type": "module"
   },
-  "optional_host_permissions": ["*://*.playdrift.com/*"],
   "minimum_chrome_version": "88",
   "externally_connectable": {
     "matches": ["*://playdrift-extension.cssnr.com/*"]
