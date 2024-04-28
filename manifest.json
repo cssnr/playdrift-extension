@@ -26,6 +26,7 @@
     }
   },
   "permissions": ["contextMenus", "storage", "tabs"],
+  "host_permissions": ["*://*.playdrift.com/*"],
   "content_scripts": [
     {
       "matches": ["*://*.playdrift.com/*"],
