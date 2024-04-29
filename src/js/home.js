@@ -36,10 +36,15 @@ bannedInput.addEventListener('change', inputBannedUsers)
  * @function domContentLoaded
  */
 async function domContentLoaded() {
-    const { banned, history, options, profile } = await chrome.storage.sync.get(
-        ['banned', 'history', 'options', 'profile']
-    )
-    console.debug('domContentLoaded:', banned, history, options, profile)
+    console.debug('domContentLoaded')
+    const { banned, history, profile } = await chrome.storage.sync.get([
+        'banned',
+        'history',
+        'profile',
+    ])
+    const manifest = chrome.runtime.getManifest()
+    document.querySelector('.version').textContent = manifest.version
+    document.querySelector('[href="homepage_url"]').href = manifest.homepage_url
     showProfile(profile)
     updateOptions(profile, true)
     updateHistory(history)
