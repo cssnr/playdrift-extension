@@ -10,7 +10,8 @@
 
 Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) 
 Web Extension and [Firefox](https://addons.mozilla.org/addon/playdrift-extension) 
-Browser Addon for PlayDrift to view Rankings and Win/Loss Records on Player Profiles plus much more!
+Browser Addon for [PlayDrift](https://dominoes.playdrift.com/)
+to view Rankings and Win/Loss Records on Player Profiles plus much more!
 See the [Features](#features) list for a full list of features and [Problems Solved](#problems-solved)
 for some of the most useful features.
 
