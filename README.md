@@ -92,6 +92,10 @@ All **Chromium** Based Browsers can install the extension from the
 *   Friends/Favorites List w/ notifications when they join game
 *   Remember how many times you played with a player and display in tooltip
 
+> [!TIP]
+> **Don't see your feature here?**
+> Request one on the [Feature Request Discussion](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests).
+
 Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
 For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
 
@@ -138,12 +142,16 @@ However, with no gains from leveled up accounts, it is most likely the bots are 
 
 > [!TIP]
 > **Don't see your question here?**
-> Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/new?category=q-a).
+> Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/categories/q-a).
 
 # Known Issues
 
 *   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
 *   Cancel Ready Button will also reset teams for anyone not using the Keep Teams Set Option
+
+> [!TIP]
+> **Don't see your issue here?**
+> Open one on the [Issues](https://github.com/cssnr/playdrift-extension/issues).
 
 # Configuration
 
