@@ -97,9 +97,6 @@ All **Chromium** Based Browsers can install the extension from the
 > **Don't see your feature here?**
 > Request one on the [Feature Request Discussion](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests).
 
-Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
-For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
-
 # Problems Solved
 
 PlayDrift negligence has created a few major issues on the site that this extension aims to solve.
