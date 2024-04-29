@@ -10,7 +10,8 @@
 
 Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) 
 Web Extension and [Firefox](https://addons.mozilla.org/addon/playdrift-extension) 
-Browser Addon for PlayDrift to view Rankings and Win/Loss Records on Player Profiles plus much more!
+Browser Addon for [PlayDrift](https://dominoes.playdrift.com/)
+to view Rankings and Win/Loss Records on Player Profiles plus much more!
 See the [Features](#features) list for a full list of features and [Problems Solved](#problems-solved)
 for some of the most useful features.
 
@@ -92,8 +93,9 @@ All **Chromium** Based Browsers can install the extension from the
 *   Friends/Favorites List w/ notifications when they join game
 *   Remember how many times you played with a player and display in tooltip
 
-Please submit a [Feature Request](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests) for new features.  
-For any issues, bugs or concerns; please [Open an Issue](https://github.com/cssnr/playdrift-extension/issues).
+> [!TIP]
+> **Don't see your feature here?**
+> Request one on the [Feature Request Discussion](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests).
 
 # Problems Solved
 
@@ -138,12 +140,16 @@ However, with no gains from leveled up accounts, it is most likely the bots are 
 
 > [!TIP]
 > **Don't see your question here?**
-> Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/new?category=q-a).
+> Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/categories/q-a).
 
 # Known Issues
 
 *   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
 *   Cancel Ready Button will also reset teams for anyone not using the Keep Teams Set Option
+
+> [!TIP]
+> **Don't see your issue here?**
+> Open one on the [Issues](https://github.com/cssnr/playdrift-extension/issues).
 
 # Configuration
 

@@ -3,7 +3,7 @@
   "description": "PlayDrift Web Extension.",
   "homepage_url": "https://github.com/cssnr/playdrift-extension",
   "author": "Shane",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "manifest_version": 3,
   "commands": {
     "_execute_action": {
@@ -26,6 +26,7 @@
     }
   },
   "permissions": ["contextMenus", "storage", "tabs"],
+  "host_permissions": ["*://*.playdrift.com/*"],
   "content_scripts": [
     {
       "matches": ["*://*.playdrift.com/*"],
