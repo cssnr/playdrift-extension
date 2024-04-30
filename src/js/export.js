@@ -84,7 +84,7 @@ export async function tabOpen(event) {
  */
 export async function requestPerms() {
     return await chrome.permissions.request({
-        origins: ['*://playdrift.com/*'],
+        origins: ['*://*.playdrift.com/*'],
     })
 }
 
@@ -107,7 +107,7 @@ export async function grantPerms(event) {
  */
 export async function checkPerms() {
     const hasPerms = await chrome.permissions.contains({
-        origins: ['*://playdrift.com/*'],
+        origins: ['*://*.playdrift.com/*'],
     })
     console.debug('checkPerms:', hasPerms)
     // Firefox still uses DOM Based Background Scripts
