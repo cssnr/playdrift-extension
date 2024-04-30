@@ -1,6 +1,6 @@
 // JS Background Service Worker
 
-import { openHome, playGame } from './export.js'
+import { checkPerms, openHome, playGame } from './export.js'
 
 chrome.runtime.onStartup.addListener(onStartup)
 chrome.runtime.onInstalled.addListener(onInstalled)
@@ -102,9 +102,7 @@ async function onInstalled(details) {
         //     delayInMinutes: 2,
         //     periodInMinutes: 2,
         // })
-        const hasPerms = await chrome.permissions.contains({
-            origins: ['*://*.playdrift.com/*'],
-        })
+        const hasPerms = await checkPerms()
         if (hasPerms) {
             chrome.runtime.openOptionsPage()
         } else {

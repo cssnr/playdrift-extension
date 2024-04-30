@@ -1,6 +1,6 @@
 // JS for oninstall.html
 
-import { checkPerms, tabOpen } from './export.js'
+import { checkPerms, requestPerms, tabOpen } from './export.js'
 
 chrome.permissions.onAdded.addListener(onAdded)
 
@@ -26,9 +26,7 @@ async function domContentLoaded() {
  */
 async function grantPerms(event) {
     console.debug('grantPerms:', event)
-    await chrome.permissions.request({
-        origins: ['*://*.playdrift.com/*'],
-    })
+    await requestPerms()
     const hasPerms = await checkPerms()
     if (hasPerms) {
         chrome.runtime.openOptionsPage()

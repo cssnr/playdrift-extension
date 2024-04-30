@@ -3,6 +3,7 @@
 import {
     checkPerms,
     onChanged,
+    requestPerms,
     saveOptions,
     showToast,
     tabOpen,
@@ -98,13 +99,12 @@ async function popupLinks(event) {
 
 /**
  * Grant Permissions Button Click Callback
+ * Firefox requires us to ignore the promise and call window.close()
  * @function grantPerms
  * @param {Event} event
  */
-function grantPerms(event) {
+async function grantPerms(event) {
     console.debug('grantPerms:', event)
-    chrome.permissions.request({
-        origins: ['*://*.playdrift.com/*'],
-    })
+    requestPerms()
     window.close()
 }
