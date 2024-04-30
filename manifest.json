@@ -1,9 +1,9 @@
 {
   "name": "PlayDrift Extension",
   "description": "PlayDrift Web Extension.",
-  "homepage_url": "https://github.com/cssnr/playdrift-extension",
+  "homepage_url": "https://playdrift-extension.cssnr.com/",
   "author": "Shane",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "manifest_version": 3,
   "commands": {
     "_execute_action": {

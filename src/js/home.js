@@ -9,6 +9,7 @@ import {
 } from './export.js'
 
 chrome.storage.onChanged.addListener(onChanged)
+chrome.permissions.onAdded.addListener(onAdded)
 
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
@@ -36,10 +37,15 @@ bannedInput.addEventListener('change', inputBannedUsers)
  * @function domContentLoaded
  */
 async function domContentLoaded() {
-    const { banned, history, options, profile } = await chrome.storage.sync.get(
-        ['banned', 'history', 'options', 'profile']
-    )
-    console.debug('domContentLoaded:', banned, history, options, profile)
+    console.debug('domContentLoaded')
+    const { banned, history, profile } = await chrome.storage.sync.get([
+        'banned',
+        'history',
+        'profile',
+    ])
+    const manifest = chrome.runtime.getManifest()
+    document.querySelector('.version').textContent = manifest.version
+    document.querySelector('[href="homepage_url"]').href = manifest.homepage_url
     showProfile(profile)
     updateOptions(profile, true)
     updateHistory(history)
@@ -277,4 +283,13 @@ export function onChanged(changes, namespace) {
             }
         }
     }
+}
+
+/**
+ * Permissions On Added Callback
+ * @param permissions
+ */
+async function onAdded(permissions) {
+    console.info('onAdded', permissions)
+    await checkPerms()
 }

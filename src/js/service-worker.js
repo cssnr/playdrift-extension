@@ -1,6 +1,6 @@
 // JS Background Service Worker
 
-import { openHome, playGame } from './export.js'
+import { checkPerms, openHome, playGame } from './export.js'
 
 chrome.runtime.onStartup.addListener(onStartup)
 chrome.runtime.onInstalled.addListener(onInstalled)
@@ -73,16 +73,16 @@ const defaultCommands = {
  * On Startup Callback
  * @function onStartup
  */
-function onStartup() {
+async function onStartup() {
     console.log('onStartup')
-    // if (typeof browser !== 'undefined') {
-    //     console.log('FireFox Startup - Fix for Bug')
-    //     const { options } = await chrome.storage.sync.get(['options'])
-    //     console.debug('options:', options)
-    //     if (options.contextMenu) {
-    //         createContextMenus()
-    //     }
-    // }
+    if (typeof browser !== 'undefined') {
+        console.log('Firefox CTX Menu Workaround')
+        const { options } = await chrome.storage.sync.get(['options'])
+        console.debug('options:', options)
+        if (options.contextMenu) {
+            createContextMenus()
+        }
+    }
 }
 
 /**
@@ -102,9 +102,7 @@ async function onInstalled(details) {
         //     delayInMinutes: 2,
         //     periodInMinutes: 2,
         // })
-        const hasPerms = await chrome.permissions.contains({
-            origins: ['*://*.playdrift.com/*'],
-        })
+        const hasPerms = await checkPerms()
         if (hasPerms) {
             chrome.runtime.openOptionsPage()
         } else {
