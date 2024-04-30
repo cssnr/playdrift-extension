@@ -73,16 +73,16 @@ const defaultCommands = {
  * On Startup Callback
  * @function onStartup
  */
-function onStartup() {
+async function onStartup() {
     console.log('onStartup')
-    // if (typeof browser !== 'undefined') {
-    //     console.log('FireFox Startup - Fix for Bug')
-    //     const { options } = await chrome.storage.sync.get(['options'])
-    //     console.debug('options:', options)
-    //     if (options.contextMenu) {
-    //         createContextMenus()
-    //     }
-    // }
+    if (typeof browser !== 'undefined') {
+        console.log('Firefox CTX Menu Workaround')
+        const { options } = await chrome.storage.sync.get(['options'])
+        console.debug('options:', options)
+        if (options.contextMenu) {
+            createContextMenus()
+        }
+    }
 }
 
 /**
