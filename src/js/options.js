@@ -256,7 +256,7 @@ async function inputCustomCommands(event) {
  * @param {Object} changes
  * @param {String} namespace
  */
-export function onChanged(changes, namespace) {
+function onChanged(changes, namespace) {
     // console.debug('onChanged:', changes, namespace)
     for (const [key, { newValue }] of Object.entries(changes)) {
         if (namespace === 'sync') {

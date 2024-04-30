@@ -24,7 +24,7 @@ const defaultOptions = {
     // autoUpdatePlayers: false,
     sendOnJoin: false,
     sendSelfOnJoin: false,
-    sendPlayerLeft: true,
+    sendPlayerLeft: false,
     sendTeamsChanged: false,
     sendPlayerKicked: false,
     sendSelfKicked: true,
