@@ -90,6 +90,7 @@ export async function requestPerms() {
 
 /**
  * Grant Permissions Click Callback
+ * Shared with Options and Home
  * @function grantPerms
  * @param {MouseEvent} event
  */
@@ -109,6 +110,7 @@ export async function checkPerms() {
         origins: ['*://playdrift.com/*'],
     })
     console.debug('checkPerms:', hasPerms)
+    // Firefox still uses DOM Based Background Scripts
     if (typeof document === 'undefined') {
         return hasPerms
     }
