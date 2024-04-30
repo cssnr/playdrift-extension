@@ -9,6 +9,7 @@ import {
 } from './export.js'
 
 chrome.storage.onChanged.addListener(onChanged)
+chrome.permissions.onAdded.addListener(onAdded)
 
 document.addEventListener('DOMContentLoaded', domContentLoaded)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
@@ -282,4 +283,13 @@ export function onChanged(changes, namespace) {
             }
         }
     }
+}
+
+/**
+ * Permissions On Added Callback
+ * @param permissions
+ */
+async function onAdded(permissions) {
+    console.info('onAdded', permissions)
+    await checkPerms()
 }
