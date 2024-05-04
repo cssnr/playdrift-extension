@@ -17,11 +17,12 @@ chrome.permissions.onAdded.addListener(onAdded)
 document.addEventListener('DOMContentLoaded', initOptions)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
 document
-    .querySelectorAll('#options-form input')
+    .querySelectorAll('.options input')
     .forEach((el) => el.addEventListener('change', saveOptions))
 document
-    .getElementById('options-form')
-    .addEventListener('submit', (e) => e.preventDefault())
+    .querySelectorAll('form.options')
+    .forEach((el) => el.addEventListener('submit', (e) => e.preventDefault()))
+
 document
     .querySelectorAll('[data-tabopen]')
     .forEach((el) => el.addEventListener('click', tabOpen))
