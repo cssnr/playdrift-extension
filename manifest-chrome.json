@@ -4,7 +4,7 @@
     "type": "module"
   },
   "externally_connectable": {
-    "matches": ["*://playdrift-extension.cssnr.com/*"]
+    "matches": ["*://playdrift-extension.cssnr.com/*", "*://localhost/*"]
   },
   "minimum_chrome_version": "88"
 }
