@@ -3,7 +3,7 @@
   "description": "PlayDrift Web Extension.",
   "homepage_url": "https://playdrift-extension.cssnr.com/",
   "author": "Shane",
-  "version": "0.4.10",
+  "version": "0.0.1",
   "manifest_version": 3,
   "commands": {
     "_execute_action": {

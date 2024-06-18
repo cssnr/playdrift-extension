@@ -12,10 +12,6 @@ chrome.tabs.onUpdated.addListener(onUpdate)
 // chrome.alarms.onAlarm.addListener(onAlarm)
 chrome.storage.onChanged.addListener(onChanged)
 
-const githubURL = 'https://github.com/cssnr/playdrift-extension'
-// const installURL = 'https://playdrift-extension.cssnr.com/docs/'
-const uninstallURL = 'https://playdrift-extension.cssnr.com/uninstall/'
-
 const defaultOptions = {
     // audio: audio,
     showTooltipMouseover: true,
@@ -92,16 +88,18 @@ async function onStartup() {
  */
 async function onInstalled(details) {
     console.log('onInstalled:', details)
+    const githubURL = 'https://github.com/cssnr/playdrift-extension'
+    // const installURL = 'https://playdrift-extension.cssnr.com/docs/'
+    const uninstallURL = new URL(
+        'https://playdrift-extension.cssnr.com/uninstall/'
+    )
     const options = await Promise.resolve(setDefaultOptions())
     console.debug('options:', options)
     if (options.contextMenu) {
         createContextMenus()
     }
+    const manifest = chrome.runtime.getManifest()
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
-        // await chrome.alarms.create('check-user-profile', {
-        //     delayInMinutes: 2,
-        //     periodInMinutes: 2,
-        // })
         const hasPerms = await checkPerms()
         if (hasPerms) {
             chrome.runtime.openOptionsPage()
@@ -109,17 +107,18 @@ async function onInstalled(details) {
             const url = chrome.runtime.getURL('/html/oninstall.html')
             await chrome.tabs.create({ active: true, url })
         }
-        // await chrome.tabs.create({ active: false, url: installURL })
     } else if (details.reason === chrome.runtime.OnInstalledReason.UPDATE) {
         if (options.showUpdate) {
-            const manifest = chrome.runtime.getManifest()
             if (manifest.version !== details.previousVersion) {
                 const url = `${githubURL}/releases/tag/${manifest.version}`
+                console.log(`Update url: ${url}`)
                 await chrome.tabs.create({ active: false, url })
             }
         }
     }
-    await chrome.runtime.setUninstallURL(uninstallURL)
+    uninstallURL.searchParams.append('version', manifest.version)
+    console.log('uninstallURL:', uninstallURL.href)
+    await chrome.runtime.setUninstallURL(uninstallURL.href)
 }
 
 /**
