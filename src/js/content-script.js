@@ -1488,7 +1488,9 @@ async function userJoinRoom(pid, rid = currentRoom) {
     if (owner) {
         if (options.autoKickBanned && banned.includes(pid)) {
             await kickPlayer(pid)
-            await sendChatMessage(`Kicked Banned User: ${player.username}`)
+            if (!options.kickSilent) {
+                await sendChatMessage(`Kicked Banned User: ${player.username}`)
+            }
             return
         }
         if (
@@ -1497,8 +1499,10 @@ async function userJoinRoom(pid, rid = currentRoom) {
                 options.kickLowGames
         ) {
             await kickPlayer(pid)
-            const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
-            await sendChatMessage(`Kicked Low Total Game Player: ${ss}`)
+            if (!options.kickSilent) {
+                const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
+                await sendChatMessage(`Kicked Low Total Game Player: ${ss}`)
+            }
             return
         }
         if (
@@ -1506,8 +1510,10 @@ async function userJoinRoom(pid, rid = currentRoom) {
             player.stats.wl_percent < options.kickLowRate
         ) {
             await kickPlayer(pid)
-            const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
-            await sendChatMessage(`Kicked Low Win Rate Player: ${ss}`)
+            if (!options.kickSilent) {
+                const ss = `${player.username} ${player.stats.won}/${player.stats.lost} (${player.stats.wl_percent}%)`
+                await sendChatMessage(`Kicked Low Win Rate Player: ${ss}`)
+            }
             return
         }
     }
@@ -2118,7 +2124,9 @@ async function banClick(event) {
     const player = await getProfile(pid)
     if (window.location.pathname.includes('room')) {
         // TODO: Make this an Option
-        await sendChatMessage(`Banned User: ${player.username}`)
+        if (!options.kickSilent) {
+            await sendChatMessage(`Banned User: ${player.username}`)
+        }
     }
     if (options.autoKickBanned) {
         await kickPlayer(pid)

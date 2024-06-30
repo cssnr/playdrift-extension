@@ -40,6 +40,7 @@ const defaultOptions = {
     kickLowRate: 40,
     autoKickLowGames: false,
     kickLowGames: 10,
+    kickSilent: false,
     autoContinueGameEnd: false,
     sendGameStart: false,
     gameStartMessage: 'Good Luck Everyone and Have Fun!',
@@ -50,6 +51,7 @@ const defaultOptions = {
     showUpdate: false,
 }
 
+const githubURL = 'https://github.com/cssnr/playdrift-extension'
 const defaultCommands = {
     info: `Stats and Rating are hidden in your profile. The web extension lets you to display stats, store game history, auto kick low win rate players, ban users, and much more. Info on GitHub: ${githubURL}`,
     addon: 'info',
@@ -88,7 +90,6 @@ async function onStartup() {
  */
 async function onInstalled(details) {
     console.log('onInstalled:', details)
-    const githubURL = 'https://github.com/cssnr/playdrift-extension'
     // const installURL = 'https://playdrift-extension.cssnr.com/docs/'
     const uninstallURL = new URL(
         'https://playdrift-extension.cssnr.com/uninstall/'
