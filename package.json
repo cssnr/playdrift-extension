@@ -3,6 +3,7 @@
   "scripts": {
     "postinstall": "npx gulp",
     "lint": "npx eslint src/js",
+    "test": "npm run manifest:chrome && node tests/test.js",
     "chrome": "npm run manifest:chrome && web-ext run --source-dir ./src/ --target=chromium",
     "firefox": "npm run manifest:firefox && web-ext run --source-dir ./src/",
     "manifest:chrome": "npx json-merger -p -am concat -o src/manifest.json manifest.json manifest-chrome.json",
@@ -25,6 +26,7 @@
     "gulp": "^4.0.2",
     "json-merger": "^1.1.10",
     "prettier": "^3.3.2",
+    "puppeteer": "^22.12.1",
     "web-ext": "^8.2.0"
   }
 }
