@@ -30,14 +30,16 @@ document
     .querySelectorAll('[data-bs-toggle="tooltip"]')
     .forEach((el) => new bootstrap.Tooltip(el))
 
+document.getElementById('cmd-form').addEventListener('submit', addCommand)
 document
     .getElementById('export-commands')
     .addEventListener('click', exportCustomCommands)
 document
     .getElementById('import-commands')
     .addEventListener('click', importCustomCommands)
-
-document.getElementById('cmd-form').addEventListener('submit', addCommand)
+document
+    .getElementById('copy-support-info')
+    .addEventListener('click', copySupportInfo)
 
 const commandsTable = document.getElementById('commands-table')
 const commandsInput = document.getElementById('commands-input')
@@ -278,4 +280,26 @@ function onChanged(changes, namespace) {
 async function onAdded(permissions) {
     console.debug('onAdded', permissions)
     await checkPerms()
+}
+
+/**
+ * Copy Support Information
+ * @function copySupportInfo
+ * @param {MouseEvent} event
+ */
+async function copySupportInfo(event) {
+    console.debug('copySupportInfo:', event)
+    event.preventDefault()
+    const { options } = await chrome.storage.sync.get(['options'])
+    delete options.gameStartMessage
+    const manifest = chrome.runtime.getManifest()
+    const result = [
+        '```',
+        `${manifest.name} - ${manifest.version}`,
+        navigator.userAgent,
+        JSON.stringify(options),
+        '```',
+    ]
+    await navigator.clipboard.writeText(result.join('\n'))
+    showToast('Support Information Copied.')
 }
