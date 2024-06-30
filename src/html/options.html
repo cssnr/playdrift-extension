@@ -314,6 +314,19 @@
 <!--            <div class="form-text" id="kickLowGamesHelp">Popup Recent Files. <span class="d-inline-block">0 to Disable.</span></div>-->
         </div>
 
+        <div class="form-check form-switch">
+            <input class="form-check-input" id="kickSilent" type="checkbox" role="switch" data-related="kickSilentWarning">
+            <label class="form-check-label text-success-emphasis" for="kickSilent" aria-describedby="kickSilentHelp">
+                Do Not Send Chat Message on Kick/Ban
+                <span data-bs-toggle="tooltip" data-bs-title="Silently Kick/Ban Players.">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                </span>
+            </label>
+        </div>
+        <div id="kickSilentWarning" class="ms-5 text-warning-emphasis" style="display: none">
+            Warning: You won't know if a player was kicked or left the game with this option enabled.
+        </div>
+
         <h6 class="mt-3 ms-2 text-body-secondary"><i class="fa-solid fa-gamepad me-2"></i> Game Options</h6>
         <div class="form-check form-switch">
             <input class="form-check-input" id="autoContinueGameEnd" type="checkbox" role="switch">
