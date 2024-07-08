@@ -3,7 +3,7 @@
   "scripts": {
     "postinstall": "npx gulp",
     "lint:eslint": "npx eslint src/js tests",
-    "lint:web-ext": "npm run manifest:firefox && npx web-ext lint --source-dir ./src/ --ignore-files dist/**",
+    "lint:web-ext": "npm run manifest:firefox && npx web-ext lint --source-dir ./src",
     "lint": "npm run lint:eslint && npm run lint:web-ext",
     "test": "npm run manifest:chrome && node tests/test.js",
     "chrome": "npm run manifest:chrome && web-ext run --source-dir ./src/ --target=chromium",
