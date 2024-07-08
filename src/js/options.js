@@ -16,6 +16,7 @@ chrome.permissions.onAdded.addListener(onAdded)
 
 document.addEventListener('DOMContentLoaded', initOptions)
 document.getElementById('grant-perms').addEventListener('click', grantPerms)
+document.getElementById('copy-support').addEventListener('click', copySupport)
 document
     .querySelectorAll('.options input')
     .forEach((el) => el.addEventListener('change', saveOptions))
@@ -37,9 +38,6 @@ document
 document
     .getElementById('import-commands')
     .addEventListener('click', importCustomCommands)
-document
-    .getElementById('copy-support-info')
-    .addEventListener('click', copySupportInfo)
 
 const commandsTable = document.getElementById('commands-table')
 const commandsInput = document.getElementById('commands-input')
@@ -284,21 +282,21 @@ async function onAdded(permissions) {
 
 /**
  * Copy Support Information
- * @function copySupportInfo
+ * @function copySupport
  * @param {MouseEvent} event
  */
-async function copySupportInfo(event) {
-    console.debug('copySupportInfo:', event)
+async function copySupport(event) {
+    console.debug('copySupport:', event)
     event.preventDefault()
     const { options } = await chrome.storage.sync.get(['options'])
     delete options.gameStartMessage
     const manifest = chrome.runtime.getManifest()
+    const permissions = await chrome.permissions.getAll()
     const result = [
-        '```',
         `${manifest.name} - ${manifest.version}`,
         navigator.userAgent,
-        JSON.stringify(options),
-        '```',
+        `permissions.origins: ${JSON.stringify(permissions.origins)}`,
+        `options: ${JSON.stringify(options)}`,
     ]
     await navigator.clipboard.writeText(result.join('\n'))
     showToast('Support Information Copied.')

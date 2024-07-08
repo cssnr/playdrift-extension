@@ -3,8 +3,10 @@
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
-[![Build](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml/badge.svg)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
+[![Build](https://img.shields.io/github/actions/workflow/status/cssnr/playdrift-extension/build.yaml?logo=github&logoColor=white&label=build)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
+[![Test](https://img.shields.io/github/actions/workflow/status/cssnr/playdrift-extension/test.yaml?logo=github&logoColor=white&label=test)](https://github.com/cssnr/playdrift-extension/actions/workflows/test.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_playdrift-extension)
+[![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
 # PlayDrift Extension
 
 Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) 
@@ -22,6 +24,7 @@ for some of the most useful features.
 *   [Known Issues](#known-issues)
 *   [Configuration](#configuration)
 *   [Browser Console](#browser-console)
+*   [Support](#support)
 *   [Development](#development)
     -   [Building](#building)
 
@@ -34,13 +37,13 @@ for some of the most useful features.
 *   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 *   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
 
-[![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_48x48.png)](https://addons.mozilla.org/addon/playdrift-extension)
-[![Edge](https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Chromium](https://raw.githubusercontent.com/alrra/browser-logos/main/src/chromium/chromium_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Brave](https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Vivaldi](https://raw.githubusercontent.com/alrra/browser-logos/main/src/vivaldi/vivaldi_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Opera](https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_48x48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Chrome](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/chrome_48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Firefox](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/firefox_48.png)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Edge](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/edge_48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Chromium](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/chromium_48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Brave](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/brave_48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Vivaldi](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/vivaldi_48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Opera](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/opera_48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 
 All **Chromium** Based Browsers can install the extension from the
 [Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn).
@@ -187,6 +190,25 @@ Make sure you are at `https://dominoes.playdrift.com/` and logged in before proc
 *   From these new tabs, select the `Response` tab. It should be the 4th tab in (Headers, Cookies, Request, Response, etc).
 *   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
 *   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
+
+# Support
+
+For help using the web extension, utilize any these resources:
+
+- Documentation: https://playdrift-extension.cssnr.com/docs/
+- Q&A Discussion: https://github.com/cssnr/playdrift-extension/discussions/categories/q-a
+- Request a Feature: https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests
+
+If you are experiencing an issue/bug or getting unexpected results, use:
+
+- Report an Issue: https://github.com/cssnr/playdrift-extension/issues
+- Chat with us on Discord: https://discord.gg/wXy6m2X8wY
+- Provide Anonymous Feedback: https://cssnr.github.io/feedback
+
+Logs can be found inspecting the page (Ctrl+Shift+I), clicking on the Console, and;
+Firefox: toggling Debug logs, Chrome: toggling Verbose from levels dropdown.
+
+Note: When providing anonymous feedback there is no way to follow up and get more information unless you provide a contact method.
 
 # Development
 
