@@ -1,12 +1,16 @@
-[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/anlkpnbhiiojmedlkchcdmigkdccnmcn?logo=google&logoColor=white&label=google%20users)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-[![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=mozilla%20users)](https://addons.mozilla.org/addon/playdrift-extension)
+[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/anlkpnbhiiojmedlkchcdmigkdccnmcn?logo=google&logoColor=white&label=users)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+[![Mozilla Add-on Users](https://img.shields.io/amo/users/playdrift-extension?logo=mozilla&label=users)](https://addons.mozilla.org/addon/playdrift-extension)
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/anlkpnbhiiojmedlkchcdmigkdccnmcn?label=chrome&logo=googlechrome)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Mozilla Add-on Version](https://img.shields.io/amo/v/playdrift-extension?label=firefox&logo=firefox)](https://addons.mozilla.org/addon/playdrift-extension)
-[![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github)](https://github.com/cssnr/playdrift-extension/releases/latest)
+[![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/playdrift-extension?logo=github&logoColor=white)](https://github.com/cssnr/playdrift-extension/releases/latest)
 [![Build](https://img.shields.io/github/actions/workflow/status/cssnr/playdrift-extension/build.yaml?logo=github&logoColor=white&label=build)](https://github.com/cssnr/playdrift-extension/actions/workflows/build.yaml)
 [![Test](https://img.shields.io/github/actions/workflow/status/cssnr/playdrift-extension/test.yaml?logo=github&logoColor=white&label=test)](https://github.com/cssnr/playdrift-extension/actions/workflows/test.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_playdrift-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_playdrift-extension)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/playdrift-extension?logo=github&logoColor=white&label=updated)](https://github.com/cssnr/playdrift-extension/graphs/commit-activity)
+[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/playdrift-extension?logo=htmx&logoColor=white)](https://github.com/cssnr/playdrift-extension)
+[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=github&logoColor=white)](https://cssnr.github.io/)
 [![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
+
 # PlayDrift Extension
 
 Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) 
@@ -27,12 +31,13 @@ for some of the most useful features.
 *   [Support](#support)
 *   [Development](#development)
     -   [Building](#building)
+*   [Contributing](#Contributing)
 
 [![Screen Shots](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://playdrift-extension.cssnr.com/screenshots/)
 
 [Visit Website](https://playdrift-extension.cssnr.com/) | [View Screen Shots](https://playdrift-extension.cssnr.com/screenshots/)
 
-# Install
+## Install
 
 *   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 *   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
@@ -48,7 +53,7 @@ for some of the most useful features.
 All **Chromium** Based Browsers can install the extension from the
 [Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn).
 
-# Features
+## Features
 
 > [!TIP]  
 > All features are **Optional** and disabled by default. Visit the options page to enable them.
@@ -84,7 +89,7 @@ All **Chromium** Based Browsers can install the extension from the
 *   Show List of Kicked Players in Room below Players
 *   Extended Kick Menu with Kick Reasons Sent to Chat
 
-### Upcoming Features and Ideas
+### Planned Upcoming Features
 
 *   Custom Audio Sounds and Volume
 *   Remember Recent Game and Room URLs
@@ -99,7 +104,7 @@ All **Chromium** Based Browsers can install the extension from the
 > **Don't see your feature here?**
 > Request one on the [Feature Request Discussion](https://github.com/cssnr/playdrift-extension/discussions/categories/feature-requests).
 
-# Problems Solved
+## Problems Solved
 
 PlayDrift negligence has created a few major issues on the site that this extension aims to solve.
 
@@ -128,13 +133,13 @@ any domino they want on the first round of 4 and hold on to the 6/6 since they p
 > **Solution:** These bots can't win more than 1/3 games and all have a win rate around 35%. The feature to Auto Kick players 
 > below a set win rate (recommended at 40%) will kick almost all the bots, plus a couple humans that only win 1/3 games.
 
-# Frequently Asked Questions
+## Frequently Asked Questions
 
-### Where do the stats come from?
+- **Where do the stats come from?**
 
 The stats come from your PlayDrift profile. See [Browser Console](#browser-console) for more information.
 
-### What is the purpose of robot players?
+- **What is the purpose of robot players?**
 
 The main theory is that the bots are from PlayDrift to maintain activity on the site during low activity hours.
 Also, since the site rewards total play over quality play, the bots could be leveling accounts for future uses.
@@ -144,7 +149,7 @@ However, with no gains from leveled up accounts, it is most likely the bots are 
 > **Don't see your question here?**
 > Ask one on the [Q&A Discussion](https://github.com/cssnr/playdrift-extension/discussions/categories/q-a).
 
-# Known Issues
+## Known Issues
 
 *   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
 *   Cancel Ready Button will also reset teams for anyone not using the Keep Teams Set Option
@@ -153,7 +158,7 @@ However, with no gains from leveled up accounts, it is most likely the bots are 
 > **Don't see your issue here?**
 > Open one on the [Issues](https://github.com/cssnr/playdrift-extension/issues).
 
-# Configuration
+## Configuration
 
 You can pin the Addon by clicking the `Puzzle Piece`, find the Web Extension icon, then;  
 **Chrome**, click the `Pin` icon.  
@@ -163,7 +168,7 @@ To open the options, click on the icon (from above) then click `Open Options`.
 
 You may also access the Options and Home page from a Right Click if Enabled in Options.
 
-# Browser Console
+## Browser Console
 
 You can view user profiles manually in your browser or console using the following methods.
 
@@ -191,7 +196,7 @@ Make sure you are at `https://dominoes.playdrift.com/` and logged in before proc
 *   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
 *   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
 
-# Support
+## Support
 
 For help using the web extension, utilize any these resources:
 
@@ -203,12 +208,12 @@ If you are experiencing an issue/bug or getting unexpected results, use:
 
 - Report an Issue: https://github.com/cssnr/playdrift-extension/issues
 - Chat with us on Discord: https://discord.gg/wXy6m2X8wY
-- Provide Anonymous Feedback: https://cssnr.github.io/feedback
+- Provide General Feedback: [https://cssnr.github.io/feedback](https://cssnr.github.io/feedback?app=PlayDrift%20Extension)
 
 Logs can be found inspecting the page (Ctrl+Shift+I), clicking on the Console, and;
 Firefox: toggling Debug logs, Chrome: toggling Verbose from levels dropdown.
 
-Note: When providing anonymous feedback there is no way to follow up and get more information unless you provide a contact method.
+To support this project, see the [Contributing](#Contributing) section at the bottom.
 
 # Development
 
@@ -257,7 +262,7 @@ npm run build:firefox
 
 For more information on building, see the scripts section in the [package.json](package.json) file.
 
-## Chrome Setup
+### Chrome Setup
 
 1.  Build or Download a [Release](https://github.com/cssnr/playdrift-extension/releases).
 1.  Unzip the archive, place the folder where it must remain and note its location for later.
@@ -265,7 +270,7 @@ For more information on building, see the scripts section in the [package.json](
 1.  In the top right, click `Developer Mode` then on the top left click `Load unpacked`.
 1.  Navigate to the folder you extracted in step #3 then click `Select Folder`.
 
-## Firefox Setup
+### Firefox Setup
 
 1.  Build or Download a [Release](https://github.com/cssnr/playdrift-extension/releases).
 1.  Unzip the archive, place the folder where it must remain and note its location for later.
@@ -279,3 +284,22 @@ You may also use an Unbranded Build: [https://wiki.mozilla.org/Add-ons/Extension
 1.  Run `npm run build:firefox` then use `web-ext-artifacts/{name}-firefox-{version}.zip`.
 1.  Open `about:config` search for `xpinstall.signatures.required` and set to `false`.
 1.  Open `about:addons` and drag the zip file to the page or choose Install from File from the Settings wheel.
+
+# Contributing
+
+Currently, the best way to contribute to this project is to give a 5-star rating on
+[Google](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) or
+[Mozilla](https://addons.mozilla.org/addon/playdrift-extension) and to star this project on GitHub.
+
+Other Web Extensions I have created and published:
+
+- [Link Extractor](https://github.com/cssnr/link-extractor)
+- [Open Links in New Tab](https://github.com/cssnr/open-links-in-new-tab)
+- [HLS Video Downloader](https://github.com/cssnr/hls-video-downloader)
+- [SMWC Web Extension](https://github.com/cssnr/smwc-web-extension)
+- [PlayDrift Extension](https://github.com/cssnr/playdrift-extension)
+- [ASN Plus](https://github.com/cssnr/asn-plus)
+- [Aviation Tools](https://github.com/cssnr/aviation-tools)
+- [Text Formatter](https://github.com/cssnr/text-formatter)
+
+For a full list of current projects visit: [https://cssnr.github.io/](https://cssnr.github.io/)
