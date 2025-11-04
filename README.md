@@ -13,25 +13,29 @@
 
 # PlayDrift Extension
 
-Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn) 
-Web Extension and [Firefox](https://addons.mozilla.org/addon/playdrift-extension) 
+Modern [Chrome](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+Web Extension and [Firefox](https://addons.mozilla.org/addon/playdrift-extension)
 Browser Addon for [PlayDrift](https://dominoes.playdrift.com/)
 to view Rankings and Win/Loss Records on Player Profiles plus much more!
 See the [Features](#features) list for a full list of features and [Problems Solved](#problems-solved)
 for some of the most useful features.
 
-*   [Install](#install)
-*   [Features](#features)
-    -   [Upcoming Features](#upcoming-features-and-ideas)
-*   [Problems Solved](#problems-solved)
-*   [Frequently Asked Questions](#frequently-asked-questions)
-*   [Known Issues](#known-issues)
-*   [Configuration](#configuration)
-*   [Browser Console](#browser-console)
-*   [Support](#support)
-*   [Development](#development)
-    -   [Building](#building)
-*   [Contributing](#Contributing)
+> [!WARNING]  
+> This extension is not affiliated with the site https://www.playdrift.com/  
+> I also have no way to contact the developers of the website.
+
+- [Install](#install)
+- [Features](#features)
+    - [Upcoming Features](#Upcoming-Features)
+- [Problems Solved](#problems-solved)
+- [Frequently Asked Questions](#frequently-asked-questions)
+- [Known Issues](#known-issues)
+- [Configuration](#configuration)
+- [Browser Console](#browser-console)
+- [Support](#support)
+- [Development](#development)
+    - [Building](#building)
+- [Contributing](#Contributing)
 
 [![Screen Shots](https://repository-images.githubusercontent.com/779112610/a81fa6cf-34d2-4454-870c-ac54ce088518)](https://playdrift-extension.cssnr.com/screenshots/)
 
@@ -39,8 +43,8 @@ for some of the most useful features.
 
 ## Install
 
-*   [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
-*   [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
+- [Google Chrome Web Store](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
+- [Mozilla Firefox Add-ons](https://addons.mozilla.org/addon/playdrift-extension)
 
 [![Chrome](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/chrome_48.png)](https://chromewebstore.google.com/detail/playdrift-extension/anlkpnbhiiojmedlkchcdmigkdccnmcn)
 [![Firefox](https://raw.githubusercontent.com/smashedr/logo-icons/master/browsers/firefox_48.png)](https://addons.mozilla.org/addon/playdrift-extension)
@@ -59,46 +63,46 @@ All **Chromium** Based Browsers can install the extension from the
 > All features are **Optional** and disabled by default. Visit the options page to enable them.
 > You can access options through the extension icon, see [Configuration](#configuration) for more info.
 
-*   Track Recent Game History, Wins/Losses, Rating and Date
-*   Show Players Rating and Record (Win/Loss)
-*   Show Stats Tooltip on Mouse Over Icon
-*   Show Stats on Icon on Mouse Over Icon
-*   Send Player Stats to Chat on User Join
-*   Send Your Own Stats to Chat When You Join
-*   Send Player Leaving Active Game Alerts to Chat
-*   Send Team Change Alerts to Chat
-*   Send Player Kicked Alerts to Chat
-*   Keep Team Set After Selecting One
-*   Add Cancel Ready Button if you are the Room Owner
-*   Auto Update Game Options Dialog on Room Creation
-*   Minimize Room Display by Reducing Paddings
-*   Play Audio on Your Turn to Make a Move
-*   Play Audio When Users Join or Leave a Room
-*   Play Audio When Users Changes Teams
-*   Play Audio on New Inbox Message
-*   Play Audio on New Chat Message
-*   Play Chat Message as Audio (TTS)
-*   Ban User Feature w/ Auto Kick Banned Option
-*   Auto Kick Users Below Set Win Rate Percentage
-*   Auto Kick Users Below Set Total Games Played
-*   Auto Continue Through the Game Stats at End of Game
-*   Send Customizable Message on Game Start and Stats at End
-*   Show Remaining Dominoes and Optionally Exclude Your Own
-*   Add Custom Chat Commands that Anybody can Use
-*   Close Profiles by Clicking Anywhere Outside the Profile
-*   Show List of Kicked Players in Room below Players
-*   Extended Kick Menu with Kick Reasons Sent to Chat
+- Track Recent Game History, Wins/Losses, Rating and Date
+- Show Players Rating and Record (Win/Loss)
+- Show Stats Tooltip on Mouse Over Icon
+- Show Stats on Icon on Mouse Over Icon
+- Send Player Stats to Chat on User Join
+- Send Your Own Stats to Chat When You Join
+- Send Player Leaving Active Game Alerts to Chat
+- Send Team Change Alerts to Chat
+- Send Player Kicked Alerts to Chat
+- Keep Team Set After Selecting One
+- Add Cancel Ready Button if you are the Room Owner
+- Auto Update Game Options Dialog on Room Creation
+- Minimize Room Display by Reducing Paddings
+- Play Audio on Your Turn to Make a Move
+- Play Audio When Users Join or Leave a Room
+- Play Audio When Users Changes Teams
+- Play Audio on New Inbox Message
+- Play Audio on New Chat Message
+- Play Chat Message as Audio (TTS)
+- Ban User Feature w/ Auto Kick Banned Option
+- Auto Kick Users Below Set Win Rate Percentage
+- Auto Kick Users Below Set Total Games Played
+- Auto Continue Through the Game Stats at End of Game
+- Send Customizable Message on Game Start and Stats at End
+- Show Remaining Dominoes and Optionally Exclude Your Own
+- Add Custom Chat Commands that Anybody can Use
+- Close Profiles by Clicking Anywhere Outside the Profile
+- Show List of Kicked Players in Room below Players
+- Extended Kick Menu with Kick Reasons Sent to Chat
 
-### Planned Upcoming Features
+### Upcoming Features
 
-*   Custom Audio Sounds and Volume
-*   Remember Recent Game and Room URLs
-*   Remember Recent Players who Kicked You
-*   End Game Player Stats (Total Points, Time Taken)
-*   More Detailed History Including Opponents, Scores, etc.
-*   Display Important Room Options in the Room as Colored Text
-*   Friends/Favorites List w/ notifications when they join game
-*   Remember how many times you played with a player and display in tooltip
+- Custom Audio Sounds and Volume
+- Remember Recent Game and Room URLs
+- Remember Recent Players who Kicked You
+- End Game Player Stats (Total Points, Time Taken)
+- More Detailed History Including Opponents, Scores, etc.
+- Display Important Room Options in the Room as Colored Text
+- Friends/Favorites List w/ notifications when they join game
+- Remember how many times you played with a player and display in tooltip
 
 > [!TIP]
 > **Don't see your feature here?**
@@ -110,15 +114,15 @@ PlayDrift negligence has created a few major issues on the site that this extens
 
 1. No Way to Judge Opponents Skill
 
-The game changed to reward quantity over quality. Someone who plays 1,000 games and losses all 1,000 games 
+The game changed to reward quantity over quality. Someone who plays 1,000 games and losses all 1,000 games
 will appear 10x more skilled a player vs someone who only plays 100 games and wins all 100.
 
-> **Solution:** This extension exposes the total Wins and Losses in a players profile and calculates a Win Rate. 
+> **Solution:** This extension exposes the total Wins and Losses in a players profile and calculates a Win Rate.
 > It also provides the Rating; however, rating is worthless fot two reasons. 1, nobody can see it. 2, it starts at 0.
 
 2. Habitual Game Leavers for Points
 
-Since there is no downside to losing a game, only an upside, many people queue for 1 additional game when they 
+Since there is no downside to losing a game, only an upside, many people queue for 1 additional game when they
 are done playing and leave as soon as it starts for the extra points.
 
 > **Solution:** This extension can provide both audible and visual notifications when a player leave the game and has
@@ -130,7 +134,7 @@ Not sure if done by PlayDrift or externally but many of the players on this site
 these bots play the game manually and send the "Joined the game" message to new roms when they join. They can also play
 any domino they want on the first round of 4 and hold on to the 6/6 since they play manually.
 
-> **Solution:** These bots can't win more than 1/3 games and all have a win rate around 35%. The feature to Auto Kick players 
+> **Solution:** These bots can't win more than 1/3 games and all have a win rate around 35%. The feature to Auto Kick players
 > below a set win rate (recommended at 40%) will kick almost all the bots, plus a couple humans that only win 1/3 games.
 
 ## Frequently Asked Questions
@@ -151,8 +155,8 @@ However, with no gains from leveled up accounts, it is most likely the bots are 
 
 ## Known Issues
 
-*   The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
-*   Cancel Ready Button will also reset teams for anyone not using the Keep Teams Set Option
+- The Mouse Over Icon Stats do not properly update when a room changes positions on the home page
+- Cancel Ready Button will also reset teams for anyone not using the Keep Teams Set Option
 
 > [!TIP]
 > **Don't see your issue here?**
@@ -187,14 +191,14 @@ _Note: You need to replace the ID in the above URL with the one from the First s
 
 Make sure you are at `https://dominoes.playdrift.com/` and logged in before proceeding.
 
-*   Press `F12` to open the console (for most browsers). May also be: `Ctrl`+`Shift`+`I`
-*   Select the **Network** tab from the top.
-*   In the **Filter URLs** box enter the following filter: `method:get profile.get`
-*   You should see many requests for *profile.get?input=XXX* etc. (if not, refresh the page).
-*   Click on one of the individual requests, this will bring up a new set of tabs (usually on the right or bottom).
-*   From these new tabs, select the `Response` tab. It should be the 4th tab in (Headers, Cookies, Request, Response, etc).
-*   From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
-*   Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
+- Press `F12` to open the console (for most browsers). May also be: `Ctrl`+`Shift`+`I`
+- Select the **Network** tab from the top.
+- In the **Filter URLs** box enter the following filter: `method:get profile.get`
+- You should see many requests for _profile.get?input=XXX_ etc. (if not, refresh the page).
+- Click on one of the individual requests, this will bring up a new set of tabs (usually on the right or bottom).
+- From these new tabs, select the `Response` tab. It should be the 4th tab in (Headers, Cookies, Request, Response, etc).
+- From there you should see the `result`. Click on the small `>` Arrow to expand it. Click the next `>` Arrow on data.
+- Once fully expanded, you should see the profile. Then you can select any other response to view those profiles.
 
 ## Support
 
@@ -222,17 +226,20 @@ To support this project, see the [Contributing](#Contributing) section at the bo
 First, clone (or download) this repository and change into the directory.
 
 Second, install the dependencies:
+
 ```shell
 npm install
 ```
 
 Finally, to run Chrome or Firefox with web-ext, run one of the following:
+
 ```shell
 npm run chrome
 npm run firefox
 ```
 
 Additionally, to Load Unpacked/Temporary Add-on make a `manifest.json` and run from the [src](src) folder, run one of the following:
+
 ```shell
 npm run manifest:chrome
 npm run manifest:firefox
@@ -249,11 +256,13 @@ Example: `npm run chrome -- --chromium-binary=...`
 
 Install the requirements and copy libraries into the `src/dist` directory by running `npm install`.
 See [gulpfile.js](gulpfile.js) for more information on `postinstall`.
+
 ```shell
 npm install
 ```
 
 To create a `.zip` archive of the [src](src) directory for the desired browser run one of the following:
+
 ```shell
 npm run build
 npm run build:chrome
